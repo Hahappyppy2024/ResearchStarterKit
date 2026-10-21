@@ -240,6 +240,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 import study_service as study
                 value=lambda key,default="":q.get(key,[default])[0]
                 import knowledge_service as knowledge
+                if path.path=='/api/study/paper-questions':
+                    import paper_questions
+                    return self.reply(paper_questions.listing(value('date',None),value('paperId'),value('mode','all')))
                 if path.path=='/api/study/flash-statistics':
                     import flash_review
                     return self.reply(flash_review.statistics())
@@ -339,7 +342,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.reply({"count":count,"page":page,"papers":[dict(json.loads(b),zoteroKey=k) for b,k in rows]})
         static={" /":"","/": "index.html"}
         name="index.html" if path.path=="/" else path.path.lstrip("/")
-        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-reader.js","paper-knowledge.js","related-papers.js","dataset-ui.js","paper-assets.js","paper-research.js","paper-quiz-ui.js","auto-card-merge.mjs","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
+        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-reader.js","paper-knowledge.js","related-papers.js","dataset-ui.js","paper-assets.js","paper-research.js","paper-quiz-ui.js","auto-card-merge.mjs","paper-questions-ui.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
         p=(asset_root/name).resolve()
         if not p.is_relative_to(asset_root.resolve()) or not p.is_file():return self.reply({"error":"不存在"},404)
         import mimetypes
@@ -363,6 +366,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if self.path.startswith("/api/study/"):
                 import study_service as study
                 action=self.path.rsplit("/",1)[-1]
+                if action=='paper-question':
+                    import paper_questions
+                    return self.reply(paper_questions.save(body))
                 if action in ('paper-quiz-selection','daily-quiz-answer'):
                     import daily_quiz
                     return self.reply(daily_quiz.select(body) if action=='paper-quiz-selection' else daily_quiz.answer(body))
