@@ -11,18 +11,21 @@ def statistics(include_items=False):
   selected={p['id'] for p in study.records(c,'paper')}
   selected.update(r[0] for r in c.execute('SELECT DISTINCT paper_id FROM queue'))
   selected.update(p['id'] for p in records)
-  trash={p['id'] for p in study.records(c,'paper-library-trash')}
+  selected.update(p['id'] for p in study.records(c,'reading-library'))
+  trash=set() # Personal papers remain available; only daily queue membership is removed.
  ids.difference_update(trash)
  ids.intersection_update(selected)
  read={p['id'] for p in records if p['id'] in ids and p.get('readDate') and complete(p)}
- result=dict(total=len(ids),read=len(read),unread=len(ids-read))
+ with study.connection() as c:today_ids={p['paperId'] for p in study.reading_queue(c,study.today())}
+ today_read={p['id'] for p in records if p['id'] in read and p.get('readDate')==study.today()}
+ result=dict(total=len(ids),read=len(read),unread=len(ids-read),todayRead=len(today_read),todayUnread=len((today_ids&ids)-read))
  if include_items:
   byid={p['id']:p for p in records};items=[]
   for ident in ids|trash:
    try:paper=study.resolve('paper',ident)
    except ValueError:continue
    tasks=byid.get(ident,{}).get('tasks',{})
-   items.append(dict(id=ident,trashed=ident in trash,title=paper['title'],authors=paper.get('authors',''),read=ident in read,done=sum(tasks.get(t['id'],{}).get('done') is True for t in definitions()),taskTotal=len(definitions())))
+   items.append(dict(id=ident,todayRead=ident in today_read,trashed=ident in trash,inToday=ident in today_ids,title=paper['title'],authors=paper.get('authors',''),read=ident in read,done=sum(tasks.get(t['id'],{}).get('done') is True for t in definitions()),taskTotal=len(definitions())))
   result['items']=sorted(items,key=lambda p:p['title'].lower())
  return result
 

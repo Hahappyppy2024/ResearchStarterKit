@@ -33,7 +33,7 @@ def records(c,kind,archived=False):return [json.loads(r[0]) for r in c.execute('
 def state(date=None):
  date=valid_date(date or today())
  with connection() as c:
-  return dict(courses=records(c,'course'),archivedCourses=records(c,'course',True),problems=records(c,'problem'),comparisons=records(c,'comparison'),archivedProblems=records(c,'problem',True),archivedComparisons=records(c,'comparison',True),links=[json.loads(r[0]) for r in c.execute('SELECT body FROM links WHERE archived=0 ORDER BY rowid')],queue=[json.loads(r[0]) for r in c.execute('SELECT body FROM queue WHERE date=? AND archived=0 ORDER BY rowid',(date,))],date=date)
+  return dict(courses=records(c,'course'),archivedCourses=records(c,'course',True),problems=records(c,'problem'),comparisons=records(c,'comparison'),archivedProblems=records(c,'problem',True),archivedComparisons=records(c,'comparison',True),links=[json.loads(r[0]) for r in c.execute('SELECT body FROM links WHERE archived=0 ORDER BY rowid')],queue=reading_queue(c,date),date=date)
 def save_record(kind,data):
  if kind not in ('course','problem','comparison'):raise ValueError('记录类型无效')
  fields={'course':['name','audience','goal','prerequisites','assessment','design'],'problem':['name','broad','narrow','question','known','gap','hypothesis','evidence','next'],'comparison':['name','question','conditions','conclusion','next']}
@@ -161,7 +161,10 @@ def queue_paper(c,p,date=None,reason=None):
  return obj
 def remove_queue(data):
  date=valid_date(data.get('date',today()))
- with connection() as c:c.execute('UPDATE queue SET archived=? WHERE date=? AND paper_id=?',(0 if data.get('restore') else 1,date,data.get('paperId')))
+ with connection() as c:
+  paper=resolve('paper',data.get('paperId'));queue_paper(c,paper,date)
+  c.execute('UPDATE queue SET archived=? WHERE date=? AND paper_id=?',(0 if data.get('restore') else 1,date,data.get('paperId')))
+
  return {'saved':True}
 def task_detail(pid,taskid):
  definitions=json.loads((ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'))
@@ -169,3 +172,23 @@ def task_detail(pid,taskid):
  if not task:raise ValueError('阅读任务不存在')
  paper=resolve('paper',pid)
  return dict(id='study-'+pid+'-'+taskid,title=(paper['title'][:75]+' · '+task['title'])[:160],detail='论文：'+paper['title']+'\n具体动作与交付标准：'+task['hint'],paperId=pid,taskId=taskid)
+
+def reading_queue(c,date):
+ from reading_journal import complete
+ latest={}
+ for day,ident,body,archived in c.execute('SELECT date,paper_id,body,archived FROM queue WHERE date<=? ORDER BY date,rowid',(date,)):latest[ident]=(day,json.loads(body),archived)
+ result=[]
+ knowledge={p['id']:p for p in records(c,'paper-knowledge')}
+ for ident,(day,obj,archived) in latest.items():
+  if archived:continue
+  if day<date and complete(knowledge.get(ident,{})):continue
+  if day<date:obj={**obj,'carriedFrom':day,'date':date}
+  result.append(obj)
+ return result
+
+def select_reading_paper(data):
+ paper=resolve('paper',data.get('paperId'))
+ with connection() as c:
+  obj=dict(id=paper['id'],createdAt=now())
+  c.execute('INSERT INTO records VALUES(?,?,?,0) ON CONFLICT(kind,id) DO UPDATE SET archived=0',('reading-library',paper['id'],json.dumps(obj)))
+ return {'saved':True}

@@ -369,6 +369,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if self.path.startswith("/api/study/"):
                 import study_service as study
                 action=self.path.rsplit("/",1)[-1]
+                if action=='reading-library-select':return self.reply(study.select_reading_paper(body))
                 if action=='paper-library-archive':
                     import reading_journal
                     return self.reply(reading_journal.archive_personal(body))
