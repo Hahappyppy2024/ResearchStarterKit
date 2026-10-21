@@ -21,7 +21,10 @@ def session(date=None,mode='flash'):
  date=date or ip.today();ip.valid_date(date)
  with ip.connection() as c:
   setup(c);r=c.execute('SELECT origin FROM learning_session_days WHERE date=?',(date,)).fetchone()
-  if r:origin=r[0]
+  if r:
+   origin=r[0];saved=c.execute('SELECT body FROM learning_sessions WHERE date=?',(origin,)).fetchone();previous=json.loads(saved[0]) if saved else {}
+   if origin<date and previous.get('completedDate') and previous['completedDate']<date:
+    origin=date;c.execute('UPDATE learning_session_days SET origin=? WHERE date=?',(origin,date))
   else:
    rows=[json.loads(x[0]) for x in c.execute('SELECT body FROM learning_sessions WHERE date<? ORDER BY date DESC',(date,))]
    previous=rows[0] if rows else None

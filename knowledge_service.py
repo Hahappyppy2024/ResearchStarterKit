@@ -84,6 +84,9 @@ def save_paper(data):
   clean={}
   for task in definitions:
    value=tasks.get(task['id'],{});entry=dict(done=value.get('done') is True,answer=study.text(value.get('answer',''),20000))
+   if entry['done']:
+    previous=old.get('tasks',{}).get(task['id'],{})
+    entry['completedDate']=previous.get('completedDate',study.today()) if previous.get('done') else study.today()
    if task['id']=='categories':entry['tags']=[study.text(t,80) for t in value.get('tags',[]) if isinstance(t,str)][:100]
    if task['id']=='connections':
     refs=value.get('references',[])
@@ -122,20 +125,25 @@ def week(date):
  d=datetime.date.fromisoformat(study.valid_date(date));return (d-datetime.timedelta(days=d.weekday())).isoformat()
 def paper_week(date=None):
  date=date or study.today();monday=week(date);end=(datetime.date.fromisoformat(monday)+datetime.timedelta(days=6)).isoformat()
+ definitions=json.loads((study.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'))
  with study.connection() as c:
-  cards=[]
   for obj in study.records(c,'paper-knowledge'):
-   if not monday<=obj.get('readDate','')<=min(date,end):continue
-   for task in json.loads((study.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8')):
+   if not obj.get('readDate'):continue
+   for task in definitions:
     answer=obj.get('tasks',{}).get(task['id'],{})
-    if not answer.get('done') or not answer.get('answer'):continue
-    ident=obj['id']+':'+task['id'];snapshot_key=monday+':'+ident
-    snap=c.execute("SELECT body FROM records WHERE kind='paper-quiz-snapshot' AND id=?",(snapshot_key,)).fetchone()
-    reference=json.loads(snap[0]) if snap else dict(id=snapshot_key,question=task['title'],reference=answer['answer'])
-    if not snap:put(c,'paper-quiz-snapshot',reference)
-    saved=c.execute("SELECT body FROM records WHERE kind='paper-quiz' AND id=?",(monday+':'+ident,)).fetchone();attempt=json.loads(saved[0]) if saved else {}
-    cards.append(dict(id=ident,paperId=obj['id'],title=obj['title'],question=reference['question'],reference=reference['reference'],revision=attempt.get('revision',0),studentAnswer=attempt.get('studentAnswer',''),verdict=attempt.get('verdict','unanswered')))
+    eligible=max(obj['readDate'],answer.get('completedDate',obj['readDate']))
+    if not answer.get('done') or not answer.get('answer') or not monday<=eligible<=min(date,end):continue
+    ident=obj['id']+':'+task['id'];key=monday+':'+ident
+    r=c.execute("SELECT body FROM records WHERE kind='paper-quiz-snapshot' AND id=?",(key,)).fetchone()
+    old=json.loads(r[0]) if r else {}
+    if not old.get('paperId'):put(c,'paper-quiz-snapshot',dict(id=key,cardId=ident,paperId=obj['id'],title=obj['title'],week=monday,eligibleDate=eligible,question=old.get('question',task['title']),reference=old.get('reference',answer['answer'])))
+  cards=[]
+  for ref in study.records(c,'paper-quiz-snapshot'):
+   if ref.get('week')!=monday or ref.get('eligibleDate','9999')>date:continue
+   r=c.execute("SELECT body FROM records WHERE kind='paper-quiz' AND id=?",(ref['id'],)).fetchone();attempt=json.loads(r[0]) if r else {}
+   cards.append(dict(id=ref['cardId'],paperId=ref['paperId'],title=ref['title'],question=ref['question'],reference=ref['reference'],revision=attempt.get('revision',0),studentAnswer=attempt.get('studentAnswer',''),verdict=attempt.get('verdict','unanswered')))
   return dict(week=monday,end=end,cards=cards,papers=len({c['paperId'] for c in cards}))
+
 def paper_attempt(data):
  monday=week(data.get('date',study.today()));ident=study.text(data.get('id',''),300);answer=study.text(data.get('studentAnswer',''),30000)
  if not answer:raise ValueError('请先填写自己的答案')

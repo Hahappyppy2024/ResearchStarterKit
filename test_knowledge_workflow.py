@@ -12,6 +12,8 @@ class KnowledgeTests(unittest.TestCase):
   saved=k.save_paper(dict(paperId=p['id'],revision=0,problemIds=[leaf['id']],tasks=tasks,read=True));self.assertEqual(len(saved['ownedMaps']),3);self.assertEqual(k.edges([p['id']])[0]['types'],['improves']);quiz=k.paper_week();self.assertEqual(len(quiz['cards']),1)
   k.paper_attempt(dict(id=quiz['cards'][0]['id'],studentAnswer='test',verdict='review'));self.assertEqual(k.paper_week()['cards'][0]['verdict'],'review')
   updated=k.save_paper(dict(paperId=p['id'],revision=saved['revision'],problemIds=[],tasks=tasks));self.assertEqual(updated['ownedMaps'],[])
+  changed={'problem':dict(done=False,answer='changed')}
+  k.save_paper(dict(paperId=p['id'],revision=updated['revision'],tasks=changed));self.assertEqual(k.paper_week()['cards'][0]['reference'],'my evidence')
 class WorkflowTests(unittest.TestCase):
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();self.old=learning.DB;learning.DB=pathlib.Path(self.tmp.name)/'learning.sqlite'
@@ -19,6 +21,7 @@ class WorkflowTests(unittest.TestCase):
  def test_carry_and_week(self):
   a=flow.session('2026-10-20','evening');card=a['cards'][0];flow.submit(dict(date=a['date'],sessionDate='2026-10-20',mode='evening',id=card['id'],revision=card['revision'],studentAnswer='不知道'))
   b=flow.session('2026-10-21','evening');self.assertEqual(b['date'],a['date']);self.assertEqual(b['cards'][0]['result'],'wrong');self.assertEqual(b['session']['answered'],1);self.assertEqual(flow.weekly('2026-10-21')['cards'],[])
+  flow.session('2026-10-22') # Viewing tomorrow early must not pin a completed old batch there.
   for card in b['cards'][1:]:flow.submit(dict(date=b['date'],sessionDate='2026-10-21',mode='evening',id=card['id'],revision=card['revision'],studentAnswer='不知道'))
   self.assertEqual(flow.session('2026-10-21','evening')['session']['status'],'completed');q=flow.weekly('2026-10-21');self.assertEqual(len(q['cards']),30)
   c=q['cards'][0];flow.submit(dict(date=q['date'],mode='completed-quiz',id=c['id'],revision=c['revision'],studentAnswer='不知道'));self.assertEqual(flow.weekly('2026-10-22')['cards'][0]['result'],'wrong');self.assertEqual(flow.session('2026-10-22')['date'],'2026-10-22')
