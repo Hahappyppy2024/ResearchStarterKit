@@ -26,6 +26,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
   try:
    if path.path=='/api/projects':return self.reply({'projects':service.list_projects(q.get('archived',['0'])[0]=='1')})
    if path.path=='/api/project':return self.reply(service.project_detail(q.get('id',[''])[0]))
+   if path.path=='/api/project-papers':
+    import project_papers
+    return self.reply(project_papers.listing(q.get('projectId',[''])[0]))
+   if path.path=='/api/project-paper-resources':
+    import study_service
+    return self.reply(study_service.catalog(q.get('q',[''])[0],'paper',q.get('page',['0'])[0]))
    if path.path=='/api/project-task':
     ident=q.get('id',[''])[0]
     return self.reply(learning.task_detail(ident) if ident.startswith('learning-') else service.task_detail(ident))
@@ -79,6 +85,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
    length=int(self.headers.get('Content-Length','0'))
    if length>500000:raise ValueError('记录过大')
    data=json.loads(self.rfile.read(length))
+   if self.path=='/api/project-paper':
+    import project_papers
+    return self.reply(project_papers.save(data))
    if self.path in ('/api/learning/notebook','/api/learning/module-quiz'):
     import module_notebook
     return self.reply(module_notebook.save(data) if self.path.endswith('/notebook') else module_notebook.select(data))
