@@ -1,6 +1,5 @@
 import {mountRelatedPapers} from "./related-papers.js";
-import {hydrateKnowledge,syncKnowledge,mountClassification,mountReference,knowledgeApi,syncTaskCompletion} from "./paper-knowledge.js";
-import {PAPER_RELATIONS,EVIDENCE_STATUSES} from "./paper-relations.mjs";
+import {hydrateKnowledge,syncKnowledge,mountClassification,syncTaskCompletion} from "./paper-knowledge.js";
 import {markPaperRead,isPaperRead} from "./reading-history.mjs";
 import {addToCourse,scheduleStudyTask} from "./course-picker.js";
 import {PAPER_TASKS,cleanPaperTasks,cleanPaperTags} from "./paper-tasks.mjs";
