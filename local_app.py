@@ -315,7 +315,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.reply({"count":count,"page":page,"papers":[dict(json.loads(b),zoteroKey=k) for b,k in rows]})
         static={" /":"","/": "index.html"}
         name="index.html" if path.path=="/" else path.path.lstrip("/")
-        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-reader.js","paper-knowledge.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
+        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-reader.js","paper-knowledge.js","related-papers.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
         p=(asset_root/name).resolve()
         if not p.is_relative_to(asset_root.resolve()) or not p.is_file():return self.reply({"error":"不存在"},404)
         import mimetypes

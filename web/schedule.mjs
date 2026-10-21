@@ -1,11 +1,9 @@
 export const schedule = [
-  {id:"practice",start:360,end:420,title:"起床 · 念经",detail:"06:00 起床，静心念经，开启新的一天。",type:"life",alert:true},
-  {id:"morning",start:420,end:480,title:"喂猫 · 早餐 · 小红书论文号",detail:"照顾猫咪、吃早餐，浏览关注的论文账号。",type:"life",alert:true},
+  {id:"morning",start:420,end:480,title:"喂猫 · 早餐",detail:"照顾猫咪，吃早餐。",type:"life",alert:true},
   {id:"papers",start:480,end:660,title:"阅读最新论文",detail:"Agent · Object Detection · Agent OS · Agent Security · Agent Harness（到 arXiv 每周论文页选择并加入任务）",type:"research",alert:true},
   {id:"buffer",start:660,end:720,title:"休息与机动",detail:"暂留空档：活动一下、处理临时事务。",type:"rest",alert:false},
   {id:"lunch",start:720,end:810,title:"午饭与午休",detail:"吃饭、休息，为下午留一点精力。",type:"rest",alert:true},
   {id:"slides",start:810,end:960,title:"PhD Defence · 制作答辩 slides",detail:"打磨叙事、整理证据与图表，推进答辩准备。",type:"defence",alert:true},
-  {id:"directions",start:960,end:1080,title:"整理深度之眼的论文方向",detail:"梳理研究主题、归纳论文脉络，记录值得深入的方向。",type:"research",alert:true},
   {id:"detection",start:1080,end:1380,title:"Object Detection 论文",detail:"目标检测论文阅读与研究；时段内自行安排晚饭和短休息。",type:"research",alert:true},
 ];
 export const reminders = [...schedule.filter(s=>s.alert),{id:"sleep",start:1380,end:1385,title:"结束研究，准备休息",detail:"保存今天的笔记，为明早六点起床做准备。",alert:true}];
