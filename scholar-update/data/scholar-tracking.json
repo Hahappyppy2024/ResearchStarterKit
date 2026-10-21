@@ -1,0 +1,17 @@
+{
+  "scholars": [
+    {
+      "id": "e4a87485-7afb-40ab-99a2-2c164b3cf25e",
+      "papers": [],
+      "createdAt": "2026-10-20T10:36:17.759Z",
+      "name": "新增功能验证（独立测试库）",
+      "author": "Test Scholar",
+      "org": "测试单位",
+      "research": "优化与理论验证",
+      "source": "",
+      "personId": "",
+      "topic": "theory",
+      "paused": true
+    }
+  ]
+}

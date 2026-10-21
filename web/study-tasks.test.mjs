@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {PAPER_TASKS,cleanPaperTasks} from './paper-tasks.mjs';
+import {cleanTodos,plannedTasks} from './todos.mjs';
+import {readFileSync} from 'node:fs';
+const tasks=JSON.parse(readFileSync(new URL('./paper-task-definitions.json',import.meta.url),'utf8'));
+assert.deepEqual(PAPER_TASKS,tasks);assert.equal(PAPER_TASKS.length,19);
+const original=['problem','solution','why','limitations','improvements','extensions','related','connections','affiliations','categories'];
+assert.deepEqual(PAPER_TASKS.slice(0,10).map(t=>t.id),original);
+const clean=cleanPaperTasks({problem:{done:true,answer:'My original notes'},connections:{references:[{id:'ref-a',paper:'A',relation:'Builds on',evidence:'Intro'}]}});assert.equal(clean.problem.answer,'My original notes');assert.equal(clean.problem.done,true);assert.equal(clean.connections.references[0].relation,'Builds on');assert.equal(clean.reproduce.done,false);
+const todo={id:'todo-study-123',title:'Understand code',start:null,end:null,studyTask:{paperId:'manual-abc',taskId:'code-map'},detail:'Deliver a data flow'};assert.deepEqual(cleanTodos([todo])[0].studyTask,todo.studyTask);assert.equal(cleanTodos([todo])[0].paper,undefined);
+const scheduled=plannedTasks([],[{...todo,start:600,end:630}]);assert.deepEqual(scheduled[0].studyTask,todo.studyTask);console.log('Study tasks: original answers, optional tasks and scheduling metadata passed');

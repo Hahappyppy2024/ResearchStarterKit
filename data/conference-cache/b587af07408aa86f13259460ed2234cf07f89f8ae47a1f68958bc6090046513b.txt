@@ -1,0 +1,5201 @@
+<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>
+		Vol. 40 No. 11: AAAI-26 Technical Tracks 11
+							| Proceedings of the AAAI Conference on Artificial Intelligence
+			</title>
+
+	
+<meta name="generator" content="Open Journal Systems 3.3.0.22" />
+<link rel="alternate" type="application/atom+xml" href="https://ojs.aaai.org/index.php/AAAI/gateway/plugin/WebFeedGatewayPlugin/atom">
+<link rel="alternate" type="application/rdf+xml" href="https://ojs.aaai.org/index.php/AAAI/gateway/plugin/WebFeedGatewayPlugin/rss">
+<link rel="alternate" type="application/rss+xml" href="https://ojs.aaai.org/index.php/AAAI/gateway/plugin/WebFeedGatewayPlugin/rss2">
+	<link rel="stylesheet" href="https://ojs.aaai.org/index.php/AAAI/$$$call$$$/page/page/css?name=stylesheet" type="text/css" /><link rel="stylesheet" href="https://ojs.aaai.org/index.php/AAAI/$$$call$$$/page/page/css?name=font" type="text/css" /><link rel="stylesheet" href="https://ojs.aaai.org/lib/pkp/styles/fontawesome/fontawesome.css?v=3.3.0.22" type="text/css" /><link rel="stylesheet" href="https://ojs.aaai.org/public/journals/2/styleSheet.css?d=2024-03-25+02%3A25%3A25" type="text/css" />
+</head>
+<body class="pkp_page_issue pkp_op_view" dir="ltr">
+
+	<div class="pkp_structure_page">
+
+				<header class="pkp_structure_head" id="headerNavigationContainer" role="banner">
+						
+ <nav class="cmp_skip_to_content" aria-label="Jump to content links">
+	<a href="#pkp_content_main">Skip to main content</a>
+	<a href="#siteNav">Skip to main navigation menu</a>
+		<a href="#pkp_content_footer">Skip to site footer</a>
+</nav>
+
+			<div class="pkp_head_wrapper">
+
+				<div class="pkp_site_name_wrapper">
+					<button class="pkp_site_nav_toggle">
+						<span>Open Menu</span>
+					</button>
+										<div class="pkp_site_name">
+																<a href="						https://ojs.aaai.org/index.php/AAAI/index
+					" class="is_text">Proceedings of the AAAI Conference on Artificial Intelligence</a>
+										</div>
+				</div>
+
+				
+				<nav class="pkp_site_nav_menu" aria-label="Site Navigation">
+					<a id="siteNav"></a>
+					<div class="pkp_navigation_primary_row">
+						<div class="pkp_navigation_primary_wrapper">
+																				<ul id="navigationPrimary" class="pkp_navigation_primary pkp_nav_list">
+								<li class="">
+				<a href="https://ojs.aaai.org/index.php/AAAI/issue/current">
+					Current
+				</a>
+							</li>
+								<li class="">
+				<a href="https://ojs.aaai.org/index.php/AAAI/issue/archive">
+					Archives
+				</a>
+							</li>
+															<li class="">
+				<a href="https://ojs.aaai.org/index.php/AAAI/about">
+					About
+				</a>
+									<ul>
+																					<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about">
+										About the Journal
+									</a>
+								</li>
+																												<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about/submissions">
+										Submissions
+									</a>
+								</li>
+																																									<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about/privacy">
+										Privacy Statement
+									</a>
+								</li>
+																												<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about/contact">
+										Contact
+									</a>
+								</li>
+																		</ul>
+							</li>
+			</ul>
+
+				
+
+																						<div class="pkp_navigation_search_wrapper">
+									<a href="https://ojs.aaai.org/index.php/AAAI/search" class="pkp_search pkp_search_desktop">
+										<span class="fa fa-search" aria-hidden="true"></span>
+										Search
+									</a>
+								</div>
+													</div>
+					</div>
+					<div class="pkp_navigation_user_wrapper" id="navigationUserWrapper">
+							<ul id="navigationUser" class="pkp_navigation_user pkp_nav_list">
+															<li class="profile">
+				<a href="https://ojs.aaai.org/index.php/AAAI/login">
+					Login
+				</a>
+							</li>
+										</ul>
+
+					</div>
+				</nav>
+			</div><!-- .pkp_head_wrapper -->
+		</header><!-- .pkp_structure_head -->
+
+						<div class="pkp_structure_content has_sidebar">
+			<div class="pkp_structure_main" role="main">
+				<a id="pkp_content_main"></a>
+
+<div class="page page_issue">
+
+				<nav class="cmp_breadcrumbs" role="navigation" aria-label="You are here:">
+	<ol>
+		<li>
+			<a href="https://ojs.aaai.org/index.php/AAAI/index">
+				Home
+			</a>
+			<span class="separator">/</span>
+		</li>
+		<li>
+			<a href="https://ojs.aaai.org/index.php/AAAI/issue/archive">
+				Archives
+			</a>
+			<span class="separator">/</span>
+		</li>
+		<li class="current" aria-current="page">
+			<span aria-current="page">
+									Vol. 40 No. 11: AAAI-26 Technical Tracks 11
+							</span>
+		</li>
+	</ol>
+</nav>
+		<h1>
+			Vol. 40 No. 11: AAAI-26 Technical Tracks 11
+		</h1>
+			<div class="obj_issue_toc">
+
+		
+		<div class="heading">
+
+									<a class="cover" href="https://ojs.aaai.org/index.php/AAAI/issue/view/692">
+								<img loading="lazy" src="https://ojs.aaai.org/public/journals/2/AAAI26Proceedings-Cover.jpg" alt="AAAI-26 / IAAI-26 / EAAI-26 Proceedings Cover">
+			</a>
+		
+							<div class="description">
+				<p><strong>Fortieth AAAI Conference on Artificial Intelligence</strong><br><strong>Thirty-Eighth Conference on Innovative Applications of Artificial Intelligence</strong><br><strong>Sixteenth Symposium on Educational Advances in Artificial Intelligence</strong><br><strong> Edited by Sven Koenig, Chad Jenkins, Matthew E. Taylor </strong><br><em>Sponsored by the Association for the Advancement of Artificial Intelligence</em><br>January 20–27, 2026, Singapore.</p>
+<p>Published by AAAI Press, Washington, DC, USA<br>Copyright © 2026, Association for the Advancement of Artificial Intelligence<br>601 Pennsylvania Ave, NW, Suite 900, Washington, DC 20004<br>All Rights Reserved<br>ISSN 2374-3468 (Online) <br>ISSN 2159-5399 (Print) <br>ISBN-10: 1-57735-906-2 <br>ISBN-13: 978-1-57735-906-7</p>
+<p>The Fortieth AAAI Conference on Artificial Intelligence was held on January 20 -- January 27, 2026, Singapore. The program chairs were Chad Jenkins (University of Michigan, USA) and Matthew Taylor (University of Alberta, Canada).</p>
+<p>AAAI-26 welcomed submissions on research that advances artificial intelligence, broadly conceived. The conference featured technical paper presentations, special tracks, invited speakers, workshops, tutorials, poster sessions, senior member presentations, competitions, and exhibit programs. Many of these activities were tailored to the theme of bridges and were selected according to the highest standards, with additional programs for students and young researchers. In addition to the Main Technical Track, authors were encouraged to submit papers for the Special Track on AI for Social Impact and the Special Track on AI Alignment.</p>
+<p>AAAI-26 received unprecedented interest from the global AI community. Nearly 29,000 papers were submitted to the Main Technical Track, with roughly 23,000 remaining under review after policy compliance filtering. This represents nearly twice the number of papers reviewed at AAAI-25. Submissions came from over 75,000 unique authors, with particularly strong engagement from China, which accounted for approximately 20,000 of the total submissions. The three largest research areas by submission volume were Computer Vision, Machine Learning, and Natural Language Processing. To meet this demand, the Program Committee was expanded to over 28,000 members, nearly three times the size of the previous year's committee.</p>
+<p>Driven by its disciplinary diversity, AAAI has incubated numerous AI sub-disciplines and conferences and has nurtured for decades the cohesion of AI. The purpose of this year's Bridge Program is to tap into new sources of innovation by cultivating collaboration between two or more communities directed towards a common goal. Hence, the communities that our Bridge Program is intended to bring together could be distinct subfields of AI, such as planning and learning, or different disciplines that contribute to and benefit from AI, such as AI and the humanities.<br>The conference scope included machine learning, natural language processing, computer vision, data mining, multiagent systems, knowledge representation, human-in-the-loop AI, search, planning, reasoning, robotics and perception, and ethics. In addition to fundamental work that focused on any one of these areas, AAAI-26 encouraged work across technical areas of AI, (e.g., machine learning and computer vision; computer vision and natural language processing; or machine learning and planning), bridges between AI and a related research area (e.g., neuroscience; cognitive science) or developing AI techniques in the context of important application domains, such as healthcare, sustainability, transportation, and commerce.</p>
+<p>The conference also continued its tradition of colocating with the long-running Innovative Applications of Artificial Intelligence conference (IAAI-26). IAAI-26 was chaired by Eren Kurshan (Princeton University, USA). The IAAI-26 papers are included in this proceedings. Also included are the papers from the Symposium on Educational Advances in Artificial Intelligence (EAAI-26). EAAI-26 was cochaired by Narges Norouzi (University of California Berkeley, USA) and Lisa Zhang (University of Toronto, Canada).</p>
+<p>The proceedings have been published in 48 consecutive issues. This issue (volume 40 no. 11) consists of 906 pages and 1 tracks:</p>
+<p>AAAI Technical Track on Computer Vision VIII</p>
+			</div>
+		
+												
+							<div class="published">
+				<span class="label">
+					Published:
+				</span>
+				<span class="value">
+					2026-03-17
+				</span>
+			</div>
+			</div>
+
+		
+		<div class="sections">
+			<div class="section">
+									<h2>
+					AAAI Technical Track on Computer Vision VIII
+				</h2>
+						<ul class="cmp_article_list articles">
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37815" href="https://ojs.aaai.org/index.php/AAAI/article/view/37815">
+			Breaking Measurement Barriers: From Compressed Sensing to Deep Reconstruction
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Gang Qu, Ping Wang, Siming Zheng, Xin Yuan
+		</div>
+		
+							<div class="pages">
+				8631-8639
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37815/41777" aria-labelledby=article-37815>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37815/48922" aria-labelledby=article-37815>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37816" href="https://ojs.aaai.org/index.php/AAAI/article/view/37816">
+			RL-U2Net: A Dual-Branch UNet with Reinforcement Learning-Assisted Multimodal Feature Fusion for Accurate 3D Whole-Heart Segmentation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Jierui Qu, Jianchun Zhao
+		</div>
+		
+							<div class="pages">
+				8640-8648
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37816/41778" aria-labelledby=article-37816>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37817" href="https://ojs.aaai.org/index.php/AAAI/article/view/37817">
+			SegDINO3D: 3D Instance Segmentation Empowered by Both Image-Level and Object-Level 2D Features
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Jinyuan Qu, Hongyang Li, Xingyu Chen, Shilong Liu, Yukai Shi, Tianhe Ren, Ruitao Jing, Lei Zhang
+		</div>
+		
+							<div class="pages">
+				8649-8658
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37817/41779" aria-labelledby=article-37817>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37817/47543" aria-labelledby=article-37817>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37818" href="https://ojs.aaai.org/index.php/AAAI/article/view/37818">
+			CloudMamba: Grouped Selective State Spaces for Point Cloud Analysis
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Kanglin Qu, Pan Gao, Qun Dai, Zhanzhi Ye, Rui Ye, Yuanhao Sun
+		</div>
+		
+							<div class="pages">
+				8659-8667
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37818/41780" aria-labelledby=article-37818>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37818/47998" aria-labelledby=article-37818>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37819" href="https://ojs.aaai.org/index.php/AAAI/article/view/37819">
+			Robust Single-Stage Fully Sparse 3D Object Detection via Detachable Latent Diffusion
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Wentao Qu, Guofeng Mei, Jing Wang, Yujiao Wu, Xiaoshui Huang, Liang Xiao
+		</div>
+		
+							<div class="pages">
+				8668-8676
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37819/41781" aria-labelledby=article-37819>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37819/47148" aria-labelledby=article-37819>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37820" href="https://ojs.aaai.org/index.php/AAAI/article/view/37820">
+			DeOcc-1-to-3: 3D De-Occlusion from a Single Image via Self-Supervised Multi-View Diffusion
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yansong Qu, Shaohui Dai, Xinyang Li, Yuze Wang, You Shen, Shengchuan Zhang, Liujuan Cao
+		</div>
+		
+							<div class="pages">
+				8677-8685
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37820/41782" aria-labelledby=article-37820>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37821" href="https://ojs.aaai.org/index.php/AAAI/article/view/37821">
+			Transformer with Controlled Attention for Synchronous Motion Captioning
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Karim Radouane, Sylvie Ranwez, Julien Lagarde, Andon Tchechmedjiev
+		</div>
+		
+							<div class="pages">
+				8686-8693
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37821/41783" aria-labelledby=article-37821>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37821/48199" aria-labelledby=article-37821>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37822" href="https://ojs.aaai.org/index.php/AAAI/article/view/37822">
+			FlashKAT: Understanding and Addressing Performance Bottlenecks in the Kolmogorov-Arnold Transformer
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Matthew Raffel, Lizhong Chen
+		</div>
+		
+							<div class="pages">
+				8694-8702
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37822/41784" aria-labelledby=article-37822>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37822/48942" aria-labelledby=article-37822>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37823" href="https://ojs.aaai.org/index.php/AAAI/article/view/37823">
+			Learning Latent Imaging Biomarkers for Interpretable Microvascular Invasion Prediction in Hepatocellular Carcinoma
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Ji Rao, Xinyu Liu, Yong Yi, Ying Xiao, Ye Luo
+		</div>
+		
+							<div class="pages">
+				8703-8711
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37823/41785" aria-labelledby=article-37823>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37823/47017" aria-labelledby=article-37823>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37824" href="https://ojs.aaai.org/index.php/AAAI/article/view/37824">
+			Masked Clustering Prediction for Unsupervised Point Cloud Pre-training
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Bin Ren, Xiaoshui Huang, Mengyuan Liu, Hong Liu, Fabio Poiesi, Nicu Sebe, Guofeng Mei
+		</div>
+		
+							<div class="pages">
+				8712-8720
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37824/41786" aria-labelledby=article-37824>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37824/47073" aria-labelledby=article-37824>
+
+		
+	Video/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37825" href="https://ojs.aaai.org/index.php/AAAI/article/view/37825">
+			Mitigating Negative Flips via Margin Preserving Training
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Simone Ricci, Niccolò Biondi, Federico Pernici, Alberto Del Bimbo
+		</div>
+		
+							<div class="pages">
+				8721-8730
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37825/41787" aria-labelledby=article-37825>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37825/47910" aria-labelledby=article-37825>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37826" href="https://ojs.aaai.org/index.php/AAAI/article/view/37826">
+			ImageSet2Text: Describing Sets of Images Through Text
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Piera Riccio, Francesco Galati, Kajetan Schweighofer, Noa Garcia, Nuria M Oliver
+		</div>
+		
+							<div class="pages">
+				8731-8739
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37826/41788" aria-labelledby=article-37826>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37826/47827" aria-labelledby=article-37826>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37827" href="https://ojs.aaai.org/index.php/AAAI/article/view/37827">
+			CART: Compositional AutoRegressive Transformer for Image Generation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Siddharth Roheda, Rohit Chowdhury, Aniruddha Bala, Rohan Jaiswal
+		</div>
+		
+							<div class="pages">
+				8740-8750
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37827/41789" aria-labelledby=article-37827>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37827/49276" aria-labelledby=article-37827>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37828" href="https://ojs.aaai.org/index.php/AAAI/article/view/37828">
+			RS2-SAM2: Customized SAM2 for Referring Remote Sensing Image Segmentation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Fu Rong, Meng Lan, Qian Zhang, Lefei Zhang
+		</div>
+		
+							<div class="pages">
+				8751-8759
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37828/41790" aria-labelledby=article-37828>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37829" href="https://ojs.aaai.org/index.php/AAAI/article/view/37829">
+			MME-SCI: A Comprehensive and Challenging Science Benchmark for Multimodal Large Language Models
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Jiacheng Ruan, Dan Jiang, Xian Gao, Ting Liu, Yuzhuo Fu, Yangyang Kang
+		</div>
+		
+							<div class="pages">
+				8760-8768
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37829/41791" aria-labelledby=article-37829>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37830" href="https://ojs.aaai.org/index.php/AAAI/article/view/37830">
+			GIIM: Graph-based Learning of Inter- and Intra-view Dependencies for Multi-view Medical Image Diagnosis
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Tran Bao Sam, Hung Vu, Dao Trung Kien, Tran Dat Dang, Van Ha Tang, Steven Truong
+		</div>
+		
+							<div class="pages">
+				8769-8777
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37830/41792" aria-labelledby=article-37830>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37830/49577" aria-labelledby=article-37830>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37831" href="https://ojs.aaai.org/index.php/AAAI/article/view/37831">
+			CoCoLIT: ControlNet-Conditioned Latent Image Translation for MRI to Amyloid PET Synthesis
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Alec Sargood, Lemuel Puglisi, James H Cole, Neil P. Oxtoby, Daniele Ravì, Daniel C. Alexander
+		</div>
+		
+							<div class="pages">
+				8778-8786
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37831/41793" aria-labelledby=article-37831>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37831/47045" aria-labelledby=article-37831>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37832" href="https://ojs.aaai.org/index.php/AAAI/article/view/37832">
+			Video Camera Trajectory Editing with Generative Rendering from Estimated Geometry
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Junyoung Seo, Jisang Han, Jaewoo Jung, Siyoon Jin, JoungBin Lee, Takuya Narihira, Kazumi Fukuda, Takashi Shibuya, Donghoon Ahn, Shoukang Hu, Seungryong Kim, Yuki Mitsufuji
+		</div>
+		
+							<div class="pages">
+				8787-8795
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37832/41794" aria-labelledby=article-37832>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37833" href="https://ojs.aaai.org/index.php/AAAI/article/view/37833">
+			Walk Before You Dance: High-fidelity and Editable Dance Synthesis via Generative Masked Motion Prior
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Foram N Shah, Parshwa N Shah, Muhammad Usama Saleem, Ekkasit Pinyoanuntapong, Pu Wang, Hongfei Xue, Ahmed Helmy
+		</div>
+		
+							<div class="pages">
+				8796-8804
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37833/41795" aria-labelledby=article-37833>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37833/49658" aria-labelledby=article-37833>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37834" href="https://ojs.aaai.org/index.php/AAAI/article/view/37834">
+			NeuS-QA: Grounding Long-Form Video Understanding in Temporal Logic and Neuro-Symbolic Reasoning
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Sahil Shah, S P Sharan, Harsh Goel, Minkyu Choi, Mustafa Munir, Manvik Pasula, Radu Marculescu, Sandeep Chinchali
+		</div>
+		
+							<div class="pages">
+				8805-8813
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37834/41796" aria-labelledby=article-37834>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37835" href="https://ojs.aaai.org/index.php/AAAI/article/view/37835">
+			DiA-gnostic VLVAE: Disentangled Alignment-Constrained Vision Language Variational AutoEncoder for Robust Radiology Reporting with Missing Modalities
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Nagur Shareef Shaik, Teja Krishna Cherukuri, Adnan Masood, Dong Hye Ye
+		</div>
+		
+							<div class="pages">
+				8814-8823
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37835/41797" aria-labelledby=article-37835>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37835/48075" aria-labelledby=article-37835>
+
+		
+	Video/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37836" href="https://ojs.aaai.org/index.php/AAAI/article/view/37836">
+			2D Gaussians Spatial Transport for Point-supervised Density Regression
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Miao Shang, Xiaopeng Hong
+		</div>
+		
+							<div class="pages">
+				8824-8832
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37836/41798" aria-labelledby=article-37836>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37836/47202" aria-labelledby=article-37836>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37837" href="https://ojs.aaai.org/index.php/AAAI/article/view/37837">
+			LSAP-PV: High-Fidelity Palm Vein Image Synthesis via Layered Spectral Absorption Projection-Guided Diffusion Model
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Sheng Shang, Chenglong Zhao, Ruixin Zhang, Jianlong Jin, Jingyun Zhang, Jun Wang, Yang Zhao, Shouhong Ding, Wei Jia
+		</div>
+		
+							<div class="pages">
+				8833-8841
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37837/41799" aria-labelledby=article-37837>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37837/47187" aria-labelledby=article-37837>
+
+		
+	Video/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37838" href="https://ojs.aaai.org/index.php/AAAI/article/view/37838">
+			FineTec: Fine-Grained Action Recognition Under Temporal Corruption via Skeleton Decomposition and Sequence Completion
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Dian Shao, Mingfei Shi, Like Liu
+		</div>
+		
+							<div class="pages">
+				8842-8850
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37838/41800" aria-labelledby=article-37838>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37838/46848" aria-labelledby=article-37838>
+
+		
+	Video/Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37839" href="https://ojs.aaai.org/index.php/AAAI/article/view/37839">
+			vMFCoOp: Towards Equilibrium on a Unified Hyperspherical Manifold for Prompting Biomedical VLMs
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Minye Shao, Sihan Guo, Xinrun Li, Xingyu Miao, Haoran Duan, Yang Long
+		</div>
+		
+							<div class="pages">
+				8851-8859
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37839/41801" aria-labelledby=article-37839>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37839/47398" aria-labelledby=article-37839>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37840" href="https://ojs.aaai.org/index.php/AAAI/article/view/37840">
+			ICM-Fusion: In-Context Meta-Optimized LoRA Fusion for Multi-Task Adaptation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yihua Shao, Xiaofeng Lin, Xinwei Long, Siyu Chen, Minxi Yan, Yang Liu, Ziyang Yan, Ao Ma, Hao Tang, Jingcai Guo
+		</div>
+		
+							<div class="pages">
+				8860-8868
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37840/41802" aria-labelledby=article-37840>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37841" href="https://ojs.aaai.org/index.php/AAAI/article/view/37841">
+			TR-DQ: Time-Rotation Diffusion Quantization
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yihua Shao, Deyang Lin, Minxi Yan, Siyu Chen, Fanhu Zeng, Minwen Liao, Ao Ma, Ziyang Yan, Haozhe Wang, Yan Wang, Zhi Chen, Xiaofeng Cao, Haotong Qin, Hao Tang, Jingcai Guo
+		</div>
+		
+							<div class="pages">
+				8869-8877
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37841/41803" aria-labelledby=article-37841>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37841/47115" aria-labelledby=article-37841>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37842" href="https://ojs.aaai.org/index.php/AAAI/article/view/37842">
+			PromptMoE: Generalizable Zero-Shot Anomaly Detection via Visually-Guided Prompt Mixtures
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yuheng Shao, Lizhang Wang, Changhao Li, Peixian Chen, Qinyuan Liu
+		</div>
+		
+							<div class="pages">
+				8878-8886
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37842/41804" aria-labelledby=article-37842>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37842/47837" aria-labelledby=article-37842>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37843" href="https://ojs.aaai.org/index.php/AAAI/article/view/37843">
+			Group Orthogonal Low-Rank Adaptation for RGB-T Tracking
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Zekai Shao, Yufan Hu, Jingyuan Liu, Bin Fan, Hongmin Liu
+		</div>
+		
+							<div class="pages">
+				8887-8895
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37843/41805" aria-labelledby=article-37843>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37843/49445" aria-labelledby=article-37843>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37844" href="https://ojs.aaai.org/index.php/AAAI/article/view/37844">
+			TarPro: Targeted Protection Against Malicious Image Editing
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Kaixin Shen, Ruijie Quan, Jiaxu Miao, Jun Xiao
+		</div>
+		
+							<div class="pages">
+				8896-8904
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37844/41806" aria-labelledby=article-37844>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37845" href="https://ojs.aaai.org/index.php/AAAI/article/view/37845">
+			FineXtrol: Controllable Motion Generation via Fine-Grained Text
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Keming Shen, Bizhu Wu, Junliang Chen, Xiaoqin Wang, Linlin Shen
+		</div>
+		
+							<div class="pages">
+				8905-8913
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37845/41807" aria-labelledby=article-37845>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37845/47277" aria-labelledby=article-37845>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37846" href="https://ojs.aaai.org/index.php/AAAI/article/view/37846">
+			Fine-grained Image Quality Assessment for Perceptual Image Restoration
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Xiangfei Sheng, Xiaofeng Pan, Zhichao Yang, Pengfei Chen, Leida Li
+		</div>
+		
+							<div class="pages">
+				8914-8922
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37846/41808" aria-labelledby=article-37846>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37847" href="https://ojs.aaai.org/index.php/AAAI/article/view/37847">
+			Edge Consistency for 4D Gaussian Splatting in Dynamic Scene Rendering
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Boya Shi, Thomas N Guan, Yi Xiaodong
+		</div>
+		
+							<div class="pages">
+				8923-8932
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37847/41809" aria-labelledby=article-37847>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37848" href="https://ojs.aaai.org/index.php/AAAI/article/view/37848">
+			Sparse4DGS: 4D Gaussian Splatting for Sparse-Frame Dynamic Scene Reconstruction
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Changyue Shi, Chuxiao Yang, Xinyuan Hu, Minghao Chen, Wenwen Pan, Yan Yang, Jiajun Ding, Zhou Yu, Jun Yu
+		</div>
+		
+							<div class="pages">
+				8933-8941
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37848/41810" aria-labelledby=article-37848>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37849" href="https://ojs.aaai.org/index.php/AAAI/article/view/37849">
+			SGMHand: Structure-Guided Modulation for Structure-Aware Hand Inpainting
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Chuancheng Shi, Shiming Guo, Ke Shui, Yixiang Chen, Fei Shen
+		</div>
+		
+							<div class="pages">
+				8942-8950
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37849/41811" aria-labelledby=article-37849>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37849/48916" aria-labelledby=article-37849>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37850" href="https://ojs.aaai.org/index.php/AAAI/article/view/37850">
+			WaveC2R: Wavelet-Driven Coarse-to-Refined Hierarchical Learning for Radar Retrieval
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Chunlei Shi, Han Xu, Yinghao Li, Yi-Lin Wei, Yongchao Feng, Yecheng Zhang, Dan Niu
+		</div>
+		
+							<div class="pages">
+				8951-8959
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37850/41812" aria-labelledby=article-37850>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37850/46861" aria-labelledby=article-37850>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37851" href="https://ojs.aaai.org/index.php/AAAI/article/view/37851">
+			TrackGS: Optimizing COLMAP-Free 3D Gaussian Splatting with Global Track Constraints
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Dongbo Shi, Shen Cao, Lubin Fan, Bojian Wu, Jinhui Guo, Ligang Liu, Renjie Chen
+		</div>
+		
+							<div class="pages">
+				8960-8968
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37851/41813" aria-labelledby=article-37851>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37852" href="https://ojs.aaai.org/index.php/AAAI/article/view/37852">
+			SpatialActor: Exploring Disentangled Spatial Representations for Robust Robotic Manipulation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Hao Shi, Bin Xie, Yingfei Liu, Yang Yue, Tiancai Wang, Haoqiang Fan, Xiangyu Zhang, Gao Huang
+		</div>
+		
+							<div class="pages">
+				8969-8977
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37852/41814" aria-labelledby=article-37852>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37852/47028" aria-labelledby=article-37852>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37853" href="https://ojs.aaai.org/index.php/AAAI/article/view/37853">
+			Exploring Reliable Spatiotemporal Dependencies for Efficient Visual Tracking
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Junze Shi, Yang Yu, Jian Shi, Haibo Luo
+		</div>
+		
+							<div class="pages">
+				8978-8987
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37853/41815" aria-labelledby=article-37853>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37853/47184" aria-labelledby=article-37853>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37854" href="https://ojs.aaai.org/index.php/AAAI/article/view/37854">
+			DP-GenG: Differentially Private Dataset Distillation Guided by DP-Generated Data
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Shuo Shi, Jinghuai Zhang, Shijie Jiang, Chunyi Zhou, Yuyuan Li, Mengying Zhu, Yangyang Wu, Tianyu Du
+		</div>
+		
+							<div class="pages">
+				8988-8996
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37854/41816" aria-labelledby=article-37854>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37854/49182" aria-labelledby=article-37854>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37855" href="https://ojs.aaai.org/index.php/AAAI/article/view/37855">
+			GeoBayes: Probabilistic Image Geo-Localization Inference via Sequential Bayesian Updating
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Weimin Shi, Xiang Li, Kaige Li, Junhao Fang, Qiang Zhou, Qichuan Geng, Zhong Zhou
+		</div>
+		
+							<div class="pages">
+				8997-9005
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37855/41817" aria-labelledby=article-37855>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37856" href="https://ojs.aaai.org/index.php/AAAI/article/view/37856">
+			Causality Matters: How Temporal Information Emerges in Video Language Models
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yumeng Shi, Quanyu Long, Yin Wu, Wenya Wang
+		</div>
+		
+							<div class="pages">
+				9006-9014
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37856/41818" aria-labelledby=article-37856>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37856/47576" aria-labelledby=article-37856>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37857" href="https://ojs.aaai.org/index.php/AAAI/article/view/37857">
+			Auxiliary Gene Learning: Spatial Gene Expression Estimation by Auxiliary Gene Selection
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Kaito Shiku, Kazuya Nishimura, Shinnosuke Matsuo, Yasuhiro Kojima, Ryoma Bise
+		</div>
+		
+							<div class="pages">
+				9015-9023
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37857/41819" aria-labelledby=article-37857>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37857/49490" aria-labelledby=article-37857>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37858" href="https://ojs.aaai.org/index.php/AAAI/article/view/37858">
+			FastAnimate: Towards Learnable Template Construction and Pose Deformation for Fast 3D Human Avatar Animation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Jian Shu, Nanjie Yao, Gangjian Zhang, Junlong Ren, Yu Feng, Hao Wang
+		</div>
+		
+							<div class="pages">
+				9024-9032
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37858/41820" aria-labelledby=article-37858>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37858/47797" aria-labelledby=article-37858>
+
+		
+	Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37859" href="https://ojs.aaai.org/index.php/AAAI/article/view/37859">
+			Free-Form Scene Editor: Enabling Multi-Round Object Manipulation Like in a 3D Engine
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Xincheng Shuai, Zhenyuan Qin, Henghui Ding, Dacheng Tao
+		</div>
+		
+							<div class="pages">
+				9033-9041
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37859/41821" aria-labelledby=article-37859>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37859/49306" aria-labelledby=article-37859>
+
+		
+	Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37860" href="https://ojs.aaai.org/index.php/AAAI/article/view/37860">
+			Towards Effective and Efficient Context-aware Nucleus Detection in Histopathology Whole Slide Images
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Zhongyi Shui, Honglin Li, Yunlong Zhang, Yuxuan Sun, Yiwen Ye, Pingyi Chen, Ruizhe Guo, Lei Cui, Chenglu Zhu, Lin Yang
+		</div>
+		
+							<div class="pages">
+				9042-9050
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37860/41822" aria-labelledby=article-37860>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37861" href="https://ojs.aaai.org/index.php/AAAI/article/view/37861">
+			T-LoRA: Single Image Diffusion Model Customization Without Overfitting
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Vera Soboleva, Aibek Alanov, Andrey Kuznetsov, Konstantin Sobolev
+		</div>
+		
+							<div class="pages">
+				9051-9059
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37861/41823" aria-labelledby=article-37861>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37861/49364" aria-labelledby=article-37861>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37862" href="https://ojs.aaai.org/index.php/AAAI/article/view/37862">
+			KTV: Keyframes and Key Tokens Selection for Efficient Training-Free Video LLMs
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Baiyang Song, Jun Peng, Yuxin Zhang, Guangyao Chen, Feidiao Yang, Jianyuan Guo
+		</div>
+		
+							<div class="pages">
+				9060-9068
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37862/41824" aria-labelledby=article-37862>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37863" href="https://ojs.aaai.org/index.php/AAAI/article/view/37863">
+			Doubly Debiased Test-Time Prompt Tuning for Vision-Language Models
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Fei Song, Yi Li, Rui Wang, Jiahuan Zhou, Changwen Zheng, Jiangmeng Li
+		</div>
+		
+							<div class="pages">
+				9069-9078
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37863/41825" aria-labelledby=article-37863>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37863/46834" aria-labelledby=article-37863>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37864" href="https://ojs.aaai.org/index.php/AAAI/article/view/37864">
+			Sim4Seg: Boosting Multimodal Multi-disease Medical Diagnosis Segmentation with Region-Aware Vision-Language Similarity Masks
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Lingran Song, Yucheng Zhou, Jianbing Shen
+		</div>
+		
+							<div class="pages">
+				9079-9087
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37864/41826" aria-labelledby=article-37864>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37865" href="https://ojs.aaai.org/index.php/AAAI/article/view/37865">
+			Creating Blank Canvas Against AI-enabled Image Forgery
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Qi Song, Ziyuan Luo, Renjie Wan
+		</div>
+		
+							<div class="pages">
+				9088-9096
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37865/41827" aria-labelledby=article-37865>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37866" href="https://ojs.aaai.org/index.php/AAAI/article/view/37866">
+			Insert Anything: Image Insertion via In-Context Editing in DiT
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Wensong Song, Hong Jiang, Zongxin Yang, Zheqiao Cheng, Ruijie Quan, Yi Yang
+		</div>
+		
+							<div class="pages">
+				9097-9105
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37866/41828" aria-labelledby=article-37866>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37866/47099" aria-labelledby=article-37866>
+
+		
+	Video/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37867" href="https://ojs.aaai.org/index.php/AAAI/article/view/37867">
+			CLUENet: Cluster Attention Makes Neural Networks Have Eyes
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Xiangshuai Song, Jun-Jie Huang, Tianrui Liu, Ke Liang, Chang Tang
+		</div>
+		
+							<div class="pages">
+				9106-9115
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37867/41829" aria-labelledby=article-37867>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37867/49442" aria-labelledby=article-37867>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37868" href="https://ojs.aaai.org/index.php/AAAI/article/view/37868">
+			UniAlignment: Semantic Alignment for Unified Image Generation, Understanding, Manipulation and Perception
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Xinyang Song, Libin Wang, Weining Wang, Shaozhen Liu, Dandan Zheng, Jingdong Chen, Qi Li, Zhenan Sun
+		</div>
+		
+							<div class="pages">
+				9116-9126
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37868/41830" aria-labelledby=article-37868>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37868/46869" aria-labelledby=article-37868>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37869" href="https://ojs.aaai.org/index.php/AAAI/article/view/37869">
+			Object Fusion via Diffusion Time-step for Customized Image Editing with Single Example
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Xue Song, Zhongqi Yue, Jiequan Cui, Hanwang Zhang, Jingjing Chen
+		</div>
+		
+							<div class="pages">
+				9127-9134
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37869/41831" aria-labelledby=article-37869>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37869/48455" aria-labelledby=article-37869>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37870" href="https://ojs.aaai.org/index.php/AAAI/article/view/37870">
+			UniMM-V2X: MoE-Enhanced Multi-Level Fusion for End-to-End Cooperative Autonomous Driving
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Ziyi Song, Chen Xia, Chenbing Wang, Haibao Yu, Sheng Zhou, Zhisheng Niu
+		</div>
+		
+							<div class="pages">
+				9135-9143
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37870/41832" aria-labelledby=article-37870>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37870/49496" aria-labelledby=article-37870>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37871" href="https://ojs.aaai.org/index.php/AAAI/article/view/37871">
+			DiffNR: Diffusion-Enhanced Neural Representation Optimization for Sparse-View 3D Tomographic Reconstruction
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Shiyan Su, Ruyi Zha, Danli Shi, Hongdong Li, Xuelian Cheng
+		</div>
+		
+							<div class="pages">
+				9144-9152
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37871/41833" aria-labelledby=article-37871>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37871/47867" aria-labelledby=article-37871>
+
+		
+	Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37872" href="https://ojs.aaai.org/index.php/AAAI/article/view/37872">
+			Zero-to-Hero: Empowering Video Appearance Transfer with Zero-Shot Initialization and Holistic Restoration
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Tongtong Su, Chengyu Wang, Haipeng Liao, Jun Huang, Dongming Lu
+		</div>
+		
+							<div class="pages">
+				9153-9161
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37872/41834" aria-labelledby=article-37872>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37873" href="https://ojs.aaai.org/index.php/AAAI/article/view/37873">
+			Weather-Robust LiDAR Perception: Point Cloud Restoration from Adverse Weather
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Chenghao Sun, Pengpeng Sun, Xiangmo Zhao
+		</div>
+		
+							<div class="pages">
+				9162-9170
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37873/41835" aria-labelledby=article-37873>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37873/49354" aria-labelledby=article-37873>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37874" href="https://ojs.aaai.org/index.php/AAAI/article/view/37874">
+			AlignTrack: Top-Down Spatiotemporal Resolution Alignment for RGB-Event Visual Tracking
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Chuanyu Sun, Jiqing Zhang, Yang Wang, Yuanchen Wang, Yutong Jiang, Baocai Yin, Xin Yang
+		</div>
+		
+							<div class="pages">
+				9171-9179
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37874/41836" aria-labelledby=article-37874>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37875" href="https://ojs.aaai.org/index.php/AAAI/article/view/37875">
+			HumanPro: Single-view 3D Clothed Human Reconstruction with Progressive Normal Guidance
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Jianchi Sun, Fei Luo, Wenzhuo Fan, Yu Jiang, Chunxia Xiao
+		</div>
+		
+							<div class="pages">
+				9180-9188
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37875/41837" aria-labelledby=article-37875>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37875/47852" aria-labelledby=article-37875>
+
+		
+	Video/Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37876" href="https://ojs.aaai.org/index.php/AAAI/article/view/37876">
+			VaccineRAG: Boosting Multimodal Large Language Models’ Immunity to Harmful RAG Samples
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Qixin Sun, Ziqin Wang, Hengyuan Zhao, Yilin Li, Kaiyou Song, Si Liu, Xiaolin Hu, Qingpei Guo, Linjiang Huang
+		</div>
+		
+							<div class="pages">
+				9189-9197
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37876/41838" aria-labelledby=article-37876>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37876/48767" aria-labelledby=article-37876>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37877" href="https://ojs.aaai.org/index.php/AAAI/article/view/37877">
+			SNN-Driven Event-Based Flow and Rotation Estimation with SO(3) Refinement
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Ruimin Sun, Haoran Xu, De Ma
+		</div>
+		
+							<div class="pages">
+				9198-9205
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37877/41839" aria-labelledby=article-37877>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37877/47044" aria-labelledby=article-37877>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37878" href="https://ojs.aaai.org/index.php/AAAI/article/view/37878">
+			CoMA: Compositional Human Motion Generation with Multi-modal Agents
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Shanlin Sun, Jiaqi Xu, Gabriel de Araujo, Shenghan Zhou, Hanwen Zhang, Ziheng Huang, Chenyu You, Xiaohui Xie
+		</div>
+		
+							<div class="pages">
+				9206-9214
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37878/41840" aria-labelledby=article-37878>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37878/48074" aria-labelledby=article-37878>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37879" href="https://ojs.aaai.org/index.php/AAAI/article/view/37879">
+			Bridging Granularity Gaps: Hierarchical Semantic Learning for Cross-domain Few-shot Segmentation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Sujun Sun, Haowen Gu, Cheng Xie, Yanxu Ren, Mingwu Ren, Haofeng Zhang
+		</div>
+		
+							<div class="pages">
+				9215-9223
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37879/41841" aria-labelledby=article-37879>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37879/48755" aria-labelledby=article-37879>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37880" href="https://ojs.aaai.org/index.php/AAAI/article/view/37880">
+			Small but Mighty: Dynamic Wavelet Expert-Guided Fine-Tuning of Large-Scale Models for Optical Remote Sensing Object Segmentation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yanguang Sun, Chao Wang, Jian Yang, Lei Luo
+		</div>
+		
+							<div class="pages">
+				9224-9232
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37880/41842" aria-labelledby=article-37880>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37880/46924" aria-labelledby=article-37880>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37881" href="https://ojs.aaai.org/index.php/AAAI/article/view/37881">
+			SwiftVideo: A Unified Framework for Few-Step Video Generation Through Trajectory-Distribution Alignment
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yanxiao Sun, Jiafu Wu, Yun Cao, Chengming Xu, Yabiao Wang, Weijian Cao, Donghao Luo, Chengjie Wang, Yanwei Fu
+		</div>
+		
+							<div class="pages">
+				9233-9241
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37881/41843" aria-labelledby=article-37881>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37881/47507" aria-labelledby=article-37881>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37882" href="https://ojs.aaai.org/index.php/AAAI/article/view/37882">
+			WDT-MD: Wavelet Diffusion Transformers for Microaneurysm Detection in Fundus Images
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yifei Sun, Yuzhi He, Junhao Jia, Jinhong Wang, Ruiquan Ge, Changmiao Wang, Hongxia Xu
+		</div>
+		
+							<div class="pages">
+				9242-9250
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37882/41844" aria-labelledby=article-37882>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37882/47546" aria-labelledby=article-37882>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37883" href="https://ojs.aaai.org/index.php/AAAI/article/view/37883">
+			SmartSight: Mitigating Hallucination in Video-LLMs Without Compromising Video Understanding via Temporal Attention Collapse
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yiming Sun, Mi Zhang, Feifei Li, Geng Hong, Min Yang
+		</div>
+		
+							<div class="pages">
+				9251-9259
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37883/41845" aria-labelledby=article-37883>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37883/47086" aria-labelledby=article-37883>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37884" href="https://ojs.aaai.org/index.php/AAAI/article/view/37884">
+			CtrlFuse: Mask-Prompt Guided Controllable Infrared and Visible Image Fusion
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yiming Sun, Yuan Ruan, Qinghua Hu, Pengfei Zhu
+		</div>
+		
+							<div class="pages">
+				9260-9268
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37884/41846" aria-labelledby=article-37884>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37884/48858" aria-labelledby=article-37884>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37885" href="https://ojs.aaai.org/index.php/AAAI/article/view/37885">
+			EmbryoDiff: A Conditional Diffusion Framework with Multi-Focal Feature Fusion for Fine-Grained Embryo Developmental Stage Recognition
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yong Sun, Zhengjie Zhang, Junyu Shi, Zhiyuan Zhang, Lijiang Liu, Qiang Nie
+		</div>
+		
+							<div class="pages">
+				9269-9277
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37885/41847" aria-labelledby=article-37885>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37885/49371" aria-labelledby=article-37885>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37886" href="https://ojs.aaai.org/index.php/AAAI/article/view/37886">
+			Difference Vector Equalization for Robust Fine-tuning of Vision-Language Models
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Satoshi Suzuki, Shin&#039;ya Yamaguchi, Shoichiro Takeda, Taiga Yamane, Naoki Makishima, Naotaka Kawata, Mana Ihori, Tomohiro Tanaka, Shota Orihashi, Ryo Masumura
+		</div>
+		
+							<div class="pages">
+				9278-9286
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37886/41848" aria-labelledby=article-37886>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37887" href="https://ojs.aaai.org/index.php/AAAI/article/view/37887">
+			Geometry Meets Light: Leveraging Geometric Priors for Universal Photometric Stereo Under Limited Multi-Illumination Cues
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			King-Man Tam, Satoshi Ikehata, Yuta Asano, Zhaoyi An, Rei Kawakami
+		</div>
+		
+							<div class="pages">
+				9287-9295
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37887/41849" aria-labelledby=article-37887>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37887/47539" aria-labelledby=article-37887>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37888" href="https://ojs.aaai.org/index.php/AAAI/article/view/37888">
+			Adapt-As-You-Walk Through the Clouds: Training-Free Online Test-Time Adaptation of 3D Vision-Language Foundation Models
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Mehran Tamjidi, Hamidreza Dastmalchi, Mohammadreza Alimoradijazi, Ali Cheraghian, Aijun An, Morteza Saberi
+		</div>
+		
+							<div class="pages">
+				9296-9304
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37888/41850" aria-labelledby=article-37888>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37888/48543" aria-labelledby=article-37888>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37889" href="https://ojs.aaai.org/index.php/AAAI/article/view/37889">
+			FLAG-4D: Flow-Guided Local-Global Dual-Deformation Model for 4D Reconstruction
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Guan Yuan Tan, Ngoc Tuan Vu, Arghya Pal, Sailaja Rajanala, Raphael C W Phan, Mettu Srinivas, Chee-Ming Ting
+		</div>
+		
+							<div class="pages">
+				9305-9313
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37889/41851" aria-labelledby=article-37889>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37890" href="https://ojs.aaai.org/index.php/AAAI/article/view/37890">
+			Aggregating Diverse Cue Experts for AI-Generated Image Detection
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Lei Tan, Shuwei Li, Mohan Kankanhalli, Robby T. Tan
+		</div>
+		
+							<div class="pages">
+				9314-9322
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37890/41852" aria-labelledby=article-37890>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37891" href="https://ojs.aaai.org/index.php/AAAI/article/view/37891">
+			Hybrid-Domain Adaptative Representation Learning for Gaze Estimation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Qida Tan, Hongyu Yang, Wenchao Du
+		</div>
+		
+							<div class="pages">
+				9323-9331
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37891/41853" aria-labelledby=article-37891>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37892" href="https://ojs.aaai.org/index.php/AAAI/article/view/37892">
+			PC-CrossDiff: Point-Cluster Dual-Level Cross-Modal Differential Attention for Unified 3D Referring and Segmentation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Wenbin Tan, Jiawen Lin, Fangyong Wang, Yuan Xie, Yong Xie, Yachao Zhang, Yanyun Qu
+		</div>
+		
+							<div class="pages">
+				9332-9340
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37892/41854" aria-labelledby=article-37892>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37892/47373" aria-labelledby=article-37892>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37893" href="https://ojs.aaai.org/index.php/AAAI/article/view/37893">
+			Dual-Seed Evolutionary Algorithm for Noise Optimization in Diffusion Models
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yuzheng Tan, Yuan He, Yao Zhu, Tianlin Huo, Huanqian Yan, Hang Su, Shuxin Zhang, Guangneng Hu
+		</div>
+		
+							<div class="pages">
+				9341-9349
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37893/41855" aria-labelledby=article-37893>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37893/47303" aria-labelledby=article-37893>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37894" href="https://ojs.aaai.org/index.php/AAAI/article/view/37894">
+			Meta-Guided Sample Reweighting for Robust Cross-Modal Hashing Retrieval with Noisy Labels
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Ziang Tan, Weitao An, Erkun Yang
+		</div>
+		
+							<div class="pages">
+				9350-9358
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37894/41856" aria-labelledby=article-37894>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37894/47613" aria-labelledby=article-37894>
+
+		
+	Video/Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37895" href="https://ojs.aaai.org/index.php/AAAI/article/view/37895">
+			PGMamba: A Physical Model-Guided Global Mamba for Underwater Image Enhancement
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Zijun Tan, Chuan Fu, Tan Guo, Zhixiong Nan, Pengzhan Zhou, Xinggan Peng, Fulin Luo
+		</div>
+		
+							<div class="pages">
+				9359-9367
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37895/41857" aria-labelledby=article-37895>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37895/46926" aria-labelledby=article-37895>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37896" href="https://ojs.aaai.org/index.php/AAAI/article/view/37896">
+			TSPO: Temporal Sampling Policy Optimization for Long-form Video Language Understanding
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Canhui Tang, Zifan Han, Hongbo Sun, Sanping Zhou, Xuchong Zhang, Xin Wei, Ye Yuan, Huayu Zhang, Jinglin Xu, Hao Sun
+		</div>
+		
+							<div class="pages">
+				9368-9376
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37896/41858" aria-labelledby=article-37896>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37896/47934" aria-labelledby=article-37896>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37897" href="https://ojs.aaai.org/index.php/AAAI/article/view/37897">
+			Neural Video Compression with Reference Hierarchy
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Chuanbo Tang, Zhuoyuan Li, Li Li, Dong Liu, Feng Wu
+		</div>
+		
+							<div class="pages">
+				9377-9385
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37897/41859" aria-labelledby=article-37897>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37898" href="https://ojs.aaai.org/index.php/AAAI/article/view/37898">
+			Heterogeneous Uncertainty-Guided Composed Image Retrieval with Fine-Grained Probabilistic Learning
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Haomiao Tang, Jinpeng Wang, Minyi Zhao, GuangHao Meng, Ruisheng Luo, Long Chen, Shu-Tao Xia
+		</div>
+		
+							<div class="pages">
+				9386-9394
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37898/41860" aria-labelledby=article-37898>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37898/46874" aria-labelledby=article-37898>
+
+		
+	Video/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37899" href="https://ojs.aaai.org/index.php/AAAI/article/view/37899">
+			Video Spatial Reasoning with Object-Centric 3D Rollout
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Haoran Tang, Meng Cao, Ruyang Liu, Xiaoxi Liang, Linglong Li, Ge Li, Xiaodan Liang
+		</div>
+		
+							<div class="pages">
+				9395-9403
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37899/41861" aria-labelledby=article-37899>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37899/48287" aria-labelledby=article-37899>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37900" href="https://ojs.aaai.org/index.php/AAAI/article/view/37900">
+			Decompose and Conquer: Compositional Reasoning for Zero-Shot Temporal Action Localization
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Haoyu Tang, Tianyuan Liang, Han Jiang, Xuesong Liu, Qinghai Zheng, Yupeng Hu
+		</div>
+		
+							<div class="pages">
+				9404-9412
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37900/41862" aria-labelledby=article-37900>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37900/49777" aria-labelledby=article-37900>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37901" href="https://ojs.aaai.org/index.php/AAAI/article/view/37901">
+			Decoupling Scene Perception and Ego Status: A Multi-Context Fusion Approach for Enhanced Generalization in End-to-End Autonomous Driving
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Jiacheng Tang, Mingyue Feng, Jiachao Liu, Yaonong Wang, Jian Pu
+		</div>
+		
+							<div class="pages">
+				9413-9420
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37901/41863" aria-labelledby=article-37901>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37901/48925" aria-labelledby=article-37901>
+
+		
+	Video/Poster/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37902" href="https://ojs.aaai.org/index.php/AAAI/article/view/37902">
+			Robust-R1: Degradation-Aware Reasoning for Robust Visual Understanding
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Jiaqi Tang, Jianmin Chen, Wei Wei, Xiaogang Xu, Runtao Liu, Xiangyu Wu, Qipeng Xie, Jiafei Wu, Lei Zhang, Qifeng Chen
+		</div>
+		
+							<div class="pages">
+				9421-9429
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37902/41864" aria-labelledby=article-37902>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37902/47782" aria-labelledby=article-37902>
+
+		
+	Video/Slides
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37903" href="https://ojs.aaai.org/index.php/AAAI/article/view/37903">
+			Less Is More: Sparse and Cooperative Perturbation for Point Cloud Attacks
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Keke Tang, Tianyu Hao, Xiaofei Wang, Weilong Peng, Denghui Zhang, Peican Zhu, Zhihong Tian
+		</div>
+		
+							<div class="pages">
+				9430-9438
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37903/41865" aria-labelledby=article-37903>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37904" href="https://ojs.aaai.org/index.php/AAAI/article/view/37904">
+			Not All Tokens and Heads Are Equally Important: Dual-Level Attention Intervention for Hallucination Mitigation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Lexiang Tang, Xianwei Zhuang, Bang Yang, Zhiyuan Hu, Hongxiang Li, Lu Ma, Jinghan Ru, Yuexian Zou
+		</div>
+		
+							<div class="pages">
+				9439-9447
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37904/41866" aria-labelledby=article-37904>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37905" href="https://ojs.aaai.org/index.php/AAAI/article/view/37905">
+			Diffusion Once and Done: Degradation-Aware LoRA for All-in-One Image Restoration
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Ni Tang, Xiaotong Luo, Zihan Cheng, Liangtai Zhou, Dongxiao Zhang, Yanyun Qu
+		</div>
+		
+							<div class="pages">
+				9448-9456
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37905/41867" aria-labelledby=article-37905>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37905/47882" aria-labelledby=article-37905>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37906" href="https://ojs.aaai.org/index.php/AAAI/article/view/37906">
+			Learning Underwater Image Enhancement Iteratively Without Reference Images
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yi Tang, Hiroshi Kawasaki, Takafumi Iwaguchi, Yuhang Zhang, Hiroshi Masui
+		</div>
+		
+							<div class="pages">
+				9457-9465
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37906/41868" aria-labelledby=article-37906>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37906/48084" aria-labelledby=article-37906>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37907" href="https://ojs.aaai.org/index.php/AAAI/article/view/37907">
+			Manipulation Intention Understanding for Zero-Shot Composed Image Retrieval
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Yuanmin Tang, Jing Yu, Keke Gai, Gang Xiong, Gaopeng Gou, Meikang Qiu, Qi Wu
+		</div>
+		
+							<div class="pages">
+				9466-9474
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37907/41869" aria-labelledby=article-37907>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37907/47261" aria-labelledby=article-37907>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37908" href="https://ojs.aaai.org/index.php/AAAI/article/view/37908">
+			Revisiting MLLM Based Image Quality Assessment: Errors and Remedy
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Zhenchen Tang, Songlin Yang, Bo Peng, Zichuan Wang, Jing Dong
+		</div>
+		
+							<div class="pages">
+				9475-9483
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37908/41870" aria-labelledby=article-37908>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37908/47781" aria-labelledby=article-37908>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37909" href="https://ojs.aaai.org/index.php/AAAI/article/view/37909">
+			SNS-Grasp: Semantic-guided Noise Scaling for Grasp Generation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Zhenhua Tang, Yudian Zheng, Yuzhang Zhong, Haolun Li, Yanbin Hao, Chi-Man Pun
+		</div>
+		
+							<div class="pages">
+				9484-9492
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37909/41871" aria-labelledby=article-37909>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37909/47723" aria-labelledby=article-37909>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37910" href="https://ojs.aaai.org/index.php/AAAI/article/view/37910">
+			NeuralGS: Bridging Neural Fields and 3D Gaussian Splatting for Compact 3D Representations
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Zhenyu Tang, Chaoran Feng, Xinhua Cheng, Wangbo Yu, Junwu Zhang, Yuan Liu, Xiao-Xiao Long, Wenping Wang, Li Yuan
+		</div>
+		
+							<div class="pages">
+				9493-9501
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37910/41872" aria-labelledby=article-37910>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37911" href="https://ojs.aaai.org/index.php/AAAI/article/view/37911">
+			Mimic-X: A Large-Scale Motion Dataset via Fast Physics-Based Controller Adaptation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Hongyu Tao, Shuaiying Hou, Junheng Fang, Mingyao Shi, Weiwei Xu
+		</div>
+		
+							<div class="pages">
+				9502-9510
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37911/41873" aria-labelledby=article-37911>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37912" href="https://ojs.aaai.org/index.php/AAAI/article/view/37912">
+			Prompting Adversarial Transferability via Path Flatness Attack
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Zeze Tao, Jinjia Peng, Huibing Wang
+		</div>
+		
+							<div class="pages">
+				9511-9519
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37912/41874" aria-labelledby=article-37912>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37912/47813" aria-labelledby=article-37912>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37913" href="https://ojs.aaai.org/index.php/AAAI/article/view/37913">
+			Distillation Dynamics: Towards Understanding Feature-Based Distillation in Vision Transformers
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Huiyuan Tian, Bonan Xu, Shijian Li
+		</div>
+		
+							<div class="pages">
+				9520-9528
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37913/41875" aria-labelledby=article-37913>
+
+		
+	PDF
+
+	</a>
+				</li>
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link file" href="https://ojs.aaai.org/index.php/AAAI/article/view/37913/49610" aria-labelledby=article-37913>
+
+		
+	Poster
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+									<li>
+						
+	
+<div class="obj_article_summary">
+	
+	<h3 class="title">
+		<a id="article-37914" href="https://ojs.aaai.org/index.php/AAAI/article/view/37914">
+			Unsupervised Motion-Compensated Decomposition for Cardiac MRI Reconstruction via Neural Representation
+					</a>
+	</h3>
+
+				<div class="meta">
+				<div class="authors">
+			Xuanyu Tian, Lixuan Chen, Qing Wu, Xiao Wang, Jie Feng, Yuyao Zhang, Hongjiang Wei
+		</div>
+		
+							<div class="pages">
+				9529-9537
+			</div>
+		
+		
+	</div>
+	
+			<ul class="galleys_links">
+																									<li>
+																										
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/37914/41876" aria-labelledby=article-37914>
+
+		
+	PDF
+
+	</a>
+				</li>
+					</ul>
+	
+	
+</div>
+					</li>
+							</ul>
+				</div>
+		</div><!-- .sections -->
+</div>
+	</div>
+
+	</div><!-- pkp_structure_main -->
+
+									<div class="pkp_structure_sidebar left" role="complementary" aria-label="Sidebar">
+				<div class="pkp_block block_information">
+	<h2 class="title">Information</h2>
+	<div class="content">
+		<ul>
+							<li>
+					<a href="https://ojs.aaai.org/index.php/AAAI/information/readers">
+						For Readers
+					</a>
+				</li>
+										<li>
+					<a href="https://ojs.aaai.org/index.php/AAAI/information/authors">
+						For Authors
+					</a>
+				</li>
+										<li>
+					<a href="https://ojs.aaai.org/index.php/AAAI/information/librarians">
+						For Librarians
+					</a>
+				</li>
+					</ul>
+	</div>
+</div>
+<div class="pkp_block block_hosted_by">
+	<div class="content">
+		<ul><li>
+			<a href="https://pkpservices.sfu.ca/" id="hostedByLogo" target="_blank"><img loading="lazy" src="https://ojs.aaai.org/plugins/blocks/hostedBy/icons/pkpps.svg" style="border: 0; margin-bottom: 8px; width: 80%"/></a>
+			<p>
+				Part of the<br />
+				<a href="https://pkpservices.sfu.ca/" id="hostedBy" target="_blank">PKP Publishing Services Network</a>
+			</p>
+		</li></ul>
+</div>
+</div>
+
+			</div><!-- pkp_sidebar.left -->
+			</div><!-- pkp_structure_content -->
+
+<div class="pkp_structure_footer_wrapper" role="contentinfo">
+	<a id="pkp_content_footer"></a>
+
+	<div class="pkp_structure_footer">
+
+					<div class="pkp_footer_content">
+				<p>Copyright © 2024, Association for the Advancement of Artificial Intelligence</p>
+			</div>
+		
+		<div class="pkp_brand_footer" role="complementary">
+			<a href="https://ojs.aaai.org/index.php/AAAI/about/aboutThisPublishingSystem">
+				<img loading="lazy" alt="More information about the publishing system, Platform and Workflow by OJS/PKP." src="https://ojs.aaai.org/templates/images/ojs_brand.png">
+			</a>
+		</div>
+	</div>
+</div><!-- pkp_structure_footer_wrapper -->
+
+</div><!-- pkp_structure_page -->
+
+<script src="https://ojs.aaai.org/lib/pkp/lib/vendor/components/jquery/jquery.min.js?v=3.3.0.22" type="text/javascript"></script><script src="https://ojs.aaai.org/lib/pkp/lib/vendor/components/jqueryui/jquery-ui.min.js?v=3.3.0.22" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/lib/popper/popper.js?v=3.3.0.22" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/lib/bootstrap/util.js?v=3.3.0.22" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/lib/bootstrap/dropdown.js?v=3.3.0.22" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/main.js?v=3.3.0.22" type="text/javascript"></script>
+
+
+</body>
+</html>
