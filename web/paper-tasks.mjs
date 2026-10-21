@@ -124,7 +124,7 @@ export const PAPER_TASKS=[
     "id": "flashcards",
     "title": "制作这篇论文的 Flash Cards／Quiz",
     "minutes": 15,
-    "hint": "把论文的重要问题和自己的答案整理为一张张正反面卡片。填写问题和参考答案，再选择是否加入每日 Quiz；睡前先回答再翻面核对。"
+    "hint": "各阅读任务的回答会自动拆成简短问答 Flash Cards。核对自动生成的卡片，可手动编辑、增删，再选择是否加入每日 Quiz；空白回答不会生成。"
   }
 ];
 export function cleanPaperTasks(input){return Object.fromEntries([...PAPER_TASKS,{id:"connections"},{id:"focus"},{id:"taxonomy"}].map(({id})=>[id,{done:input?.[id]?.done===true,answer:typeof input?.[id]?.answer==="string"?input[id].answer.slice(0,20000):"",...(id==="connections"?{references:cleanReferences(input?.[id]?.references)}:{}),...(["extensions","reading-questions","flashcards"].includes(id)?{items:cleanQuestionItems(input?.[id]?.items,["reading-questions","flashcards"].includes(id))}: {}),...(id==="compare"?{comparisonPaperIds:Array.isArray(input?.[id]?.comparisonPaperIds)?[...new Set(input[id].comparisonPaperIds.filter(v=>typeof v==="string"))].slice(0,10):[]}:{}),...(id==="next-step"?{problems:cleanNextProblems(input?.[id]?.problems)}:{}),...(id==="methodology"?{figureIds:cleanIds(input?.[id]?.figureIds)}:{}),...(id==="datasets"?{datasetIds:cleanIds(input?.[id]?.datasetIds)}:{}),...(id==="categories"?{tags:cleanPaperTags(input?.[id]?.tags)}:{})}]))}

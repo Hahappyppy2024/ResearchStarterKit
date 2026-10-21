@@ -149,6 +149,22 @@ def save_paper(data):
      if not isinstance(types,list) or any(t not in RELATIONS for t in types):raise ValueError('论文关系类型无效')
      entry['references'].append(dict(id=study.text(ref.get('id',''),100),paperId=target,paper=study.text(ref.get('paper',''),1000),relation=study.text(ref.get('relation',''),10000),relationTypes=list(dict.fromkeys(types)),evidenceStatus=ref.get('evidenceStatus') if ref.get('evidenceStatus') in STATUSES else 'unverified',evidence=study.text(ref.get('evidence',''),10000)))
    clean[task['id']]=entry
+  import paper_flashcards
+  extra=[]
+  for key,prompt in [('topicIds','论文属于哪些 Topic？'),('problemIds','研究问题属于哪些 Problem？'),('solutionIds','方法属于哪些 Solution？')]:
+   names=[index[i]['name']+(' / '+index[i].get('en','') if index[i].get('en') else '') for i in obj[key]]
+   if names:extra.append(dict(source='classification:'+key,question=prompt,answer='；'.join(names)))
+  for ref in clean.get('connections',{}).get('references',[]):
+   if not ref.get('paper') or not ref.get('relationTypes'):continue
+   labels='；'.join({'same-problem':'研究同一问题','builds-on':'继承其方法','improves':'改进其方法或局限','extends':'扩展其能力或场景','uses-component':'使用其模型或组件','baseline':'作为对照基线','compares':'进行实验对比','complements':'方法互补','applies':'迁移到新任务','supports':'支持其结论','challenges':'质疑或提出反例','background':'背景或概念来源','surveys':'综述其工作','uncertain':'关系待判断'}[t] for t in ref['relationTypes'])
+   status={'unverified':'待核实','author-claim':'作者陈述','checked':'已核对','inference':'我的推断'}[ref['evidenceStatus']]
+   extra.append(dict(source='relation:'+ref['id'],question='本文与《'+ref['paper']+'》有什么关系？',answer=labels+'（'+status+'）'+('。依据：'+ref['evidence'] if ref.get('evidence') else '；未填写关系依据')))
+  for dataset_id in clean.get('datasets',{}).get('datasetIds',[]):
+   dataset=row(c,'dataset',dataset_id)
+   extra.append(dict(source='dataset-name:'+dataset_id,question='论文使用了什么数据集？',answer=dataset['name']+(' / '+dataset.get('en','') if dataset.get('en') else '')))
+   names=[study.resolve('paper',i)['title'] for i in dataset.get('sourcePaperIds',[])]
+   if names:extra.append(dict(source='dataset:'+dataset_id,question='数据集“'+dataset['name']+'”来自哪篇论文？',answer='；'.join(names)))
+  obj.update(paper_flashcards.sync(pid,clean,old,definitions,extra));obj['autoFlashcardVersion']=1
   obj.update(tasks=clean,title=paper['title'],revision=old['revision']+1,updatedAt=study.now())
   complete=all(clean[t['id']]['done'] for t in definitions)
   if complete and not obj.get('readDate'):
