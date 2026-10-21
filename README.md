@@ -9,9 +9,7 @@
 
 ## 🖥️ 项目界面预览
 
-<p align="center">
-  <img src="home_page.png" alt="ResearchStarterKit 首页预览" width="900">
-</p>
+![ResearchStarterKit 首页预览](home_page.png)
 
 ## 🌱 为什么做这个项目？
 
