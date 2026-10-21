@@ -2,7 +2,7 @@
 import datetime as dt,json
 import study_service as study
 
-def statistics():
+def statistics(include_items=False):
  import local_app,contextlib
  with contextlib.closing(local_app.db()) as c:ids={r[0] for r in c.execute('SELECT id FROM papers')}
  ids.update(p['id'] for p in study.atlas_papers())
@@ -13,7 +13,16 @@ def statistics():
   selected.update(p['id'] for p in records)
  ids.intersection_update(selected)
  read={p['id'] for p in records if p['id'] in ids and p.get('readDate') and complete(p)}
- return dict(total=len(ids),read=len(read),unread=len(ids-read))
+ result=dict(total=len(ids),read=len(read),unread=len(ids-read))
+ if include_items:
+  byid={p['id']:p for p in records};items=[]
+  for ident in ids:
+   try:paper=study.resolve('paper',ident)
+   except ValueError:continue
+   tasks=byid.get(ident,{}).get('tasks',{})
+   items.append(dict(id=ident,title=paper['title'],authors=paper.get('authors',''),read=ident in read,done=sum(tasks.get(t['id'],{}).get('done') is True for t in definitions()),taskTotal=len(definitions())))
+  result['items']=sorted(items,key=lambda p:p['title'].lower())
+ return result
 
 def definitions():return json.loads((study.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'))
 def complete(obj):return all(obj.get('tasks',{}).get(t['id'],{}).get('done') is True for t in definitions())
