@@ -26,7 +26,7 @@ def ensure_services():
    try:
     if not pathlib.Path(service["cwd"]).is_dir():raise FileNotFoundError("网站目录不存在")
     startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
-    with open(ROOT/"data"/("hub-"+service["id"]+".log"),"ab") as log:
+    with open(ROOT/"local-data"/("hub-"+service["id"]+".log"),"ab") as log:
      subprocess.Popen(service["command"],cwd=service["cwd"],stdout=log,stderr=log,startupinfo=startup,creationflags=subprocess.CREATE_NO_WINDOW)
     ERRORS.pop(service["id"],None)
    except Exception as e:ERRORS[service["id"]]=str(e)

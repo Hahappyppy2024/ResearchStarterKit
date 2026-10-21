@@ -4,7 +4,7 @@ import sqlite3, subprocess, threading, time, urllib.parse, urllib.request, uuid,
 import xml.etree.ElementTree as ET
 
 ROOT=pathlib.Path(__file__).resolve().parent
-DATA=ROOT/"data"; DATA.mkdir(exist_ok=True)
+DATA=ROOT/"local-data"; DATA.mkdir(exist_ok=True)
 PORT=8766
 WEB=ROOT/"web"
 if hasattr(sys.stdout,"reconfigure"):sys.stdout.reconfigure(encoding="utf-8")
@@ -214,7 +214,9 @@ def run_job(kind,only_id=None,only_topic=None):
 class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self,*args):pass
     def reply(self,data,status=200,kind="application/json"):
-        body=json.dumps(data,ensure_ascii=False).encode() if kind=="application/json" else data
+        body=data if isinstance(data,bytes) else json.dumps(data,ensure_ascii=False).encode() if kind=="application/json" else data
+        import theme_assets
+        body=theme_assets.inject(body,kind)
         self.send_response(status);self.send_header("Content-Type",kind+"; charset=utf-8");self.send_header("Cache-Control","no-store");self.send_header("X-Content-Type-Options","nosniff");self.study_cors();self.end_headers();self.wfile.write(body)
     def study_cors(self):
         origin=self.headers.get("Origin","")
@@ -230,11 +232,33 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if not self.trusted():return self.reply({"error":"仅允许本机同源请求"},403)
         path=urllib.parse.urlsplit(self.path);q=urllib.parse.parse_qs(path.query)
+        import theme_assets
+        shared=theme_assets.asset(path.path)
+        if shared:return self.reply(shared[0],kind=shared[1])
         if path.path.startswith("/api/study/"):
             try:
                 import study_service as study
                 value=lambda key,default="":q.get(key,[default])[0]
                 import knowledge_service as knowledge
+                if path.path=='/api/study/flash-statistics':
+                    import flash_review
+                    return self.reply(flash_review.statistics())
+                if path.path in ('/api/study/daily-quiz','/api/study/paper-quiz-selection'):
+                    import daily_quiz
+                    return self.reply(daily_quiz.plan(value('date',None)) if path.path.endswith('/daily-quiz') else daily_quiz.selection(value('paperId')))
+                if path.path=="/api/study/read-papers":
+                    import reading_journal
+                    return self.reply(reading_journal.library())
+                if path.path=="/api/study/reading-review":
+                    import reading_journal
+                    return self.reply(reading_journal.review(value("kind","day"),value("date",study.today())))
+                if path.path=="/api/study/datasets":
+                    import research_assets
+                    return self.reply(research_assets.datasets())
+                if path.path=="/api/study/methodology-image":
+                    import research_assets
+                    file,mime=research_assets.figure_file(value("id"))
+                    return self.reply(file.read_bytes(),kind=mime)
                 if path.path=="/api/study/taxonomy":return self.reply(knowledge.taxonomy())
                 if path.path=="/api/study/paper-knowledge":return self.reply(knowledge.get_paper(value("id")))
                 if path.path=="/api/study/paper-week":return self.reply(knowledge.paper_week(value("date",None)))
@@ -315,12 +339,22 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.reply({"count":count,"page":page,"papers":[dict(json.loads(b),zoteroKey=k) for b,k in rows]})
         static={" /":"","/": "index.html"}
         name="index.html" if path.path=="/" else path.path.lstrip("/")
-        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-reader.js","paper-knowledge.js","related-papers.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
+        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-reader.js","paper-knowledge.js","related-papers.js","dataset-ui.js","paper-assets.js","paper-research.js","paper-quiz-ui.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
         p=(asset_root/name).resolve()
         if not p.is_relative_to(asset_root.resolve()) or not p.is_file():return self.reply({"error":"不存在"},404)
         import mimetypes
         return self.reply(p.read_bytes(),kind=mimetypes.guess_type(p.name)[0] or "application/octet-stream")
     def do_POST(self):
+        upload_path=urllib.parse.urlsplit(self.path)
+        if upload_path.path=="/api/study/methodology-upload":
+            if not self.trusted():return self.reply({"error":"只允许本机上传"},403)
+            try:
+                length=int(self.headers.get("Content-Length","0"))
+                if not 0<length<=8*1024*1024:return self.reply({"error":"图片最大 8 MB"},413)
+                import research_assets
+                query=urllib.parse.parse_qs(upload_path.query)
+                return self.reply(research_assets.upload_figure(query.get("paperId",[""])[0],self.rfile.read(length)))
+            except (ValueError,KeyError,TypeError) as e:return self.reply({"error":str(e)},400)
         if not self.trusted() or self.headers.get("Content-Type")!="application/json":return self.reply({"error":"只允许本机 JSON 请求"},403)
         try:
             length=int(self.headers.get("Content-Length","0"))
@@ -329,8 +363,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if self.path.startswith("/api/study/"):
                 import study_service as study
                 action=self.path.rsplit("/",1)[-1]
+                if action in ('paper-quiz-selection','daily-quiz-answer'):
+                    import daily_quiz
+                    return self.reply(daily_quiz.select(body) if action=='paper-quiz-selection' else daily_quiz.answer(body))
+                if action=="reading-review":
+                    import reading_journal
+                    return self.reply(reading_journal.save_review(body))
                 import knowledge_service as knowledge
-                knowledge_actions={"taxonomy":knowledge.save_node,"paper-knowledge":knowledge.save_paper,"paper-quiz-answer":knowledge.paper_attempt}
+                import research_assets
+                knowledge_actions={"dataset":research_assets.save_dataset,"taxonomy":knowledge.save_node,"paper-knowledge":knowledge.save_paper,"paper-quiz-answer":knowledge.paper_attempt}
                 if action in knowledge_actions:return self.reply(knowledge_actions[action](body))
                 if action=="read-library":
                     import lineage_service

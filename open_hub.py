@@ -7,7 +7,7 @@ def ready():
  except Exception:return False
 if not ready():
  startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
- with open(root/"data"/"hub-server.log","ab") as out,open(root/"data"/"hub-server-error.log","ab") as err:
+ with open(root/"local-data"/"hub-server.log","ab") as out,open(root/"local-data"/"hub-server-error.log","ab") as err:
   subprocess.Popen([sys.executable,str(root/"hub_server.py")],cwd=root,stdout=out,stderr=err,startupinfo=startup,creationflags=subprocess.CREATE_NO_WINDOW)
  for _ in range(20):
   if ready():break

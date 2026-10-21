@@ -1,3 +1,4 @@
+import {mountQuizToggle} from './paper-quiz-ui.js';
 import {openReader,paperTaskProgress,paperTaskTotal} from "./paper-reader.js";
 const $=id=>document.getElementById(id),node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n};
 const params=new URLSearchParams(location.search);
@@ -24,7 +25,7 @@ function renderPapers(data){$("library-list").replaceChildren();const parent=tax
  const actions=node("div","conference-paper-actions"),tasks=node("button","button",`整理内容 ${paperTaskProgress(p.id)}/${paperTaskTotal}`),abstract=node("button","button","中英摘要"),notes=node("button","button","笔记");tasks.type=abstract.type=notes.type="button";tasks.dataset.paperChecklist=p.id;tasks.setAttribute("aria-label","整理论文："+p.title);tasks.onclick=()=>openReader(p.id,"tasks");abstract.onclick=()=>openReader(p.id,"abstract");notes.onclick=()=>openReader(p.id,"notes");const add=node("a","button","加入任务");add.href="http://127.0.0.1:8766/?addPaper="+encodeURIComponent(p.id)+"#daily";add.setAttribute("aria-label","加入每日努力："+p.title);add.onclick=e=>{
    if(window.parent!==window){e.preventDefault();window.parent.postMessage({type:"research-add-paper-task",paperId:p.id},"http://127.0.0.1:8769")}
  };actions.append(tasks,abstract,notes,add);
- for(const [label,url] of [["arXiv ↗",p.arxivUrl],["官方页面 ↗",p.source],["PDF ↗",p.pdf]]){const a=link(label,url);if(a)actions.append(a)}row.append(actions);$("library-list").append(row)}
+ for(const [label,url] of [["arXiv ↗",p.arxivUrl],["官方页面 ↗",p.source],["PDF ↗",p.pdf]]){const a=link(label,url);if(a)actions.append(a)}mountQuizToggle(actions,p.id);row.append(actions);$("library-list").append(row)}
  if(!data.papers.length){const empty=node("div","conference-empty");empty.append(node("h3","",data.total?"这个筛选下暂无论文":"本地尚无该会议的题录"),node("p","small muted",data.total?"可以换一个分类，或清空搜索。":"可切换其他年份浏览已有题录，后续补充该会议的正式来源与论文。"));$("library-list").append(empty)}
  $("library-prev").disabled=page===0;$("library-next").disabled=(page+1)*data.pageSize>=data.count;$("conference-page").textContent=`${page+1} / ${Math.max(1,Math.ceil(data.count/data.pageSize))}`;
 }

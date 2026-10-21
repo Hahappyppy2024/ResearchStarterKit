@@ -31,7 +31,7 @@ class StudyTests(unittest.TestCase):
   p=s.save_paper(dict(self.p1,summary='Updated abstract'));self.assertEqual(s.resolve('paper',p['id'])['summary'],'Updated abstract')
   with self.assertRaises(ValueError):s.save_paper(dict(title='Unsafe',pdf='javascript:alert(1)'))
  def test_tasks_and_module_link(self):
-  definitions=json.loads((s.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'));self.assertEqual(len(definitions),19)
+  definitions=json.loads((s.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'));self.assertEqual(len(definitions),21)
   task=s.task_detail(self.p1['id'],'minimal-run');self.assertIn('日志',task['detail']);self.assertNotIn('paper',task)
   a=self.course();m=learning_service.list_modules()[0];link=s.add_link(dict(courseId=a['id'],unit='基础知识',resourceKind='module',resourceId=m['id']));self.assertEqual(link['resourceKind'],'module')
   with self.assertRaises(ValueError):s.task_detail(self.p1['id'],'missing')

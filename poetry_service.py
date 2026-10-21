@@ -4,10 +4,10 @@ ROOT=pathlib.Path(__file__).resolve().parent
 TZ=dt.timezone(dt.timedelta(hours=8))
 
 def today():return dt.datetime.now(TZ).date()
-def catalog():return json.loads((ROOT/"data"/"poetry-catalog.json").read_text("utf8"))
+def catalog():return json.loads((ROOT/"local-data"/"poetry-catalog.json").read_text("utf8"))
 @contextlib.contextmanager
 def connection():
- c=sqlite3.connect(ROOT/"data"/"poetry.sqlite",timeout=30)
+ c=sqlite3.connect(ROOT/"local-data"/"poetry.sqlite",timeout=30)
  try:
   c.execute("CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT)")
   c.execute("CREATE TABLE IF NOT EXISTS progress(id TEXT PRIMARY KEY,done INTEGER,memorized_at TEXT,text TEXT DEFAULT '',note TEXT DEFAULT '')")

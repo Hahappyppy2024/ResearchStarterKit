@@ -16,8 +16,8 @@ from pathlib import Path
 from urllib.parse import urljoin, urlencode
 
 ROOT = Path(__file__).resolve().parent
-CACHE = ROOT / "data" / "conference-cache"
-OUT = ROOT / "data" / "conferences.json"
+CACHE = ROOT / "local-data" / "conference-cache"
+OUT = ROOT / "local-data" / "conferences.json"
 REFRESH = False
 
 

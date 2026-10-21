@@ -1,6 +1,6 @@
 const $=id=>document.getElementById(id),node=(tag,cls,text)=>{const n=document.createElement(tag);n.className=cls||'';if(text!==undefined)n.textContent=text;return n};
 const chinaDate=()=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Shanghai',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
-let mode=['flash','evening','quiz'].includes(new URLSearchParams(location.search).get('practice'))?new URLSearchParams(location.search).get('practice'):'flash';
+let mode=new URLSearchParams(location.search).get('quizOnly')!=='1'?'flash':['flash','evening','quiz'].includes(new URLSearchParams(location.search).get('practice'))?new URLSearchParams(location.search).get('practice'):'flash';
 let data=null,active='all',selectedId=null,back=false,editing=null,request=0,lastToday=chinaDate(),followingToday=true,busy=false,retrying=new Set();
 async function api(url,body){const r=await fetch(url,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'});const d=await r.json();if(!r.ok)throw Error(d.error||'本机服务未连接');return d}
 function cards(){return data?.cards.filter(c=>active==='all'||c.category===active)||[]}

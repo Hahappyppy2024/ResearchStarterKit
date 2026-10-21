@@ -9,6 +9,7 @@ class KnowledgeTests(unittest.TestCase):
   with self.assertRaises(ValueError):k.save_node(dict(kind='problem',name='第四层',en='Fourth',parentId=leaf['id']))
   with self.assertRaises(ValueError):k.save_node({**root,'parentId':leaf['id']})
   papers=study.atlas_papers();p,q=papers[:2];tasks={'problem':{'done':True,'answer':'my evidence'},'connections':{'references':[dict(id='ref-test',paperId=q['id'],paper=q['title'],relationTypes=['improves'])]}}
+  definitions=json.loads((study.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'));tasks={**tasks,**{t['id']:{**tasks.get(t['id'],{}),'done':True} for t in definitions}}
   saved=k.save_paper(dict(paperId=p['id'],revision=0,problemIds=[leaf['id']],tasks=tasks,read=True));self.assertEqual(len(saved['ownedMaps']),3);self.assertEqual(k.edges([p['id']])[0]['types'],['improves']);quiz=k.paper_week();self.assertEqual(len(quiz['cards']),1)
   k.paper_attempt(dict(id=quiz['cards'][0]['id'],studentAnswer='test',verdict='review'));self.assertEqual(k.paper_week()['cards'][0]['verdict'],'review')
   updated=k.save_paper(dict(paperId=p['id'],revision=saved['revision'],problemIds=[],tasks=tasks));self.assertEqual(updated['ownedMaps'],[])

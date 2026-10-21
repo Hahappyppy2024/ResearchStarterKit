@@ -3,8 +3,8 @@ import contextlib, datetime, json, pathlib, sqlite3, subprocess, threading, uuid
 from learning_editor import slide_names
 from learning_taxonomy import entries as taxonomy_entries
 ROOT=pathlib.Path(__file__).resolve().parent
-DB=ROOT/'data'/'learning.sqlite'
-FILES=ROOT/'data'/'learning-files'
+DB=ROOT/'local-data'/'learning.sqlite'
+FILES=ROOT/'local-data'/'learning-files'
 CONVERT_LOCK=threading.Lock()
 SEEDS=[('卷积神经网络','CNN','卷积、感受野、特征提取',['卷积层如何计算输出尺寸？','参数共享解决什么问题？','1×1 卷积有什么作用？']),('注意力机制','Attention','Q / K / V、注意力权重、多头机制',['Q、K、V 分别表示什么？','为什么要除以 √dₖ？','多头注意力与单头有什么区别？']),('Transformer','Transformer','位置编码、残差连接、编码器与解码器',['为什么需要位置编码？','Self-Attention 与 Cross-Attention 有何区别？']),('模型训练与优化','Training & Optimization','反向传播、损失函数、正则化',['梯度消失与梯度爆炸如何排查？','训练集好但验证集差怎么办？']),('目标检测','Object Detection','框回归、分类、NMS、评价指标',['IoU 与 mAP 分别衡量什么？','一阶段与两阶段检测有什么区别？']),('检索增强生成','RAG','分块、检索、重排序、生成',['如何定位检索错误和生成错误？','怎样选择分块大小？']),('智能体','AI Agents','规划、工具调用、记忆与评估',['如何评估 Agent 的任务完成能力？','工具调用失败后如何恢复？'])]
 @contextlib.contextmanager

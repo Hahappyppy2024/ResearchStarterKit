@@ -11,14 +11,14 @@ class ConferenceCatalogTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         root = pathlib.Path(self.tmp.name)
-        (root / "data").mkdir()
+        (root / "local-data").mkdir()
         papers = [
             {"id":"c1","title":"Agent Security and Object Detection","venue":"CVPR","year":2026,"authors":"A. Author","summary":"Prompt injection for tool use","source":"https://example.org/one"},
             {"id":"c2","title":"A New Research Direction","venue":"CVPR","year":2026,"authors":"B. Author"},
             {"id":"a1","title":"Agent Security and Object Detection","venue":"arXiv","year":2026,"source":"https://arxiv.org/abs/2601.12345"},
             {"id":"old","title":"Graph Neural Networks","venue":"ICML","year":2025},
         ]
-        with sqlite3.connect(root / "data/library.sqlite") as db:
+        with sqlite3.connect(root / "local-data/library.sqlite") as db:
             db.execute("CREATE TABLE papers (body TEXT, venue TEXT)")
             db.executemany("INSERT INTO papers VALUES (?,?)",[(json.dumps(p),p["venue"]) for p in papers])
         db.close()

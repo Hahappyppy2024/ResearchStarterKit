@@ -1,10 +1,22 @@
 import {cleanRelationTypes,EVIDENCE_STATUSES} from "./paper-relations.mjs";
 export const PAPER_TASKS=[
   {
+    "id": "methodology",
+    "title": "上传 Methodology 总体框架图并解释",
+    "minutes": 20,
+    "hint": "预计 20 分钟。上传论文的方法总览图，标明图号与页码；用自己的话逐步解释输入、核心模块、数据流、输出和关键创新。交付：方法大图＋结构化图解；上传图片不代表已理解。"
+  },
+  {
     "id": "problem",
     "title": "找到论文需要解决什么 problem",
     "hint": "预计 10 分钟。研究对象、已有方法的不足，以及论文具体要解决的问题。 交付：写下你的结论和对应原文位置；没有依据时标注待核实。",
     "minutes": 10
+  },
+  {
+    "id": "reading-questions",
+    "title": "阅读过程中的问题",
+    "minutes": 15,
+    "hint": "逐条添加阅读时遇到的问题。每个问题都有独立回答框，可先记录疑问，阅读后再补充自己的解释、证据或尚未解决的部分。"
   },
   {
     "id": "solution",
@@ -33,19 +45,13 @@ export const PAPER_TASKS=[
   {
     "id": "extensions",
     "title": "有什么延展的 problem",
-    "hint": "预计 10 分钟。可以继续研究的新问题、迁移场景或后续研究方向。 交付：写下你的结论和对应原文位置；没有依据时标注待核实。",
+    "hint": "逐条添加可以延展研究的 Problem，每条独立填写和保存；不需要用逗号分隔。可从新场景、失败条件、假设或方法局限提出新问题。",
     "minutes": 10
   },
   {
     "id": "related",
     "title": "和哪些论文有联系",
     "hint": "预计 15 分钟。重点阅读 Introduction，列出被引用的相关论文名称、作者／年份、引用编号。 交付：写下你的结论和对应原文位置；没有依据时标注待核实。",
-    "minutes": 15
-  },
-  {
-    "id": "connections",
-    "title": "和每篇论文分别有什么联系",
-    "hint": "预计 15 分钟。概括研究脉络；在本页顶部的“相关论文”区域逐篇选择关系，并记录 Introduction 中的依据。 交付：写下你的结论和对应原文位置；没有依据时标注待核实。",
     "minutes": 15
   },
   {
@@ -61,22 +67,10 @@ export const PAPER_TASKS=[
     "minutes": 5
   },
   {
-    "id": "focus",
-    "title": "围绕一个具体问题阅读",
-    "minutes": 10,
-    "hint": "预计 10 分钟。先不读全文。写下研究对象、输入、输出和一个可测量的问题；在摘要和 Introduction 中圈出对应句。交付：一句问题定义＋两处页码或段落依据。"
-  },
-  {
-    "id": "taxonomy",
-    "title": "从通用方向定位到小类别",
-    "minutes": 10,
-    "hint": "预计 10 分钟。写出“领域 → 任务 → 子问题 → 本文切入点”四级路径，并说明本文不处理的两个邻近问题。交付：四级分类链＋边界说明。"
-  },
-  {
     "id": "compare",
     "title": "与一篇同类论文对比",
     "minutes": 25,
-    "hint": "预计 25 分钟。从 Introduction 选择一篇解决相同问题的论文。在论文脉络的对比表中填研究问题、假设、方法、数据、指标、证据、局限和成本；条件不一致时写不可直接比较。交付：至少两篇论文的对比表＋一句选择理由。"
+    "hint": "预计 25 分钟。从已读论文库选择一篇解决相同或类似问题的论文。比较问题、假设、方法、数据集、指标、证据、局限和成本；条件不一致时说明不可直接比较。交付：对比论文关联＋自己的对比结论与依据。"
   },
   {
     "id": "code-map",
@@ -112,9 +106,33 @@ export const PAPER_TASKS=[
     "id": "next-step",
     "title": "把新问题变成下一步行动",
     "minutes": 10,
-    "hint": "预计 10 分钟。从一个局限提炼可验证的新问题，写一个假设、一个最小实验、预计耗时和停止条件。交付：可加入项目实验本的一条实验计划。"
+    "hint": "预计 10 分钟。从局限逐条新增中英文 Problem，为每条问题分别添加搜索关键词；再写下假设、最小验证实验、预计耗时和停止条件。交付：问题列表＋每条的关键词＋下一步行动。"
+  },
+  {
+    "id": "background",
+    "title": "描述论文的应用场景与 Background",
+    "minutes": 10,
+    "hint": "预计 10 分钟。写清真实场景、使用者、输入与输出、已有流程及其困难、约束条件，以及为什么值得解决。交付：一段具体场景＋原文出处；区分背景、问题与本文贡献。"
+  },
+  {
+    "id": "datasets",
+    "title": "整理使用的数据集与来源论文",
+    "minutes": 15,
+    "hint": "预计 15 分钟。选择或新建数据集，核对其原始论文、官方地址、任务、数据规模、划分和评价指标；说明本文如何使用。交付：数据集关联＋来源依据＋本文实验设置；来源不明时标记待核实。"
+  },
+  {
+    "id": "flashcards",
+    "title": "制作这篇论文的 Flash Cards／Quiz",
+    "minutes": 15,
+    "hint": "把论文的重要问题和自己的答案整理为一张张正反面卡片。填写问题和参考答案，再选择是否加入每日 Quiz；睡前先回答再翻面核对。"
   }
 ];
-export function cleanPaperTasks(input){return Object.fromEntries(PAPER_TASKS.map(({id})=>[id,{done:input?.[id]?.done===true,answer:typeof input?.[id]?.answer==="string"?input[id].answer.slice(0,20000):"",...(id==="connections"?{references:cleanReferences(input?.[id]?.references)}:{}),...(id==="categories"?{tags:cleanPaperTags(input?.[id]?.tags)}:{})}]))}
+export function cleanPaperTasks(input){return Object.fromEntries([...PAPER_TASKS,{id:"connections"},{id:"focus"},{id:"taxonomy"}].map(({id})=>[id,{done:input?.[id]?.done===true,answer:typeof input?.[id]?.answer==="string"?input[id].answer.slice(0,20000):"",...(id==="connections"?{references:cleanReferences(input?.[id]?.references)}:{}),...(["extensions","reading-questions","flashcards"].includes(id)?{items:cleanQuestionItems(input?.[id]?.items,["reading-questions","flashcards"].includes(id))}: {}),...(id==="compare"?{comparisonPaperIds:Array.isArray(input?.[id]?.comparisonPaperIds)?[...new Set(input[id].comparisonPaperIds.filter(v=>typeof v==="string"))].slice(0,10):[]}:{}),...(id==="next-step"?{problems:cleanNextProblems(input?.[id]?.problems)}:{}),...(id==="methodology"?{figureIds:cleanIds(input?.[id]?.figureIds)}:{}),...(id==="datasets"?{datasetIds:cleanIds(input?.[id]?.datasetIds)}:{}),...(id==="categories"?{tags:cleanPaperTags(input?.[id]?.tags)}:{})}]))}
 export function cleanPaperTags(input){return Array.isArray(input)?[...new Set(input.filter(t=>typeof t==="string").map(t=>t.trim().slice(0,80)).filter(Boolean))]:[]}
 function cleanReferences(input){if(!Array.isArray(input))return [];const seen=new Set();return input.filter(r=>r&&typeof r.id==="string"&&/^ref-[a-z0-9-]{1,70}$/i.test(r.id)&&!seen.has(r.id)&&seen.add(r.id)).map(r=>({id:r.id,paperId:typeof r.paperId==="string"?r.paperId:"",paper:typeof r.paper==="string"?r.paper.slice(0,1000):"",relationTypes:cleanRelationTypes(r.relationTypes),evidenceStatus:EVIDENCE_STATUSES.some(([id])=>id===r.evidenceStatus)?r.evidenceStatus:'unverified',relation:typeof r.relation==="string"?r.relation.slice(0,10000):"",evidence:typeof r.evidence==="string"?r.evidence.slice(0,10000):""}))}
+
+function cleanIds(values){return Array.isArray(values)?[...new Set(values.filter(v=>typeof v==="string"&&/^[a-zA-Z0-9-]{1,100}$/.test(v)))]:[]}
+
+function cleanNextProblems(values){return Array.isArray(values)?values.filter(p=>p&&typeof p.id==='string').slice(0,50).map(p=>({id:p.id,name:typeof p.name==='string'?p.name:'',en:typeof p.en==='string'?p.en:'',keywords:Array.isArray(p.keywords)?[...new Set(p.keywords.filter(w=>typeof w==='string').map(w=>w.trim().slice(0,160)).filter(Boolean))].slice(0,50):[]})):[]}
+
+function cleanQuestionItems(values,answers){if(!Array.isArray(values))return [];const seen=new Set();return values.filter(v=>v&&typeof v.id==='string'&&/^item-[a-z0-9-]{1,70}$/i.test(v.id)&&!seen.has(v.id)&&seen.add(v.id)).slice(0,100).map(v=>({id:v.id,question:typeof v.question==='string'?v.question.slice(0,10000):'',...(answers?{answer:typeof v.answer==='string'?v.answer.slice(0,20000):''}:{})}))}

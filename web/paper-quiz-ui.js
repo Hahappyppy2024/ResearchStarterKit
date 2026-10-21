@@ -1,0 +1,13 @@
+import {knowledgeApi as api} from './paper-knowledge.js';
+import {mountQuestionList} from './paper-research.js';
+const choices=new Map();
+function updateChoice(id,selection){const old=choices.get(id);if(old&&old.revision>selection.revision)return;choices.set(id,selection);for(const label of document.querySelectorAll('[data-paper-quiz]'))if(label.dataset.paperQuiz===id)label.querySelector('input').checked=selection.enabled}
+export async function mountQuizToggle(host,paperId){
+ const label=document.createElement('label'),check=document.createElement('input'),status=document.createElement('span');label.className='paper-daily-quiz-toggle';label.dataset.paperQuiz=paperId;check.type='checkbox';check.disabled=true;check.setAttribute('aria-label','这篇论文加入每日 Quiz');label.append(check,document.createTextNode(' 加入每日 Quiz '),status);host.append(label);let selection;
+ try{selection=await api('paper-quiz-selection?paperId='+encodeURIComponent(paperId));updateChoice(paperId,selection);check.disabled=false}catch(e){status.textContent=e.message;return}
+ check.onchange=async()=>{check.disabled=true;try{selection=await api('paper-quiz-selection',{paperId,revision:(choices.get(paperId)||selection).revision,enabled:check.checked});updateChoice(paperId,selection);status.textContent=selection.enabled?'已加入，使用此论文的 Flash Cards':'已移出每日 Quiz'}catch(e){check.checked=selection.enabled;status.textContent=e.message}finally{check.disabled=false}};
+}
+export function mountPaperFlashcards(host,paperId,state,all,save){
+ mountQuestionList(host,state,save,true,'Flash Card');const tools=document.createElement('div'),generate=document.createElement('button'),status=document.createElement('p');generate.type='button';generate.className='button';generate.textContent='从已有阅读回答生成卡片';tools.append(generate,status);host.append(tools);mountQuizToggle(tools,paperId);
+ generate.onclick=async()=>{const {PAPER_TASKS}=await import('./paper-tasks.mjs');const known=new Set(state.items.map(i=>i.question.trim()));let count=0;for(const task of PAPER_TASKS){if(task.id==='flashcards')continue;const answer=all[task.id]?.answer?.trim();if(answer&&!known.has(task.title)&&state.items.length<100){state.items.push({id:'item-'+crypto.randomUUID(),question:task.title,answer});known.add(task.title);count++}}for(const item of all['reading-questions']?.items||[]){if(item.question.trim()&&item.answer?.trim()&&!known.has(item.question.trim())&&state.items.length<100){state.items.push({id:'item-'+crypto.randomUUID(),question:item.question,answer:item.answer});known.add(item.question.trim());count++}}save();status.textContent='已生成 '+count+' 张；内容来自自己的笔记，请核对。重新打开本项可编辑生成的卡片。';window.dispatchEvent(new CustomEvent('paper-knowledge-reload',{detail:{id:paperId}}))};
+}

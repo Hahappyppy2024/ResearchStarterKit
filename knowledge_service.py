@@ -41,12 +41,12 @@ def save_node(data):
   kind=data.get('kind',obj.get('kind'))
   if obj.get('kind') and kind!=obj['kind'] and any(n.get('parentId')==obj['id'] for n in items):raise ValueError('有子分类时不能更改 Topic / Problem 类型')
   parent=data.get('parentId') or None
-  if kind not in ('topic','problem'):raise ValueError('请选择 Topic 或 Problem')
+  if kind not in ('topic','problem','solution'):raise ValueError('请选择 Topic、Problem 或 Solution')
   name=study.text(data.get('name',''),160);en=study.text(data.get('en',''),200)
   if not name or not en:raise ValueError('请填写中文名称和英文名称')
   chain=ancestors(parent,items) if parent else []
   if any(n['id']==obj['id'] for n in chain):raise ValueError('分类不能形成循环')
-  if any(n['kind']!=kind for n in chain):raise ValueError('Topic 与 Problem 分别维护层级')
+  if any(n['kind']!=kind for n in chain):raise ValueError('Topic、Problem 与 Solution 分别维护层级')
   if len(chain)>=3:raise ValueError('当前支持大类、子类、子子类三级')
   # A move must preserve the depth of every existing descendant as well.
   for n in items:
@@ -58,12 +58,19 @@ def save_node(data):
   mapid=obj.get('lineageId','taxonomy-'+obj['id']);existing=c.execute("SELECT body FROM records WHERE kind='lineage' AND id=?",(mapid,)).fetchone()
   if existing:
    m=json.loads(existing[0]);m.update(name=name+' · '+en,description=obj['definition'],revision=m['revision']+1);put(c,'lineage',m)
+  else:put(c,'lineage',dict(id=mapid,kind=kind,name=name+' · '+en,description=obj['definition'],paperIds=[],paths=[],revision=1,createdAt=study.now()))
   return obj
+
 def get_paper(ident):
  taxonomy()
  with study.connection() as c:
   r=c.execute("SELECT body FROM records WHERE kind='paper-knowledge' AND id=?",(ident,)).fetchone()
-  return json.loads(r[0]) if r else dict(id=ident,revision=0,topicIds=[],problemIds=[],tasks={},ownedMaps=[])
+  obj=json.loads(r[0]) if r else dict(id=ident,revision=0,topicIds=[],problemIds=[],solutionIds=[],tasks={},ownedMaps=[])
+  definitions=json.loads((study.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'))
+  obj['completedCount']=sum(obj.get('tasks',{}).get(t['id'],{}).get('done') is True for t in definitions)
+  obj['taskCount']=len(definitions);obj['completed']=obj['completedCount']==len(definitions)
+  if not obj['completed']:obj.pop('readDate',None)
+  return obj
 def save_paper(data):
  pid=study.text(data.get('paperId',''),200);paper=study.resolve('paper',pid);taxonomy()
  with study.connection() as c:
@@ -71,7 +78,7 @@ def save_paper(data):
   old=json.loads(r[0]) if r else dict(id=pid,revision=0,ownedMaps=[])
   if data.get('revision',0)!=old['revision']:raise ValueError('这篇论文已在另一窗口更新。草稿仍在当前浏览器，请刷新后核对。')
   allnodes=nodes(c);index={n['id']:n for n in allnodes};obj={**old};selected=[]
-  for key,kind in [('topicIds','topic'),('problemIds','problem')]:
+  for key,kind in [('topicIds','topic'),('problemIds','problem'),('solutionIds','solution')]:
    ids=data.get(key,old.get(key,[]))
    if not isinstance(ids,list) or len(ids)>50:raise ValueError('每篇最多选择 50 个分类')
    obj[key]=list(dict.fromkeys(ids))
@@ -82,12 +89,54 @@ def save_paper(data):
   if not isinstance(tasks,dict):raise ValueError('阅读任务格式无效')
   definitions=json.loads((study.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'))
   clean={}
-  for task in definitions:
-   value=tasks.get(task['id'],{});entry=dict(done=value.get('done') is True,answer=study.text(value.get('answer',''),20000))
+  # Removed checklist items remain stored as annotations, especially paper relations.
+  for task in definitions+[dict(id=ident) for ident in ('connections','focus','taxonomy') if not any(t['id']==ident for t in definitions)]:
+   value=tasks.get(task['id'],old.get('tasks',{}).get(task['id'],{}));entry=dict(done=value.get('done') is True,answer=study.text(value.get('answer',''),20000))
    if entry['done']:
     previous=old.get('tasks',{}).get(task['id'],{})
     entry['completedDate']=previous.get('completedDate',study.today()) if previous.get('done') else study.today()
+   if task['id'] in ('methodology','datasets'):
+    key='figureIds' if task['id']=='methodology' else 'datasetIds';ids=value.get(key,[])
+    if not isinstance(ids,list) or len(ids)>(12 if key=='figureIds' else 100):raise ValueError('关联图片或数据集数量无效')
+    for ident in ids:
+     linked=row(c,'paper-figure' if key=='figureIds' else 'dataset',ident)
+     if key=='figureIds' and linked['paperId']!=pid:raise ValueError('不能使用其他论文的上传图片')
+     if key=='datasetIds':
+      for source in linked.get('sourcePaperIds',[]):study.queue_paper(c,study.resolve('paper',source),reason='数据集来源论文：'+linked['name'])
+    entry[key]=list(dict.fromkeys(ids))
    if task['id']=='categories':entry['tags']=[study.text(t,80) for t in value.get('tags',[]) if isinstance(t,str)][:100]
+   if task['id'] in ('extensions','reading-questions','flashcards'):
+    items=value.get('items',[])
+    if not isinstance(items,list) or len(items)>100:raise ValueError('每个清单最多 100 条问题')
+    entry['items']=[];seen=set()
+    for item in items:
+     ident=study.text(item.get('id',''),80)
+     if not re.fullmatch(r'item-[a-zA-Z0-9-]{1,70}',ident):raise ValueError('问题编号无效')
+     if ident in seen:continue
+     seen.add(ident);part=dict(id=ident,question=study.text(item.get('question',''),10000))
+     if task['id'] in ('reading-questions','flashcards'):part['answer']=study.text(item.get('answer',''),20000)
+     entry['items'].append(part)
+   if task['id']=='compare':
+    ids=value.get('comparisonPaperIds',[])
+    if not isinstance(ids,list) or len(ids)>10 or any(not isinstance(i,str) for i in ids):raise ValueError('对比论文最多 10 篇')
+    previous=old.get('tasks',{}).get('compare',{}).get('comparisonPaperIds',[])
+    for ident in ids:
+     if ident==pid:raise ValueError('请选择另一篇已读论文进行对比')
+     study.resolve('paper',ident)
+     if ident not in previous:
+      target=row(c,'paper-knowledge',ident)
+      if not target.get('readDate') or not all(target.get('tasks',{}).get(t['id'],{}).get('done') is True for t in definitions):raise ValueError('对比论文必须来自已完成阅读任务的论文')
+    entry['comparisonPaperIds']=list(dict.fromkeys(ids))
+   if task['id']=='next-step':
+    problems=value.get('problems',[])
+    if not isinstance(problems,list) or len(problems)>50:raise ValueError('每篇最多添加 50 个新问题')
+    entry['problems']=[];seen=set()
+    for problem in problems:
+     ident=problem.get('id');n=index.get(ident)
+     if not n or n['kind']!='problem':raise ValueError('新问题需关联已有或新建的 Problem 定义')
+     words=problem.get('keywords',[])
+     if not isinstance(words,list) or len(words)>50:raise ValueError('每个问题最多 50 个关键词')
+     if ident not in seen:entry['problems'].append(dict(id=ident,name=n['name'],en=n.get('en',''),keywords=list(dict.fromkeys(study.text(w,160) for w in words if study.text(w,160)))));seen.add(ident)
    if task['id']=='connections':
     refs=value.get('references',[])
     if not isinstance(refs,list) or len(refs)>200:raise ValueError('关联论文最多 200 条')
@@ -95,16 +144,21 @@ def save_paper(data):
     for ref in refs:
      target=study.text(ref.get('paperId',''),200)
      if target==pid:raise ValueError('不能把论文关联到自身')
-     if target:study.resolve('paper',target)
+     if target:study.queue_paper(c,study.resolve('paper',target),reason='相关论文：'+paper['title'][:500])
      types=ref.get('relationTypes',[])
      if not isinstance(types,list) or any(t not in RELATIONS for t in types):raise ValueError('论文关系类型无效')
      entry['references'].append(dict(id=study.text(ref.get('id',''),100),paperId=target,paper=study.text(ref.get('paper',''),1000),relation=study.text(ref.get('relation',''),10000),relationTypes=list(dict.fromkeys(types)),evidenceStatus=ref.get('evidenceStatus') if ref.get('evidenceStatus') in STATUSES else 'unverified',evidence=study.text(ref.get('evidence',''),10000)))
    clean[task['id']]=entry
   obj.update(tasks=clean,title=paper['title'],revision=old['revision']+1,updatedAt=study.now())
-  if data.get('read') and not obj.get('readDate'):
+  complete=all(clean[t['id']]['done'] for t in definitions)
+  if complete and not obj.get('readDate'):
    read_date=study.valid_date(data.get('readDate') or study.today())
    if read_date>study.today():raise ValueError('已读日期不能晚于今天')
    obj['readDate']=read_date
+  if not complete:obj.pop('readDate',None)
+  obj['completed']=complete
+  if complete and not old.get('readDate'):
+   put(c,'reading-log',dict(id=pid+':'+obj['readDate'],paperId=pid,date=obj['readDate'],createdAt=study.now()))
   wanted={n.get('lineageId','taxonomy-'+n['id']):n for n in selected};owned=set(old.get('ownedMaps',[]))
   for mapid in owned-set(wanted):
    m=row(c,'lineage',mapid);m['paperIds']=[i for i in m['paperIds'] if i!=pid];m['paths']=[{**p,'ids':[i for i in p['ids'] if i!=pid]} for p in m['paths'] if any(i!=pid for i in p['ids'])];m['revision']+=1;put(c,'lineage',m)

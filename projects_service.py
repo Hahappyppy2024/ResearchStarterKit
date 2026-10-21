@@ -1,7 +1,7 @@
 """Local project notebook with durable SQLite records and recoverable archives."""
 import contextlib, csv, datetime as dt, io, json, pathlib, sqlite3, uuid
 ROOT=pathlib.Path(__file__).resolve().parent
-DB_PATH=ROOT/'data/projects.sqlite'
+DB_PATH=ROOT/'local-data/projects.sqlite'
 PROJECT_FIELDS=['name','problem','goal','papers','codePath','status']
 LOG_FIELDS=['date','name','hypothesis','baseline','changes','codeVersion','command','environment','dataSplit','seed','artifacts','results','conclusion','limitations','next','notes','parentId','outcome']
 DEFAULT_TASKS=['明确研究问题与目标','准备数据与检查数据划分','复现并确认 baseline','设计对照与消融实验','运行实验并分析结果','整理图表与论文写作']

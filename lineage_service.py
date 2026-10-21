@@ -56,7 +56,7 @@ def save(data):
   obj=study.row(c,'lineage',data['id']) if data.get('id') else dict(id=str(uuid.uuid4()),createdAt=study.now(),revision=0,paperIds=[],paths=[])
   if data.get('id') and data.get('revision')!=obj['revision']:raise ValueError('图谱已更新，请重新打开后再保存；你的草稿仍保留。')
   obj['kind']=data.get('kind',obj.get('kind'))
-  if obj['kind'] not in ('topic','problem'):raise ValueError('请选择主题或问题')
+  if obj['kind'] not in ('topic','problem','solution'):raise ValueError('请选择主题或问题')
   obj['name']=study.text(data.get('name',obj.get('name','')),160)
   if not obj['name']:raise ValueError('请填写主题或问题名称')
   obj['description']=study.text(data.get('description',obj.get('description','')))

@@ -2,7 +2,7 @@
 import contextlib,datetime as dt,hashlib,json,pathlib,re,sqlite3,threading,time,urllib.parse
 import xml.etree.ElementTree as ET
 ROOT=pathlib.Path(__file__).resolve().parent
-DATA=ROOT/'data';DB=DATA/'weekly-arxiv.sqlite';LOCK=threading.RLock()
+DATA=ROOT/'local-data';DB=DATA/'weekly-arxiv.sqlite';LOCK=threading.RLock()
 FETCH_LOCK=threading.Lock()
 DATE_NOTE='按 arXiv API published（第一版提交处理日期）归档，不等同于公开公告日；后续版本另列为更新。历史合集仅覆盖已采集或已检索的方向。'
 

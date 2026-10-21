@@ -1,6 +1,6 @@
 """Persist user research directions next to the local library."""
 import json,pathlib,sqlite3,uuid,contextlib
-DB=pathlib.Path(__file__).resolve().parent/"data"/"library.sqlite"
+DB=pathlib.Path(__file__).resolve().parent/"local-data"/"library.sqlite"
 BUILTINS=[
  ("Agent",'all:agent OR all:agentic'),
  ("Object Detection",'all:"object detection"'),

@@ -2,7 +2,7 @@ import pathlib,tempfile,unittest,zipfile
 import learning_editor as e
 class EditorTests(unittest.TestCase):
  def setUp(self):
-  self.tmp=tempfile.TemporaryDirectory(dir=pathlib.Path(__file__).parent/'data');self.source=pathlib.Path(self.tmp.name)/'source.pptx'
+  self.tmp=tempfile.TemporaryDirectory(dir=pathlib.Path(__file__).parent/'local-data');self.source=pathlib.Path(self.tmp.name)/'source.pptx'
   slide=f'''<p:sld xmlns:p="{e.P}" xmlns:a="{e.A}" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main" mc:Ignorable="p14"><p:cSld><p:spTree><p:sp><p:nvSpPr><p:cNvPr id="2" name="Title"/></p:nvSpPr><p:txBody><a:bodyPr/><a:lstStyle/><a:p><a:pPr algn="l"/><a:r><a:rPr sz="2400" b="1"/><a:t>Original title</a:t></a:r><a:endParaRPr lang="zh-CN"/></a:p></p:txBody></p:sp></p:spTree></p:cSld></p:sld>'''
   with zipfile.ZipFile(self.source,'w',zipfile.ZIP_DEFLATED) as z:
    z.writestr('ppt/slides/slide1.xml',slide.replace('Original title','First file'))

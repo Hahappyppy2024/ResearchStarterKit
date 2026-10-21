@@ -1,6 +1,6 @@
 """Local courses, problem-led reading, comparison sheets and intentional reading queue."""
 import contextlib,datetime as dt,json,pathlib,re,sqlite3,uuid
-ROOT=pathlib.Path(__file__).resolve().parent;DB=ROOT/'data'/'study-workspace.sqlite'
+ROOT=pathlib.Path(__file__).resolve().parent;DB=ROOT/'local-data'/'study-workspace.sqlite'
 ATLAS=pathlib.Path('D:/000_CV_projects/Top_projects/research-atlas')
 def today():return dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).date().isoformat()
 def now():return dt.datetime.now(dt.timezone.utc).isoformat()
@@ -149,10 +149,15 @@ def save_paper(data):
 def add_queue(data):
  date=valid_date(data.get('date',today()));p=resolve('paper',data.get('paperId'))
  with connection() as c:
-  old=c.execute('SELECT body FROM queue WHERE date=? AND paper_id=?',(date,p['id'])).fetchone()
-  obj=json.loads(old[0]) if old else dict(paperId=p['id'],date=date,title=p['title'],reason='',createdAt=now())
-  if 'reason' in data:obj['reason']=text(data['reason'],3000)
-  c.execute('INSERT INTO queue VALUES(?,?,?,0) ON CONFLICT(date,paper_id) DO UPDATE SET body=excluded.body,archived=0',(date,p['id'],json.dumps(obj,ensure_ascii=False)))
+  obj=queue_paper(c,p,date,data.get('reason'))
+ return obj
+
+def queue_paper(c,p,date=None,reason=None):
+ date=valid_date(date or today())
+ old=c.execute('SELECT body FROM queue WHERE date=? AND paper_id=?',(date,p['id'])).fetchone()
+ obj=json.loads(old[0]) if old else dict(paperId=p['id'],date=date,title=p['title'],reason='',createdAt=now())
+ if reason is not None and not obj.get('reason'):obj['reason']=text(reason,3000)
+ c.execute('INSERT INTO queue VALUES(?,?,?,0) ON CONFLICT(date,paper_id) DO UPDATE SET body=excluded.body,archived=0',(date,p['id'],json.dumps(obj,ensure_ascii=False)))
  return obj
 def remove_queue(data):
  date=valid_date(data.get('date',today()))

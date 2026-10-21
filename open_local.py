@@ -10,7 +10,7 @@ def ready(number):
 startup=subprocess.STARTUPINFO();startup.dwFlags|=subprocess.STARTF_USESHOWWINDOW;startup.wShowWindow=0
 for number,flag in [(8766,[]),(8767,["--literature"]),(8768,["--poetry"])]:
  if ready(number):continue
- with open(root/"data"/f"server-{number}.log","ab") as out,open(root/"data"/f"server-{number}-error.log","ab") as err:
+ with open(root/"local-data"/f"server-{number}.log","ab") as out,open(root/"local-data"/f"server-{number}-error.log","ab") as err:
   subprocess.Popen([sys.executable,str(root/"local_app.py"),"serve","--port",str(number)]+flag,cwd=root,stdout=out,stderr=err,startupinfo=startup,creationflags=subprocess.CREATE_NO_WINDOW)
 for _ in range(20):
  if ready(port):break

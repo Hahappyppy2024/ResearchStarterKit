@@ -13,3 +13,10 @@ export function scheduleStudyTask(paperId,taskId){
  if(window.parent!==window)window.parent.postMessage(message,'http://127.0.0.1:8769');
  else window.open(base+'/?studyPaper='+encodeURIComponent(paperId)+'&studyTask='+encodeURIComponent(taskId),'_blank','noopener');
 }
+
+export async function addToRequiredReading(paperId,reason=''){
+ const {chinaTime}=await import('./schedule.mjs');
+ const r=await fetch(base+'/api/study/queue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paperId,date:chinaTime().date,reason})});
+ const d=await r.json();if(!r.ok)throw Error(d.error||'加入今日必读失败');
+ localStorage.setItem('required-reading-updated',String(Date.now()));window.dispatchEvent(new Event('required-reading-change'));return d;
+}

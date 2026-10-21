@@ -3,7 +3,7 @@ import datetime,hashlib,json,pathlib,re,sqlite3
 ROOT=pathlib.Path(__file__).resolve().parent
 
 def connection():
- c=sqlite3.connect(ROOT/"data"/"reader.sqlite",timeout=30)
+ c=sqlite3.connect(ROOT/"local-data"/"reader.sqlite",timeout=30)
  c.execute("CREATE TABLE IF NOT EXISTS notes(id TEXT PRIMARY KEY,content TEXT,updated TEXT)")
  c.execute("CREATE TABLE IF NOT EXISTS translations(hash TEXT PRIMARY KEY,en TEXT,zh TEXT,provider TEXT)")
  return c
@@ -12,7 +12,7 @@ def sentences(text):
  return [x.strip() for x in re.split(r'(?<=[.!?。！？])\s+(?=[A-Z“"(\u4e00-\u9fff])',re.sub(r"\s+"," ",text or "")) if x.strip()]
 
 def paper(pid):
- with sqlite3.connect(ROOT/"data"/"library.sqlite") as c:
+ with sqlite3.connect(ROOT/"local-data"/"library.sqlite") as c:
   row=c.execute("SELECT body FROM papers WHERE id=?",(pid,)).fetchone()
  if not row:raise ValueError("论文不存在")
  return json.loads(row[0])

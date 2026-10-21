@@ -18,3 +18,16 @@ htmlcov/
 # Temporary files
 *.tmp
 *.log
+# Private runtime data, uploads, databases and backups
+/local-data/
+/local-data-backups/
+/data/
+*.sqlite
+*.sqlite3
+*.db
+*.sqlite-*
+*.sqlite3-*
+*.db-*
+.env
+.env.*
+!.env.example

@@ -1,6 +1,6 @@
 """Daily concrete research exercises. Stable assignments and self-reported outputs."""
 import contextlib,datetime as dt,json,pathlib,re,sqlite3,sys
-ROOT=pathlib.Path(__file__).resolve().parent;DB=ROOT/'data'/'research-practice.sqlite'
+ROOT=pathlib.Path(__file__).resolve().parent;DB=ROOT/'local-data'/'research-practice.sqlite'
 TZ=dt.timezone(dt.timedelta(hours=8))
 def today():return dt.datetime.now(TZ).date().isoformat()
 def now():return dt.datetime.now(TZ).isoformat()

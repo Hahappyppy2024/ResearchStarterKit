@@ -80,7 +80,7 @@ CACHE = None
 CACHED_SIGNATURE = None
 
 def signature():
-    paths=[ROOT/"data/library.sqlite", ROOT/"data/library.sqlite-wal", ROOT/"data/conferences.json"]
+    paths=[ROOT/"local-data/library.sqlite", ROOT/"local-data/library.sqlite-wal", ROOT/"local-data/conferences.json"]
     return tuple((p.stat().st_size,p.stat().st_mtime_ns) if p.exists() else None for p in paths)
 
 def classify_paper(p):
@@ -103,7 +103,7 @@ def catalog(force=False):
     with LOCK:
         if CACHE is not None and not force and signature()==CACHED_SIGNATURE:
             return CACHE
-        with contextlib.closing(sqlite3.connect(ROOT/"data/library.sqlite")) as c:
+        with contextlib.closing(sqlite3.connect(ROOT/"local-data/library.sqlite")) as c:
             rows = c.execute("SELECT body FROM papers WHERE venue IN (?,?,?,?,?,?) OR venue='arXiv'", VENUES).fetchall()
         raw = [json.loads(row[0]) for row in rows]
         arxiv = {title_key(p["title"]):arxiv_link(p) for p in raw if p.get("venue")=="arXiv" and arxiv_link(p)}
@@ -115,7 +115,7 @@ def catalog(force=False):
             p["arxivUrl"] = arxiv_link(p) or arxiv.get(title_key(p["title"]), "")
             groups[(int(p["year"]),p["venue"])].append(p)
         for papers in groups.values(): papers.sort(key=lambda p:p["title"].casefold())
-        try: sources = json.loads((ROOT/"data/conferences.json").read_text(encoding="utf-8"))["sources"]
+        try: sources = json.loads((ROOT/"local-data/conferences.json").read_text(encoding="utf-8"))["sources"]
         except (OSError,KeyError,ValueError): sources=[]
         CACHE = {"groups":dict(groups), "sources":{(int(s["year"]),s["venue"]):s for s in sources}}
         CACHED_SIGNATURE = signature()

@@ -5,8 +5,8 @@ class PoetryTests(unittest.TestCase):
  def setUp(self):
   self.temp=tempfile.TemporaryDirectory(dir=pathlib.Path(__file__).resolve().parent,prefix="test-poetry-")
   self.root=pathlib.Path(self.temp.name);assert self.root.parent==pathlib.Path(__file__).resolve().parent
-  (self.root/"data").mkdir();self.catalog=poetry_service.catalog()
-  (self.root/"data"/"poetry-catalog.json").write_text(json.dumps(self.catalog),"utf8")
+  (self.root/"local-data").mkdir();self.catalog=poetry_service.catalog()
+  (self.root/"local-data"/"poetry-catalog.json").write_text(json.dumps(self.catalog),"utf8")
   self.mock=patch.object(poetry_service,"ROOT",self.root);self.mock.start()
  def tearDown(self):self.mock.stop();self.temp.cleanup()
  def test_chronological_day_assignment_stays_fixed_when_marked(self):
