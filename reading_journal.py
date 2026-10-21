@@ -11,16 +11,18 @@ def statistics(include_items=False):
   selected={p['id'] for p in study.records(c,'paper')}
   selected.update(r[0] for r in c.execute('SELECT DISTINCT paper_id FROM queue'))
   selected.update(p['id'] for p in records)
+  trash={p['id'] for p in study.records(c,'paper-library-trash')}
+ ids.difference_update(trash)
  ids.intersection_update(selected)
  read={p['id'] for p in records if p['id'] in ids and p.get('readDate') and complete(p)}
  result=dict(total=len(ids),read=len(read),unread=len(ids-read))
  if include_items:
   byid={p['id']:p for p in records};items=[]
-  for ident in ids:
+  for ident in ids|trash:
    try:paper=study.resolve('paper',ident)
    except ValueError:continue
    tasks=byid.get(ident,{}).get('tasks',{})
-   items.append(dict(id=ident,title=paper['title'],authors=paper.get('authors',''),read=ident in read,done=sum(tasks.get(t['id'],{}).get('done') is True for t in definitions()),taskTotal=len(definitions())))
+   items.append(dict(id=ident,trashed=ident in trash,title=paper['title'],authors=paper.get('authors',''),read=ident in read,done=sum(tasks.get(t['id'],{}).get('done') is True for t in definitions()),taskTotal=len(definitions())))
   result['items']=sorted(items,key=lambda p:p['title'].lower())
  return result
 
@@ -62,3 +64,19 @@ def save_review(data):
   obj=dict(id=ident,kind=kind,start=start,end=end,content=content,revision=old['revision']+1,updatedAt=study.now())
   c.execute('INSERT INTO records VALUES(?,?,?,0) ON CONFLICT(kind,id) DO UPDATE SET body=excluded.body',('reading-review',ident,json.dumps(obj,ensure_ascii=False)))
  return obj
+
+def archive_personal(data):
+ ident=data.get('paperId','');study.resolve('paper',ident)
+ with study.connection() as c:
+  found=c.execute("SELECT body FROM records WHERE kind='paper-library-trash' AND id=?",(ident,)).fetchone()
+  if data.get('restore'):
+   if found:
+    obj=json.loads(found[0])
+    for date in obj.get('queueDates',[]):c.execute('UPDATE queue SET archived=0 WHERE paper_id=? AND date=?',(ident,date))
+    c.execute("DELETE FROM records WHERE kind='paper-library-trash' AND id=?",(ident,))
+  elif not found:
+   dates=[r[0] for r in c.execute('SELECT date FROM queue WHERE paper_id=? AND archived=0',(ident,))]
+   obj=dict(id=ident,queueDates=dates,deletedAt=study.now())
+   c.execute('INSERT INTO records VALUES(?,?,?,0)',('paper-library-trash',ident,json.dumps(obj)))
+   c.execute('UPDATE queue SET archived=1 WHERE paper_id=?',(ident,))
+ return dict(ok=True)

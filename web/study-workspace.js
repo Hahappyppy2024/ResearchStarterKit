@@ -55,3 +55,5 @@ window.addEventListener("focus",()=>{if(view==='reading'&&!document.querySelecto
 setInterval(()=>{if(view==='reading'&&!document.querySelector('dialog[open]'))refresh().catch(()=>{})},20000);
 
 window.addEventListener('paper-completion-change',()=>{if(view==='reading')document.querySelector('.reading-journal')?.refreshRecords?.().catch(e=>toast(e.message))});
+
+window.addEventListener('paper-library-change',()=>{if(view==='reading')refresh().catch(e=>toast(e.message))});
