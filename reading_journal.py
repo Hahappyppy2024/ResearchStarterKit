@@ -2,6 +2,19 @@
 import datetime as dt,json
 import study_service as study
 
+def statistics():
+ import local_app,contextlib
+ with contextlib.closing(local_app.db()) as c:ids={r[0] for r in c.execute('SELECT id FROM papers')}
+ ids.update(p['id'] for p in study.atlas_papers())
+ with study.connection() as c:
+  records=study.records(c,'paper-knowledge')
+  selected={p['id'] for p in study.records(c,'paper')}
+  selected.update(r[0] for r in c.execute('SELECT DISTINCT paper_id FROM queue'))
+  selected.update(p['id'] for p in records)
+ ids.intersection_update(selected)
+ read={p['id'] for p in records if p['id'] in ids and p.get('readDate') and complete(p)}
+ return dict(total=len(ids),read=len(read),unread=len(ids-read))
+
 def definitions():return json.loads((study.ROOT/'web'/'paper-task-definitions.json').read_text(encoding='utf-8'))
 def complete(obj):return all(obj.get('tasks',{}).get(t['id'],{}).get('done') is True for t in definitions())
 

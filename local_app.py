@@ -240,6 +240,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 import study_service as study
                 value=lambda key,default="":q.get(key,[default])[0]
                 import knowledge_service as knowledge
+                if path.path=='/api/study/paper-library-statistics':
+                    import reading_journal
+                    return self.reply(reading_journal.statistics())
                 if path.path=='/api/study/paper-questions':
                     import paper_questions
                     return self.reply(paper_questions.listing(value('date',None),value('paperId'),value('mode','all')))

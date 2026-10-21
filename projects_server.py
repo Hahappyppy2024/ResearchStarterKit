@@ -25,6 +25,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
   if shared:return self.reply(shared[0],shared[1])
   try:
    if path.path=='/api/projects':return self.reply({'projects':service.list_projects(q.get('archived',['0'])[0]=='1')})
+   if path.path=='/api/project-notes':
+    import project_notes
+    return self.reply(project_notes.listing(q.get('projectId',[''])[0]))
    if path.path=='/api/project':return self.reply(service.project_detail(q.get('id',[''])[0]))
    if path.path=='/api/project-papers':
     import project_papers
@@ -83,8 +86,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
   if not self.trusted() or self.headers.get('Content-Type')!='application/json':return self.reply({'error':'仅允许本机 JSON 请求'},code=403)
   try:
    length=int(self.headers.get('Content-Length','0'))
-   if length>500000:raise ValueError('记录过大')
+   if length>(8000000 if self.path=='/api/project-note' else 500000):raise ValueError('记录过大')
    data=json.loads(self.rfile.read(length))
+   if self.path=='/api/project-note':
+    import project_notes
+    return self.reply(project_notes.save(data))
    if self.path=='/api/project-paper':
     import project_papers
     return self.reply(project_papers.save(data))

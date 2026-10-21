@@ -11,6 +11,7 @@ const url = `http://127.0.0.1:${port}`;
 const server = http.createServer((req,res)=>{
   let pathname;
   try {pathname=decodeURIComponent(new URL(req.url,url).pathname);} catch {res.writeHead(400);res.end('Bad request');return;}
+  if(pathname.startsWith('/api/scholar-photo/')){void require('./photos.cjs').handle(req,res,pathname);return;}
   if(pathname.startsWith('/api/')){void tracker.handle(req,res,pathname);return;}
   const file=path.resolve(root,'.'+(pathname==='/'?'/index.html':pathname));
   if(!file.startsWith(root+path.sep)||!['.html','.css','.js','.jpg'].includes(path.extname(file))){res.writeHead(403);res.end('Forbidden');return;}

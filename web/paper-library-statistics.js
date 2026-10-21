@@ -1,0 +1,4 @@
+import {knowledgeApi as api} from './paper-knowledge.js';
+let busy=false;
+async function refresh(){if(busy)return;busy=true;try{const stats=await api('paper-library-statistics');for(const key of ['read','unread','total'])document.getElementById('library-stat-'+key).textContent=stats[key].toLocaleString('zh-CN');document.getElementById('library-stats-note').textContent='个人阅读库 · 仅统计你添加、安排阅读或已开始整理的论文，按论文 ID 去重；不含仅批量收录的会议论文。完成全部阅读任务计为已读；正在阅读的论文计入未读。'}catch(e){document.getElementById('library-stats-note').textContent='统计暂未读取：'+e.message;for(const key of ['read','unread','total'])document.getElementById('library-stat-'+key).textContent='—'}finally{busy=false}}
+refresh();for(const event of ['focus','storage','paper-completion-change','paper-reading-status-change','paper-knowledge-change'])window.addEventListener(event,refresh);setInterval(refresh,60000);

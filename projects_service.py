@@ -2,7 +2,7 @@
 import contextlib, csv, datetime as dt, io, json, pathlib, sqlite3, uuid
 ROOT=pathlib.Path(__file__).resolve().parent
 DB_PATH=ROOT/'local-data/projects.sqlite'
-PROJECT_FIELDS=['name','problem','goal','papers','codePath','status']
+PROJECT_FIELDS=['name','problem','goal','papers','codePath','status','projectNotes']
 LOG_FIELDS=['date','name','hypothesis','baseline','changes','codeVersion','command','environment','dataSplit','seed','artifacts','results','conclusion','limitations','next','notes','parentId','outcome']
 DEFAULT_TASKS=['明确研究问题与目标','准备数据与检查数据划分','复现并确认 baseline','设计对照与消融实验','运行实验并分析结果','整理图表与论文写作']
 def now():return dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).isoformat(timespec='seconds')
@@ -12,6 +12,7 @@ def connection():
  with contextlib.closing(sqlite3.connect(DB_PATH,timeout=30)) as c:
   c.row_factory=sqlite3.Row;c.execute('PRAGMA foreign_keys=ON')
   c.executescript('''CREATE TABLE IF NOT EXISTS projects(id TEXT PRIMARY KEY,body TEXT NOT NULL,archived INTEGER DEFAULT 0);
+  CREATE TABLE IF NOT EXISTS project_notes(id TEXT PRIMARY KEY,project_id TEXT NOT NULL,body TEXT NOT NULL);
   CREATE TABLE IF NOT EXISTS tasks(id TEXT PRIMARY KEY,project_id TEXT REFERENCES projects(id),body TEXT NOT NULL,archived INTEGER DEFAULT 0);
   CREATE TABLE IF NOT EXISTS logs(id TEXT PRIMARY KEY,project_id TEXT REFERENCES projects(id),body TEXT NOT NULL,archived INTEGER DEFAULT 0);''')
   with c:
@@ -112,7 +113,9 @@ def export_project(id,format):
   for l in logs:writer.writerow([l['id'],l['date'],l['name']]+[l.get(k,'') for k in ['hypothesis','baseline','changes','codeVersion','command','environment','dataSplit','seed']]+[json.dumps(l['metrics'],ensure_ascii=False)]+[l.get(k,'') for k in ['results','conclusion','limitations','next','notes','artifacts','parentId','outcome']])
   return '\ufeff'+stream.getvalue()
  lines=['# '+p['name'],'']
- for key,label in [('problem','研究问题'),('goal','目标'),('papers','关联论文'),('codePath','代码路径')]:lines.extend(['## '+label,p.get(key,''),''])
+ for key,label in [('projectNotes','项目笔记'),('problem','研究问题'),('goal','目标'),('papers','关联论文'),('codePath','代码路径')]:lines.extend(['## '+label,p.get(key,''),''])
+ for item in records_for_export(id):
+  lines+=['## 项目笔记 / '+item['path'],item['content'],'']
  lines+=['## 基础任务']+['- ['+('x' if t['done'] else ' ')+'] '+t['title']+('：'+t['detail'] if t.get('detail') else '') for t in data['tasks']]
  for i,l in enumerate(logs,1):
   lines+=['',f"## E{l.get('number',i):03} · {l['date']} · {l['name']}",'实验 ID：'+l['id']]
@@ -120,3 +123,15 @@ def export_project(id,format):
    if l.get(key):lines+=['','### '+{'hypothesis':'实验问题／假设','baseline':'对照 baseline','changes':'具体改动','codeVersion':'代码版本','command':'运行命令','environment':'环境','dataSplit':'数据划分','seed':'随机种子','artifacts':'文件与路径','results':'结果观察','conclusion':'结论','limitations':'局限','next':'下一步','notes':'随手笔记','parentId':'前序实验 ID','outcome':'验证状态'}.get(key,key),l[key]]
   lines+=['','### 指标']+['- '+m['name']+'：'+m['value']+' '+m['unit'] for m in l['metrics']]
  return '\n'.join(lines)
+
+def records_for_export(project):
+ with connection() as c:
+  items=[json.loads(r[0]) for r in c.execute('SELECT body FROM project_notes WHERE project_id=?',(project,))]
+ byid={i['id']:i for i in items};result=[]
+ for item in items:
+  if item['kind']!='note' or item.get('deleted'):continue
+  names=[item['title']];parent=item.get('parentId');seen=set()
+  while parent in byid and parent not in seen:
+   seen.add(parent);names.insert(0,byid[parent]['title']);parent=byid[parent].get('parentId')
+  result.append(dict(path='/'.join(names),content=item.get('content','')))
+ return result
