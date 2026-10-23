@@ -220,7 +220,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_response(status);self.send_header("Content-Type",kind+"; charset=utf-8");self.send_header("Cache-Control","no-store");self.send_header("X-Content-Type-Options","nosniff");self.study_cors();self.end_headers();self.wfile.write(body)
     def study_cors(self):
         origin=self.headers.get("Origin","")
-        if self.path.startswith("/api/study/") and origin in ("http://127.0.0.1:8766","http://127.0.0.1:8767","http://127.0.0.1:8770","http://127.0.0.1:4173"):
+        if self.path.startswith("/api/study/") and origin in ("http://127.0.0.1:8766","http://127.0.0.1:8767","http://127.0.0.1:8770","http://127.0.0.1:4173","http://127.0.0.1:8791","http://127.0.0.1:8769"):
             self.send_header("Access-Control-Allow-Origin",origin);self.send_header("Vary","Origin")
             self.send_header("Access-Control-Allow-Headers","Content-Type");self.send_header("Access-Control-Allow-Methods","GET, POST, OPTIONS")
     def do_OPTIONS(self):
@@ -228,7 +228,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         return self.reply({"ok":True})
     def trusted(self):
         host=self.headers.get("Host","")
-        return host in (f"127.0.0.1:{PORT}",f"localhost:{PORT}") and (self.headers.get("Origin",f"http://{host}")==f"http://{host}" or (self.path.startswith("/api/study/") and self.headers.get("Origin") in ("http://127.0.0.1:8766","http://127.0.0.1:8767","http://127.0.0.1:8770","http://127.0.0.1:4173")))
+        return host in (f"127.0.0.1:{PORT}",f"localhost:{PORT}") and (self.headers.get("Origin",f"http://{host}")==f"http://{host}" or (self.path.startswith("/api/study/") and self.headers.get("Origin") in ("http://127.0.0.1:8766","http://127.0.0.1:8767","http://127.0.0.1:8770","http://127.0.0.1:4173","http://127.0.0.1:8791","http://127.0.0.1:8769")))
     def do_GET(self):
         if not self.trusted():return self.reply({"error":"仅允许本机同源请求"},403)
         path=urllib.parse.urlsplit(self.path);q=urllib.parse.parse_qs(path.query)
@@ -240,6 +240,30 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 import study_service as study
                 value=lambda key,default="":q.get(key,[default])[0]
                 import knowledge_service as knowledge
+                if path.path=='/api/study/scholar-papers':
+                    import scholar_papers
+                    return self.reply(scholar_papers.listing(value('scholarId'),value('labId')))
+                if path.path=='/api/study/paper-affiliations':
+                    import paper_affiliations
+                    return self.reply(paper_affiliations.listing(value('paperId')))
+                if path.path=='/api/study/scholar-photo':
+                    import workspace_content
+                    return self.reply(workspace_content.scholar_photo(value('id')))
+                if path.path=='/api/study/scholar-directory':
+                    import workspace_content
+                    return self.reply(workspace_content.scholar_directory())
+                if path.path=='/api/study/topic-library':
+                    import topic_library
+                    return self.reply(topic_library.browse(value('topic'),value('source','conference'),value('venue'),value('year'),value('q'),value('page',0),value('state','all')))
+                if path.path in ('/api/study/method-posts','/api/study/method-resources'):
+                    import workspace_content
+                    return self.reply(workspace_content.listing('method-post' if path.path.endswith('method-posts') else 'method-resource'))
+                if path.path in ('/api/study/blog-posts','/api/study/blog-folders','/api/study/research-labs'):
+                    import workspace_content
+                    return self.reply(workspace_content.listing('blog-post' if path.path.endswith('blog-posts') else 'blog-folder' if path.path.endswith('blog-folders') else 'research-lab'))
+                if path.path=='/api/study/paste-image':
+                    import workspace_content
+                    content,kind=workspace_content.image_file(value('id'));return self.reply(content,kind=kind)
                 if path.path=='/api/study/paper-library-statistics':
                     import reading_journal
                     return self.reply(reading_journal.statistics(include_items=True))
@@ -273,7 +297,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     import lineage_service
                     return self.reply(lineage_service.detail(value("id")) if value("id") else lineage_service.all_maps())
                 if path.path=="/api/study/state":return self.reply(study.state(value("date",None)))
-                if path.path=="/api/study/resources":return self.reply(study.catalog(value("q"),value("kind"),value("page",0)))
+                if path.path=="/api/study/resources":return self.reply(study.catalog(value("q"),value("kind"),value("page",0),value('venue')))
                 if path.path=="/api/study/resource":return self.reply(study.resolve(value("kind"),value("id")))
                 if path.path=="/api/study/task":return self.reply(study.task_detail(value("paperId"),value("taskId")))
                 return self.reply({"error":"不存在"},404)
@@ -345,7 +369,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.reply({"count":count,"page":page,"papers":[dict(json.loads(b),zoteroKey=k) for b,k in rows]})
         static={" /":"","/": "index.html"}
         name="index.html" if path.path=="/" else path.path.lstrip("/")
-        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-reader.js","paper-knowledge.js","related-papers.js","dataset-ui.js","paper-assets.js","paper-research.js","paper-quiz-ui.js","auto-card-merge.mjs","paper-questions-ui.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
+        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-title.js","paper-title-model.mjs","paper-labs.js","paper-reader.js","paper-knowledge.js","related-papers.js","dataset-ui.js","paper-assets.js","paper-research.js","paper-quiz-ui.js","auto-card-merge.mjs","paper-questions-ui.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
         p=(asset_root/name).resolve()
         if not p.is_relative_to(asset_root.resolve()) or not p.is_file():return self.reply({"error":"不存在"},404)
         import mimetypes
@@ -364,11 +388,26 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if not self.trusted() or self.headers.get("Content-Type")!="application/json":return self.reply({"error":"只允许本机 JSON 请求"},403)
         try:
             length=int(self.headers.get("Content-Length","0"))
-            if length>500000:return self.reply({"error":"请求过大"},413)
+            if length>12000000:return self.reply({"error":"请求过大"},413)
             body=json.loads(self.rfile.read(length))
             if self.path.startswith("/api/study/"):
                 import study_service as study
                 action=self.path.rsplit("/",1)[-1]
+                if action=='paper-affiliations':
+                    import paper_affiliations
+                    return self.reply(paper_affiliations.save(body))
+                if action=='paper-title':
+                    import paper_titles
+                    return self.reply(paper_titles.bilingual_title(body))
+                if action=='library-translate':
+                    import topic_library
+                    return self.reply(topic_library.translate(body))
+                if action=='scholar':
+                    import workspace_content
+                    return self.reply(workspace_content.save_scholar(body))
+                if action in ('blog-post','blog-folder','research-lab','method-post','method-resource','paste-image'):
+                    import workspace_content
+                    return self.reply(workspace_content.paste_image(body) if action=='paste-image' else workspace_content.save(action,body))
                 if action=='reading-library-select':return self.reply(study.select_reading_paper(body))
                 if action=='paper-library-archive':
                     import reading_journal
@@ -384,7 +423,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     return self.reply(reading_journal.save_review(body))
                 import knowledge_service as knowledge
                 import research_assets
-                knowledge_actions={"dataset":research_assets.save_dataset,"taxonomy":knowledge.save_node,"paper-knowledge":knowledge.save_paper,"paper-quiz-answer":knowledge.paper_attempt}
+                knowledge_actions={"dataset":research_assets.save_dataset,"dataset-topics":research_assets.assign_dataset_topics,"taxonomy":knowledge.save_node,"paper-knowledge":knowledge.save_paper,"paper-quiz-answer":knowledge.paper_attempt}
                 if action in knowledge_actions:return self.reply(knowledge_actions[action](body))
                 if action=="read-library":
                     import lineage_service

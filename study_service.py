@@ -82,17 +82,18 @@ def atlas_papers():
  unique={}
  for p in result:unique.setdefault(p['id'],p)
  return list(unique.values())
-def catalog(query='',kind='',page=0):
+def catalog(query='',kind='',page=0,venue=''):
  import local_app,learning_service
  query=text(query,300).lower();page=max(0,int(page));items=[];offset=page*40;total=0
  if kind in ('','paper'):
   with local_app.db() as c:
    args=[];where=''
-   if query:where=' WHERE lower(title) LIKE ? OR lower(body) LIKE ?';args=['%'+query+'%']*2
+   if query:where=' WHERE (lower(title) LIKE ? OR lower(body) LIKE ?)';args=['%'+query+'%']*2
+   if venue:where+=(' AND ' if where else ' WHERE ')+'venue=?';args.append(text(venue,100))
    total=c.execute('SELECT count(*) FROM papers'+where,args).fetchone()[0]
    rows=c.execute('SELECT body FROM papers'+where+' ORDER BY year DESC,title LIMIT ? OFFSET ?',args+[40,offset]).fetchall()
    items.extend(dict(json.loads(r[0]),kind='paper') for r in rows)
-   atlas=[p for p in atlas_papers() if (not query or query in json.dumps(p,ensure_ascii=False).lower()) and not c.execute('SELECT 1 FROM papers WHERE id=?',(p['id'],)).fetchone()]
+   atlas=[p for p in atlas_papers() if (not venue or venue=='Paper Atlas') and (not query or query in json.dumps(p,ensure_ascii=False).lower()) and not c.execute('SELECT 1 FROM papers WHERE id=?',(p['id'],)).fetchone()]
   if len(items)<40:items.extend(atlas[max(0,offset-total):max(0,offset-total)+40-len(items)])
   total+=len(atlas)
  if kind in ('','module'):
@@ -106,6 +107,9 @@ def resolve(kind,ident):
  if kind=='paper':
   with local_app.db() as c:r=c.execute('SELECT body FROM papers WHERE id=?',(ident,)).fetchone()
   if r:return dict(json.loads(r[0]),kind='paper')
+  import scholar_papers
+  p=scholar_papers.resolve(ident)
+  if p:local_app.absorb([p]);return p
   p=next((p for p in atlas_papers() if p['id']==ident),None)
   if p:local_app.absorb([p]);return p
  elif kind=='module':

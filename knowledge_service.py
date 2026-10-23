@@ -53,6 +53,12 @@ def save_node(data):
    path=ancestors(n['id'],items)
    if obj['id'] in [p['id'] for p in path] and len(chain)+len(path)-[p['id'] for p in path].index(obj['id'])>3:raise ValueError('移动后子分类将超过三级')
   if any(n['id']!=obj['id'] and n['kind']==kind and n.get('parentId')==parent and (n['name'].casefold()==name.casefold() or n.get('en','').casefold()==en.casefold()) for n in items):raise ValueError('同一层级已有同名分类，请直接选择或编辑已有定义')
+  topic_ids=data.get('topicIds',obj.get('topicIds',[]))
+  if not isinstance(topic_ids,list) or len(topic_ids)>50:raise ValueError('最多关联 50 个 Topic')
+  index={n['id']:n for n in items}
+  if any(not isinstance(i,str) or i not in index or index[i]['kind']!='topic' for i in topic_ids):raise ValueError('关联的 Topic 不存在')
+  if kind=='topic' and topic_ids:raise ValueError('Topic 自身的层级请通过父分类设置')
+  obj['topicIds']=list(dict.fromkeys(topic_ids))
   obj.update(kind=kind,name=name,en=en,parentId=parent,definition=study.text(data.get('definition','')),revision=obj['revision']+1,updatedAt=study.now())
   put(c,'taxonomy',obj)
   mapid=obj.get('lineageId','taxonomy-'+obj['id']);existing=c.execute("SELECT body FROM records WHERE kind='lineage' AND id=?",(mapid,)).fetchone()

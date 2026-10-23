@@ -3,6 +3,8 @@ import json,uuid
 import study_service as study
 
 def all_maps():
+ import knowledge_service
+ definitions=knowledge_service.taxonomy()['nodes']
  with study.connection() as c:
   if not c.execute("SELECT 1 FROM records WHERE kind='lineage-meta' AND id='seed-v1'").fetchone():
    try:topics=json.loads((study.ATLAS/'topics.json').read_text(encoding='utf-8-sig'))
@@ -23,6 +25,11 @@ def all_maps():
      c.execute("UPDATE records SET body=? WHERE kind='lineage' AND id=?",(json.dumps(obj,ensure_ascii=False),obj['id']))
    c.execute('INSERT INTO records VALUES(?,?,?,0)',('lineage-meta','original-catalog-v2','{}'))
   repair_initial_membership(c)
+  # Every saved classification has its own persistent, independently addressable map.
+  for n in definitions:
+   ident=n.get('lineageId') or 'taxonomy-'+n['id']
+   obj=dict(id=ident,kind=n['kind'],name=n['name']+(' · '+n['en'] if n.get('en') else ''),description=n.get('definition',''),paperIds=[],paths=[],revision=1,createdAt=study.now(),updatedAt=study.now())
+   c.execute('INSERT OR IGNORE INTO records VALUES(?,?,?,0)',('lineage',ident,json.dumps(obj,ensure_ascii=False)))
   # Bring existing problem cards into their own maps once; never overwrite edits.
   for old in study.records(c,'problem'):
    obj=dict(id='problem-'+old['id'],kind='problem',name=old['name'],description=old.get('question') or old.get('gap',''),paperIds=old.get('paperIds',[]),paths=[],revision=1,createdAt=study.now(),updatedAt=study.now())
@@ -85,6 +92,13 @@ def read_library(data):
  if not isinstance(ids,list) or len(ids)>10000 or any(not isinstance(i,str) or not i or len(i)>200 for i in ids):raise ValueError('已读论文列表无效')
  import local_app
  atlas={p['id']:p for p in study.atlas_papers()};papers=[];missing=[]
+ from reading_journal import complete
+ with study.connection() as c:knowledge=study.records(c,'paper-knowledge')
+ complete_records=[p for p in knowledge if complete(p) and p.get('readDate')]
+ def organized(p):
+  if any(p.get(k) for k in ('topicIds','problemIds','solutionIds')):return True
+  return any(ref.get('relationTypes') for ref in p.get('tasks',{}).get('related',{}).get('references',[]))
+ ids=[p['id'] for p in complete_records if organized(p)]
  with local_app.db() as c:
   for ident in dict.fromkeys(ids):
    found=c.execute('SELECT body FROM papers WHERE id=?',(ident,)).fetchone()

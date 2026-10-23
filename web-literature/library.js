@@ -1,3 +1,4 @@
+import {paperTitle,setPaperTitle,paperOption} from './paper-title.js';
 import {mountQuizToggle} from './paper-quiz-ui.js';
 import {openReader,paperTaskProgress,paperTaskTotal} from "./paper-reader.js";
 const $=id=>document.getElementById(id),node=(tag,cls,value)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(value!==undefined)n.textContent=value;return n};
@@ -19,7 +20,7 @@ function renderTaxonomy(){const box=$("conference-taxonomy");box.replaceChildren
 }
 function renderPapers(data){$("library-list").replaceChildren();const parent=taxonomy.find(c=>c.id===category),child=parent?.children.find(s=>s.id===subcategory);$("conference-breadcrumb").textContent=child?parent.label+" / "+child.label:parent?.label||"全部论文";
  $("conference-count").textContent=`${data.count} 篇 · 30 篇／页`;
- for(const p of data.papers){const row=node("article","conference-paper"),title=node("button","conference-paper-title",p.title);title.type="button";title.onclick=()=>openReader(p.id,"tasks");row.append(title);
+ for(const p of data.papers){const row=node("article","conference-paper"),title=paperTitle(p,'button','conference-paper-title');title.type="button";title.onclick=()=>openReader(p.id,"tasks");row.append(title);
  const authors=node("p","paper-authors","作者："+(Array.isArray(p.authors)?p.authors.join(", "):p.authors||"待补充"));row.append(authors);
  const tags=node("div","conference-paper-tags");for(const [cid,sid] of p.categories){const c=taxonomy.find(t=>t.id===cid),s=c?.children.find(t=>t.id===sid);if(!c||!s)continue;const tag=node("button","",s.label);tag.type="button";tag.title=c.label;tag.onclick=()=>selectCategory(cid,sid);tags.append(tag)}row.append(tags);
  const actions=node("div","conference-paper-actions"),tasks=node("button","button",`整理内容 ${paperTaskProgress(p.id)}/${paperTaskTotal}`),abstract=node("button","button","中英摘要"),notes=node("button","button","笔记");tasks.type=abstract.type=notes.type="button";tasks.dataset.paperChecklist=p.id;tasks.setAttribute("aria-label","整理论文："+p.title);tasks.onclick=()=>openReader(p.id,"tasks");abstract.onclick=()=>openReader(p.id,"abstract");notes.onclick=()=>openReader(p.id,"notes");const add=node("a","button","加入任务");add.href="http://127.0.0.1:8766/?addPaper="+encodeURIComponent(p.id)+"#daily";add.setAttribute("aria-label","加入今日任务："+p.title);add.onclick=e=>{

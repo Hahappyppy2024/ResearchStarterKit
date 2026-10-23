@@ -1,3 +1,4 @@
+import {paperTitle,setPaperTitle,paperOption} from './paper-title.js';
 import {knowledgeApi as api} from './paper-knowledge.js';
 const el=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n};
 function button(text,fn){const b=el('button',text);b.type='button';b.className='button';b.onclick=fn;return b}
@@ -8,8 +9,8 @@ export function mountQuestionList(host,state,save,answers,custom=""){
 }
 export async function mountComparison(host,paperId,state,save){
  const section=el('section'),search=el('input'),choices=el('select'),list=el('div'),status=el('p');section.className='knowledge-classification';search.placeholder='搜索已读论文的标题或作者';search.setAttribute('aria-label','搜索已读对比论文');choices.setAttribute('aria-label','选择已读对比论文');state.comparisonPaperIds||=[];const papers=(await api('read-papers')).items.filter(p=>p.id!==paperId),names=new Map(papers.map(p=>[p.id,p.title]));
- function options(){choices.replaceChildren(new Option('从已读论文选择',''));for(const p of papers.filter(p=>(p.title+' '+JSON.stringify(p.authors)).toLowerCase().includes(search.value.toLowerCase())))choices.add(new Option(p.title+' · '+p.date,p.id))}options();search.oninput=options;
- async function draw(){list.replaceChildren();for(const id of state.comparisonPaperIds){if(!names.has(id)){try{names.set(id,(await api('resource?kind=paper&id='+encodeURIComponent(id))).title)}catch{names.set(id,id)}}const row=el('div');row.append(el('strong',names.get(id)),button('打开对比论文',async()=>{const {openReader}=await import('./paper-reader.js');openReader(id,'tasks')}),button('取消选择',()=>{state.comparisonPaperIds=state.comparisonPaperIds.filter(x=>x!==id);save();draw()}));list.append(row)}}
+ function options(){choices.replaceChildren(new Option('从已读论文选择',''));for(const p of papers.filter(p=>(p.title+' '+JSON.stringify(p.authors)).toLowerCase().includes(search.value.toLowerCase())))choices.add(paperOption(p))}options();search.oninput=options;
+ async function draw(){list.replaceChildren();for(const id of state.comparisonPaperIds){if(!names.has(id)){try{names.set(id,(await api('resource?kind=paper&id='+encodeURIComponent(id))).title)}catch{names.set(id,id)}}const row=el('div');row.append(paperTitle({id,title:names.get(id)},'strong'),button('打开对比论文',async()=>{const {openReader}=await import('./paper-reader.js');openReader(id,'tasks')}),button('取消选择',()=>{state.comparisonPaperIds=state.comparisonPaperIds.filter(x=>x!==id);save();draw()}));list.append(row)}}
  const add=button('加入对比论文',()=>{if(!choices.value)return;state.comparisonPaperIds=[...new Set([...state.comparisonPaperIds,choices.value])];save();draw()});section.append(el('h4','从已读论文中选择对比对象'),el('p','仅列出已完成全部阅读任务的论文；对比结果写在下方回答中。'),search,choices,add,list,status);host.insertBefore(section,host.querySelector('textarea'));if(!papers.length)status.textContent='还没有其他已读论文。完成一篇论文的阅读任务后，就可以在这里选择。';await draw();
 }
 export async function mountNextProblems(host,state,save){

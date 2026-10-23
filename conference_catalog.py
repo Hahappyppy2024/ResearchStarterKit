@@ -9,7 +9,7 @@ import threading
 import unicodedata
 
 ROOT = pathlib.Path(__file__).resolve().parent
-VENUES = ["AAAI", "NeurIPS", "ICML", "ICLR", "CVPR", "ICCV"]
+VENUES = ["AAAI", "NeurIPS", "ICML", "ICLR", "CVPR", "ICCV", "ICSE", "FSE", "ASE", "ISSTA"]
 # Personal browsing taxonomy, not official conference tracks. Multi-label matches.
 RULES = [
  ("agents", "智能体 / Agents", [
@@ -46,8 +46,14 @@ RULES = [
   ("adaptation", "迁移与泛化", r"domain.adapt|domain.general|out.of.distribution|transfer.learning|test.time.adapt"),
   ("continual", "持续与小样本学习", r"continual.learning|lifelong|few.shot|zero.shot|meta.learning"),
   ("federated", "联邦与分布式学习", r"federated|distributed.learning|decentralized.learning")]),
- ("safety", "安全与可信 / Trustworthy AI", [
-  ("security", "攻击与防御", r"adversarial|backdoor|jailbreak|prompt.injection|poison|watermark"),
+ ("software", "软件工程 / Software Engineering", [
+  ("testing", "软件测试与分析", r"software.test|unit.test|test.generat|fuzz|static.analys|dynamic.analys|program.analys|symbolic.execut"),
+  ("repair", "程序修复与调试", r"program.repair|bug.fix|automated.repair|debugg|patch.generat|vulnerability.repair"),
+  ("code", "代码生成与理解", r"code.generat|code.complet|code.summar|code.understand|program.synth|software.engineer|repository.level"),
+  ("general", "软件工程综合", r"(?!)"),
+  ("maintenance", "软件维护与演化", r"software.maint|software.evol|refactor|technical.debt|code.review|pull.request|software.requirement|software.architect")]),
+ ("safety", "安全 / Security", [
+  ("security", "攻击与防御", r"adversarial|backdoor|jailbreak|prompt.injection|poison|watermark|cybersecurity|cyber.security|vulnerabilit|malware|intrusion.detect|agent.*secur|llm.*secur"),
   ("alignment", "对齐与安全", r"\balignment\b|\bsafety\b|\brlhf\b|preference.optim"),
   ("privacy", "隐私与公平", r"\bprivacy\b|differentially.private|\bfairness\b|unlearning"),
   ("explain", "可解释性与可靠性", r"interpretabil|explainabil|uncertainty|calibration|hallucinat")]),
@@ -86,6 +92,7 @@ def signature():
 def classify_paper(p):
     text = p.get("title", "") + " " + p.get("summary", "")
     labels = [(cid,sid) for cid,_,subs in COMPILED for sid,_,pattern in subs if pattern.search(text)]
+    if p.get("venue") in ("ICSE","FSE","ASE","ISSTA") and not any(c=="software" for c,s in labels):labels.append(("software","general"))
     return labels or [("other", "unclassified")]
 
 def title_key(title):
@@ -104,7 +111,7 @@ def catalog(force=False):
         if CACHE is not None and not force and signature()==CACHED_SIGNATURE:
             return CACHE
         with contextlib.closing(sqlite3.connect(ROOT/"local-data/library.sqlite")) as c:
-            rows = c.execute("SELECT body FROM papers WHERE venue IN (?,?,?,?,?,?) OR venue='arXiv'", VENUES).fetchall()
+            rows = c.execute("SELECT body FROM papers WHERE venue IN ("+",".join("?" for _ in VENUES)+") OR venue='arXiv'", VENUES).fetchall()
         raw = [json.loads(row[0]) for row in rows]
         arxiv = {title_key(p["title"]):arxiv_link(p) for p in raw if p.get("venue")=="arXiv" and arxiv_link(p)}
         groups = collections.defaultdict(list)

@@ -1,0 +1,17 @@
+import {titleParts,titleLabel} from './paper-title-model.mjs';
+const endpoint=location.port==='8772'?'':'http://127.0.0.1:8766',memory=new Map(),pending=new Map(),jobs=[];let active=0;
+const style=document.createElement('style');style.textContent=`.bilingual-paper-title{display:block;line-height:1.5;text-align:inherit;overflow-wrap:anywhere}.bilingual-paper-title .paper-title-zh{display:block;font-size:1em;font-weight:inherit}.bilingual-paper-title .paper-title-en{display:block;font-size:.84em;font-weight:400;opacity:.78;margin-top:3px}.bilingual-paper-title .paper-title-state{display:block;font-size:11px;font-weight:400;opacity:.65;margin-top:2px}`;document.head.append(style);
+function cached(p){return memory.get(p.title)||null}
+function request(p){const key=p.id||p.paperId;if(!key)return Promise.resolve({...titleParts(p),error:'标题译名待补充'});if(pending.has(key))return pending.get(key);const promise=new Promise(resolve=>{jobs.push({key,resolve});pump()});pending.set(key,promise);return promise;}
+async function pump(){while(active<2&&jobs.length){const {key,resolve}=jobs.shift();active++;(async()=>{let result;try{const r=await fetch(endpoint+'/api/study/paper-title',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paperId:key})});result=await r.json();if(!r.ok)throw Error(result.error);if(result.titleZh&&result.titleEn){memory.set(result.title,result);}}catch{result={error:'标题翻译暂不可用，原始标题保留'}}if(result.error)pending.delete(key);resolve(result);active--;pump()})();}}
+const observe=new IntersectionObserver(entries=>{for(const item of entries)if(item.isIntersecting){observe.unobserve(item.target);item.target._loadPaperTitle?.();}},{rootMargin:'200px'});
+export function setPaperTitle(node,p,options={}){
+ const source=titleParts(p),stamp=Symbol();node._paperTitleStamp=stamp;node.classList.add('bilingual-paper-title');let slot=node._paperTitleSlot;if(node.tagName!=='OPTION'&&slot?.parentNode!==node){slot=document.createElement('span');node.replaceChildren(slot);node._paperTitleSlot=slot;}
+ function draw(value){if(node._paperTitleStamp!==stamp)return;const t={...source,...value};if(node.tagName==='OPTION'){node.textContent=(options.prefix||'')+titleLabel(t);return;}
+  const zh=document.createElement('span'),en=document.createElement('span');zh.className='paper-title-zh';en.className='paper-title-en';zh.lang='zh-CN';en.lang='en';zh.textContent=(options.prefix||'')+(t.titleZh||(t.error?'中文译名暂缺':'中文译名加载中…'));en.textContent=t.titleEn||(t.error?'英文译名暂缺':'英文译名加载中…');slot.replaceChildren(zh,en);node.title=t.provider||'';if(t.error){const status=document.createElement('small');status.className='paper-title-state';status.textContent=t.error;slot.append(status);}}
+ const known={...source,...cached(source),...(p.titleZh?{titleZh:p.titleZh}:{}),...(p.titleEn?{titleEn:p.titleEn}:{})};draw(known);
+ if((!known.titleZh||!known.titleEn)&&options.translate!==false){node._loadPaperTitle=()=>request(p).then(value=>draw({...known,...value}));if(node.tagName==='OPTION')node._loadPaperTitle();else observe.observe(node);}
+ return node;
+}
+export function paperTitle(p,tag='h3',cls=''){const n=document.createElement(tag);if(cls)n.className=cls;return setPaperTitle(n,p);}
+export function paperOption(p,prefix=''){const n=new Option('',p.id||p.paperId||'');return setPaperTitle(n,p,{prefix});}

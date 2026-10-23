@@ -10,6 +10,21 @@ class AssetTests(unittest.TestCase):
  def tearDown(self):
   for p in self.patches:p.stop()
   gc.collect();self.tmp.cleanup()
+ def test_topic_association_preserves_dataset_and_queue(self):
+  topic=k.save_node(dict(kind='topic',name='主题 A',en='Test definition'))
+  other=k.save_node(dict(kind='topic',name='主题 B',en='Second definition'))
+  problem=k.save_node(dict(kind='problem',name='问题',en='Test definition',topicIds=[topic['id']]))
+  dataset=assets.save_dataset(dict(name='Benchmark',description='Preserve',sourcePaperIds=[self.source['id']],problemIds=[problem['id']],topicIds=[topic['id']]))
+  before=s.state()['queue']
+  saved=assets.assign_dataset_topics(dict(id=dataset['id'],revision=dataset['revision'],topicIds=[topic['id'],other['id'],topic['id']]))
+  self.assertEqual(saved['topicIds'],[topic['id'],other['id']])
+  for key in ['name','description','sourcePaperIds','problemIds']:self.assertEqual(saved[key],dataset[key])
+  self.assertEqual(s.state()['queue'],before)
+  with self.assertRaises(ValueError):assets.assign_dataset_topics(dict(id=saved['id'],revision=dataset['revision'],topicIds=[]))
+  with self.assertRaises(ValueError):assets.assign_dataset_topics(dict(id=saved['id'],revision=saved['revision'],topicIds=[problem['id']]))
+  with self.assertRaises(ValueError):k.save_node(dict(kind='solution',name='Invalid',en='Test definition',topicIds=[problem['id']]))
+  saved_problem=k.save_node(dict(problem,definition='Preserve Topic'))
+  self.assertEqual(saved_problem['topicIds'],[topic['id']])
  def test_dataset_figure_and_old_answers_roundtrip(self):
   nodes={kind:k.save_node(dict(kind=kind,name=kind+'中文',en=kind+' English')) for kind in ('topic','problem','solution')}
   with s.connection() as c:self.assertTrue(k.row_exists(c,'lineage','taxonomy-'+nodes['solution']['id']))
@@ -104,3 +119,4 @@ class AssetTests(unittest.TestCase):
    with self.assertRaises(ValueError):assets.upload_figure(self.paper['id'],payload)
   with self.assertRaises(ValueError):assets.figure_file('../../study.sqlite')
 if __name__=='__main__':unittest.main()
+

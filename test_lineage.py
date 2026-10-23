@@ -14,6 +14,15 @@ class LineageTests(unittest.TestCase):
   a=l.save(dict(a,paths=[dict(name='Start here',ids=[self.p['id']],relation='Reading order',evidence='My learning plan')]))
   self.assertEqual(l.detail(a['id'])['papers'][0]['title'],'Test paper');self.assertFalse(l.detail(b['id'])['papers']);self.assertFalse(l.detail(b['id'])['map']['paths'])
   with self.assertRaises(ValueError):l.save(dict(a,paperIds=[]))
+ def test_every_classification_has_independent_map_without_overwriting_edits(self):
+  import knowledge_service as k
+  with s.connection() as c:k.put(c,'taxonomy',dict(id='existing-child',kind='topic',name='子主题',en='Subtopic',parentId=None,revision=1))
+  m=next(m for m in l.all_maps()['items'] if m['id']=='taxonomy-existing-child')
+  self.assertEqual(m['paperIds'],[])
+  changed=l.save(dict(m,description='My own notes'))
+  self.assertEqual(l.detail(m['id'])['map']['description'],'My own notes')
+  l.archive(dict(id=m['id']))
+  self.assertNotIn(m['id'],[item['id'] for item in l.all_maps()['items']])
  def test_archive_conflict_and_restore(self):
   a=l.save(dict(name='Agent',kind='topic'));l.save(dict(a,description='Updated'))
   with self.assertRaises(ValueError):l.save(a)
@@ -49,10 +58,18 @@ class LineageTests(unittest.TestCase):
    c.execute('INSERT INTO records VALUES(?,?,?,0)',('lineage-meta','seed-v1','{}'))
   result=l.all_maps()['items'][0];self.assertEqual(result['description'],'User notes');self.assertEqual(result['paths'][0],obj['paths'][0]);self.assertEqual(result['paths'][1]['ids'],['atlas-alpha','atlas-beta']);self.assertEqual(result['revision'],3)
   with s.connection() as c:backup=json.loads(c.execute("SELECT body FROM records WHERE kind='lineage-meta' AND id='initial-membership-v3'").fetchone()[0]);self.assertEqual(backup['before'][0]['revision'],2)
- def test_read_library_only_resolves_explicit_marks(self):
+ def test_read_library_requires_complete_and_organized_notes(self):
+  import reading_journal
   other=s.save_paper(dict(title='Unread paper'))
-  result=l.read_library(dict(ids=[self.p['id'],self.p['id'],'missing-paper']))
-  self.assertEqual([p['id'] for p in result['papers']],[self.p['id']]);self.assertEqual(result['missing'],['missing-paper'])
+  self.assertFalse(l.read_library(dict(ids=[self.p['id']]))['papers'])
+  tasks={t['id']:{'done':True} for t in reading_journal.definitions()}
+  obj=dict(id=self.p['id'],tasks=tasks,readDate='2026-10-23',topicIds=[])
+  with s.connection() as c:c.execute('INSERT INTO records VALUES(?,?,?,0)',('paper-knowledge',obj['id'],json.dumps(obj)))
+  self.assertFalse(l.read_library(dict(ids=[self.p['id']]))['papers'])
+  obj['topicIds']=['topic-test']
+  with s.connection() as c:c.execute("UPDATE records SET body=? WHERE kind='paper-knowledge' AND id=?",(json.dumps(obj),obj['id']))
+  result=l.read_library(dict(ids=[]))
+  self.assertEqual([p['id'] for p in result['papers']],[self.p['id']])
   self.assertNotIn(other['id'],[p['id'] for p in result['papers']])
   with self.assertRaises(ValueError):l.read_library(dict(ids=[None]))
 if __name__=='__main__':unittest.main()

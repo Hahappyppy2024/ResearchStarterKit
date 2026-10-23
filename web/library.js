@@ -1,3 +1,4 @@
+import {paperTitle,setPaperTitle,paperOption} from './paper-title.js';
 const $=id=>document.getElementById(id);
 let page=0;
 async function api(path,body){const r=await fetch(path,body?{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}:{});if(!r.ok)throw Error("请求失败");return r.json()}
@@ -14,7 +15,7 @@ async function load(){
  try{const d=await api("/api/library?"+q);$("library-list").replaceChildren();$("library-count").textContent=`${d.count} 篇 · 第 ${page+1} 页`;
  for(const p of d.papers){
   const row=document.createElement("article");row.className="library-row";
-  const title=text("h3",p.title),meta=text("p",`${p.venue||"arXiv"} ${p.year||""} · ${(p.topics||[]).join(" / ")} · ${p.authors||"作者信息待补全"}`);meta.className="small muted";
+  const title=paperTitle(p),meta=text("p",`${p.venue||"arXiv"} ${p.year||""} · ${(p.topics||[]).join(" / ")} · ${p.authors||"作者信息待补全"}`);meta.className="small muted";
   const links=document.createElement("div");links.className="library-links";
   for(const [label,url] of [["原文",p.source],["PDF",p.pdf]]){if(!url||!url.startsWith("https://"))continue;const a=text("a",label+" ↗");a.href=url;a.target="_blank";a.rel="noopener";links.append(a)}
   const save=text("button",p.zoteroKey?"已在 Zotero":"保存到 Zotero");save.className="button";save.disabled=!!p.zoteroKey;

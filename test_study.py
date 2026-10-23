@@ -26,7 +26,7 @@ class StudyTests(unittest.TestCase):
   c=s.save_record('comparison',dict(name='Two methods',paperIds=[self.p1['id'],self.p2['id']],rows={self.p1['id']:{'method':'Baseline'}}))
   self.assertEqual(c['rows'][self.p1['id']]['method'],'Baseline');s.archive(dict(kind='comparison',id=c['id']));self.assertEqual(len(s.state()['archivedComparisons']),1)
  def test_manual_queue_date_dedup_remove_restore(self):
-  data=dict(date='2026-10-21',paperId=self.p1['id'],reason='Chosen intentionally');s.add_queue(data);s.add_queue(data);self.assertEqual(len(s.state(data['date'])['queue']),1);self.assertFalse(s.state('2026-10-22')['queue'])
+  data=dict(date='2026-10-21',paperId=self.p1['id'],reason='Chosen intentionally');s.add_queue(data);s.add_queue(data);self.assertEqual(len(s.state(data['date'])['queue']),1);self.assertEqual(s.state('2026-10-22')['queue'][0]['carriedFrom'],'2026-10-21')
   s.remove_queue(data);self.assertFalse(s.state(data['date'])['queue']);s.remove_queue(dict(data,restore=True));self.assertEqual(s.state(data['date'])['queue'][0]['reason'],data['reason'])
   p=s.save_paper(dict(self.p1,summary='Updated abstract'));self.assertEqual(s.resolve('paper',p['id'])['summary'],'Updated abstract')
   with self.assertRaises(ValueError):s.save_paper(dict(title='Unsafe',pdf='javascript:alert(1)'))

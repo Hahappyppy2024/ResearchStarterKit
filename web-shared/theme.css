@@ -17,3 +17,8 @@ body:has(#tree):has(#kind) small{color:var(--theme-muted)}
 body:has(#tree):has(#kind) input,body:has(#tree):has(#kind) textarea,body:has(#tree):has(#kind) select,body:has(#cards) textarea{background:var(--theme-paper);color:var(--theme-ink);border-color:var(--theme-line)}
 body:has(#tree):has(#kind) a{color:var(--theme-accent)}
 body:has(#tree):has(#kind) #editor>button{background:var(--theme-accent);color:white}
+
+/* Shared research motto: white text on the chosen deep green/blue accent. */
+.research-nav-host .hub-brand small,.hub-header .hub-brand small{display:table!important;color:#fff!important;background:var(--theme-accent,#28594b);border-radius:6px;padding:6px 10px;font-size:16px!important;line-height:1.6;letter-spacing:.3px;margin-top:5px;font-weight:600!important;white-space:normal}
+
+

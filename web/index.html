@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#28594b">
-  <meta name="description" content="从六点开始的每日修行与研究日程。查看当前安排、每日打卡，记录论文与答辩准备进度。">
-  <title>每日努力 · 修行与研究</title>
+  <meta name="description" content="从六点开始的每日修身与研究日程。查看当前安排、每日打卡，记录论文与答辩准备进度。">
+  <title>每日努力 · 修身与研究</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%2328594b'/%3E%3Cpath d='M16 44V20h12q8 0 8 8v16m0-16q0-8 12-8v24' fill='none' stroke='%23fff' stroke-width='4'/%3E%3C/svg%3E">
   <link rel="stylesheet" href="./style.css">
   <link rel="stylesheet" href="./papers.css">
@@ -25,21 +25,21 @@
     </header>
     <main>
       <section class="page-heading">
-        <div><p class="eyebrow">修行 · 研究 · 一点点积累</p><h1 id="daily-quote">祸福无门，唯人自召。</h1><p class="muted quote-caption"><span id="daily-quote-meta">《太上感应篇》· 每日一句</span><a id="daily-quote-source" target="_blank" rel="noopener" hidden>查看原文 ↗</a></p></div>
+        <div><p class="eyebrow">修身 · 研究 · 一点点积累</p><h1 id="daily-quote">祸福无门，唯人自召。</h1><p class="muted quote-caption"><span id="daily-quote-meta">《太上感应篇》· 每日一句</span><a id="daily-quote-source" target="_blank" rel="noopener" hidden>查看原文 ↗</a></p></div>
         <div class="heading-tools"><a class="poetry-quick-link" href="http://127.0.0.1:8769/#poetry" target="_top"><span class="poetry-quick-mark" aria-hidden="true">诗</span><span>毛主席诗词<small>每日一首 · 按创作时间背诵</small></span><span aria-hidden="true">↗</span></a><div class="date-control"><label for="date">查看日期</label><div><button id="prev-day" class="icon-button" aria-label="前一天">‹</button><input id="date" type="date" aria-label="查看日期"><button id="next-day" class="icon-button" aria-label="后一天">›</button><button id="today" class="button subtle">今天</button></div></div></div>
       </section>
       <section class="now-card" aria-label="当前日程">
         <div><p class="eyebrow light"><span class="pulse"></span> 此刻的安排 <time id="clock"></time></p><h2 id="current-title">正在读取日程</h2><p id="current-detail"></p><div class="now-bottom"><span id="current-time"></span><span id="remaining"></span></div></div>
-        <div class="next-block"><p class="eyebrow light">接下来</p><h3 id="next-title"></h3><p id="next-time"></p><span class="small">不急，一次做好一件事。</span></div>
+        <div class="next-block"><p class="eyebrow light">接下来</p><h3 id="next-title"></h3><p id="next-time"></p><span class="daily-calm-reminder">不急，一次做好一件事。</span></div>
       </section>
-      <nav class="page-nav" aria-label="页面导航"><a href="http://127.0.0.1:8769/#daily" target="_top">统一研究桌面 ↑</a><a href="http://127.0.0.1:8767/" target="_blank" rel="noopener">打开独立论文网站 ↗</a><a href="#daily">每日安排 ↓</a><a href="#todo-panel">Todo List ↓</a><a href="/daily-quiz.html" target="_blank" rel="noopener">每日 Quiz ↗</a><a href="/paper-questions.html" target="_blank" rel="noopener">已读论文问题 ↗</a>
+      <nav class="page-nav" aria-label="页面导航"><a href="http://127.0.0.1:8769/#daily" target="_top">统一研究桌面 ↑</a><a href="http://127.0.0.1:8766/library.html" target="_blank" rel="noopener">打开论文库 ↗</a><a href="#daily">每日安排 ↓</a><a href="#todo-panel">Todo List ↓</a><a href="/daily-quiz.html" target="_blank" rel="noopener">每日 Quiz ↗</a><a href="/paper-questions.html" target="_blank" rel="noopener">已读论文问题 ↗</a>
           <a href="http://127.0.0.1:8769/#methods" target="_top">科研方法 ↗</a><a href="http://127.0.0.1:8769/#arxiv" target="_top">arXiv 每周论文 ↗</a></nav>
 
 
 <div class="content-grid" id="daily">
         <section class="schedule-panel">
           <div class="section-heading"><div><h2 id="schedule-heading">今日安排</h2><p class="muted small" id="day-label"></p></div><span class="pill" id="schedule-window">06:00 — 23:00</span></div>
-          <div class="legend"><span><i class="dot life"></i>生活与修行</span><span><i class="dot research"></i>论文研究</span><span><i class="dot defence"></i>答辩准备</span><span><i class="dot rest"></i>休息</span></div>
+          <div class="legend"><span><i class="dot life"></i>生活与修身</span><span><i class="dot research"></i>论文研究</span><span><i class="dot defence"></i>答辩准备</span><span><i class="dot rest"></i>休息</span></div>
           <div class="schedule-manage"><span class="small muted">时间固定 · 新任务自动切分原时段，不重叠。</span><button id="schedule-reset" class="text-button" type="button">恢复默认安排</button></div>
           <div id="schedule"></div>
           <p id="schedule-status" class="small muted" role="status"></p><button id="schedule-undo" type="button" class="text-button" hidden>撤销删除安排</button>
@@ -47,7 +47,7 @@
         </section>
         <aside>
           <section class="panel reading-statistics" id="flash-statistics" aria-label="Flash Cards 学习统计"><div class="section-heading"><h2>Flash Cards 学习统计</h2></div><div class="read-stats-grid"><div><span>全部卡片</span><strong id="flash-stat-total">—</strong><small>张</small></div><div><span>已学会</span><strong id="flash-stat-known">—</strong><small>张</small></div><div><span>未学会</span><strong id="flash-stat-review">—</strong><small>张</small></div><div><span>未测试</span><strong id="flash-stat-untested">—</strong><small>张</small></div><div><span>今日到期／待测试</span><strong id="flash-stat-due">—</strong><small>张</small></div></div><p class="small muted" id="flash-stats-note">正在读取本机记录…</p></section><section class="panel reading-statistics" id="reading-statistics" aria-label="论文阅读统计"><div class="section-heading"><h2>论文阅读统计</h2><span class="tag">按篇累计</span></div><div class="read-stats-grid"><div><span>今日已读</span><strong id="read-stat-today">0</strong><small>篇</small></div><div><span>本周已读</span><strong id="read-stat-week">0</strong><small>篇</small></div><div><span>本月已读</span><strong id="read-stat-month">0</strong><small>篇</small></div><div><span>累计已读</span><strong id="read-stat-total">0</strong><small>篇</small></div></div><p id="reading-stats-note" class="small muted"></p></section>
-          <section class="panel todo-panel" id="todo-panel"><div class="section-heading"><h2>Todo List · 待办清单</h2><span class="tag" id="todo-date-label"></span></div><form id="todo-form"><label class="field-label" for="todo-title">待办事项</label><input id="todo-title" required maxlength="160" placeholder="例如：修改论文引言"><div class="todo-time-fields"><div><label class="field-label" for="todo-start">开始时间（选填）</label><select id="todo-start"></select></div><div><label class="field-label" for="todo-end">结束时间（选填）</label><select id="todo-end"></select></div></div><div class="todo-form-actions"><button id="todo-submit" class="button primary" type="submit">添加待办</button><button id="todo-cancel" class="button" type="button" hidden>取消编辑</button></div></form><p id="todo-status" class="small muted" role="status"></p><div id="todo-list"></div><button id="todo-undo" class="text-button" hidden>撤销删除</button></section>
+          <section class="panel todo-panel" id="todo-panel"><div class="section-heading"><h2>Todo List · 待办清单</h2><span class="tag" id="todo-date-label"></span></div><form id="todo-form"><label class="field-label" for="todo-title">待办事项</label><input id="todo-title" required maxlength="160" placeholder="例如：修改论文引言"><label class="field-label" for="todo-detail">说明／截图（可直接粘贴）</label><textarea id="todo-detail" rows="3" placeholder="补充任务内容，Ctrl+V 粘贴截图"></textarea><div class="todo-time-fields"><div><label class="field-label" for="todo-start">开始时间（选填）</label><select id="todo-start"></select></div><div><label class="field-label" for="todo-end">结束时间（选填）</label><select id="todo-end"></select></div></div><div class="todo-form-actions"><button id="todo-submit" class="button primary" type="submit">添加待办</button><button id="todo-cancel" class="button" type="button" hidden>取消编辑</button></div></form><p id="todo-status" class="small muted" role="status"></p><div id="todo-list"></div><button id="todo-undo" class="text-button" hidden>撤销删除</button></section>
           <section class="panel progress-panel">
             <div class="section-heading"><h2>当天进度</h2><span id="progress-count">0 / 8</span></div>
             <div class="progress-track" role="progressbar" aria-label="当天完成进度" aria-valuemin="0" aria-valuemax="8" aria-valuenow="0"><div id="progress-fill"></div></div>
@@ -70,7 +70,10 @@
 <section class="panel nightly-quiz-entry" id="daily-quiz-entry"><div><p class="eyebrow">睡前任务 · 所有任务完成后</p><h2>每日 Quiz · 先回忆，再核对</h2><p id="night-quiz-due">论文卡片＋知识模块卡片＋间隔复习。</p><p class="small">未学会：次日继续；已学会：间隔 1、3、7、14、30 天复习。间隔从每次自评当天起算。</p></div><a class="button" href="/daily-quiz.html" target="_blank" rel="noopener">开始睡前 Quiz ↗</a></section>
 <section class="panel" id="daily-paper-questions"><div class="section-heading"><h2>每日的问题 · 论文问题</h2><a class="button" href="/paper-questions.html" target="_blank" rel="noopener">已读论文问题合集 ↗</a></div><p id="daily-paper-question-stats" class="small muted">正在读取问题记录…</p><div id="daily-paper-question-list"></div></section>
       <section class="panel" id="conference-deadlines" aria-label="会议投稿截止日期"><h2>会议投稿 DDL</h2><p>正在读取官方日期记录…</p></section>
-      <footer>每天重新开始，每一步都算数。<span>每日努力 · 修行与研究</span></footer>
+      <section class="frequent-links" aria-labelledby="frequent-links-title">
+        <div class="frequent-links-heading"><h2 id="frequent-links-title">常访问链接</h2><p>常用的研究资讯与工具</p></div>
+        <div class="frequent-links-grid"><a class="frequent-link-card" href="https://aisafetyhot.com/zh" target="_blank" rel="noopener"><span class="frequent-link-icon" aria-hidden="true">AI</span><span class="frequent-link-text"><strong>AI Safety Hot</strong><small>AI 安全热点</small></span><span class="frequent-link-arrow" aria-hidden="true">↗</span></a></div>
+      </section><footer>每天重新开始，每一步都算数。<span>每日努力 · 修身与研究</span></footer>
     </main>
   </div>
   <dialog id="schedule-edit-dialog"><div class="dialog-heading"><h2>编辑当天安排</h2><button id="schedule-edit-cancel" type="button" class="icon-button" aria-label="关闭安排编辑">×</button></div><form id="schedule-edit-form"><label class="field-label" for="schedule-edit-title">事项名称</label><input id="schedule-edit-title" required maxlength="160"><div class="todo-time-fields"><div><label class="field-label" for="schedule-edit-start">开始时间</label><select id="schedule-edit-start" required></select></div><div><label class="field-label" for="schedule-edit-end">结束时间</label><select id="schedule-edit-end" required></select></div></div><label class="field-label" for="schedule-edit-detail">说明（选填）</label><textarea id="schedule-edit-detail" rows="3" maxlength="2000"></textarea><p id="schedule-edit-status" class="small muted" role="status"></p><button class="button primary" type="submit">保存当天安排</button></form></dialog>

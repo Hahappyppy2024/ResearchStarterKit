@@ -1,4 +1,5 @@
 """Local AI learning modules, source decks, preview jobs and study notes."""
+import re
 import contextlib, datetime, json, pathlib, sqlite3, subprocess, threading, uuid, zipfile, io, xml.etree.ElementTree as ET
 from learning_editor import slide_names
 from learning_taxonomy import entries as taxonomy_entries
@@ -43,10 +44,20 @@ def write(c,table,data):c.execute(f'UPDATE {table} SET body=? WHERE id=?',(json.
 def clean(value,limit=50000):
  if not isinstance(value,str) or len(value)>limit:raise ValueError('内容无效或过长')
  return value
+LEARNING_STAGES={'model':'模型／模块理解','training':'模型训练','inference':'模型推理','deployment':'模型部署'}
+def learning_stage(module):
+ explicit=module.get('learningStage')
+ if explicit in LEARNING_STAGES:return explicit
+ text=(module.get('name','')+' '+module.get('en','')).lower()
+ if re.search(r'部署|服务化|量化|剪枝|蒸馏|模型压缩|onnx|tensorrt|serving|deployment|quantiz|pruning|distillation|compression',text):return 'deployment'
+ if re.search(r'推理|解码|缓存|nms|kv.?cache|inference|decoding|beam.search|\bsampling\b|speculative',text):return 'inference'
+ if re.search(r'训练|优化|损失|反向传播|正则化|微调|学习率|梯度|初始化|归一化|training|optimization|optimizer|loss|交叉熵|均方误差|\badam\b|\bsgd\b|\blora\b|\bpeft\b|\bdpo\b|\brlhf\b|\bgrpo\b|\bppo\b|backprop|regulariz|fine.tun|learning.rate|gradient|initializ|normalization|dropout',text):return 'training'
+ return 'model'
+
 def list_modules():
  with connection() as c:
   modules=[json.loads(r[0]) for r in c.execute('SELECT body FROM modules ORDER BY rowid')]
-  for m in modules:m['deckCount']=sum(not json.loads(r[0]).get('archived',False) for r in c.execute('SELECT body FROM decks WHERE module_id=?',(m['id'],)))
+  for m in modules:m['learningStage']=learning_stage(m);m['deckCount']=sum(not json.loads(r[0]).get('archived',False) for r in c.execute('SELECT body FROM decks WHERE module_id=?',(m['id'],)))
   return modules
 def detail(ident):
  with connection() as c:
@@ -58,6 +69,7 @@ def detail(ident):
     c.execute('INSERT INTO flashcards VALUES(?,?,?)',(card['id'],ident,json.dumps(card,ensure_ascii=False)))
    module['flashcardsMigrated']=True;write(c,'modules',module)
   cards=[json.loads(r[0]) for r in c.execute('SELECT body FROM flashcards WHERE module_id=? ORDER BY rowid',(ident,))]
+  module={**module,'learningStage':learning_stage(module)}
   return dict(module=module,decks=[d for d in decks if not d.get('archived')],archivedDecks=[d for d in decks if d.get('archived') and not d.get('systemSample')],cards=[v for v in cards if not v.get('archived')],archivedCards=[v for v in cards if v.get('archived')])
 
 def save_flashcard(data):
@@ -85,10 +97,11 @@ def archive_flashcard(data):
 def save_module(data):
  with connection() as c:
   ident=data.get('id');m=row(c,'modules',ident) if ident else dict(id=str(uuid.uuid4()),notes='',questions='',answers='',summary='',en='')
-  for k in ['name','en','summary','notes','questions','answers','domain','section']:
+  for k in ['name','en','summary','notes','questions','answers','domain','section','learningStage']:
    if k in data:m[k]=clean(data[k],160 if k in ['name','en'] else 50000)
   if not m.get('name','').strip():raise ValueError('请填写模块名称')
   if m.get('domain','general') not in ('general','cv','nlp','agent'):raise ValueError('知识分类无效')
+  if m.get('learningStage',learning_stage(m)) not in LEARNING_STAGES:raise ValueError('请选择有效的学习部分')
   m['updatedAt']=now()
   if ident:write(c,'modules',m)
   else:c.execute('INSERT INTO modules VALUES(?,?)',(m['id'],json.dumps(m,ensure_ascii=False)))

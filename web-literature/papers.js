@@ -1,3 +1,4 @@
+import {paperTitle,setPaperTitle,paperOption} from './paper-title.js';
 import {openReader} from "./paper-reader.js";
 import {chinaTime} from "./schedule.mjs";
 const $=id=>document.getElementById(id),KEY="daily-paper-reading-v1";
@@ -34,7 +35,7 @@ function render(){
     if(group!==p.section){group=p.section;$("paper-list").append(el("h3","paper-group",group==="recent"?"近期论文":"补读推荐 · 较早论文"))}
     const card=el("article","paper-card"),top=el("div","paper-meta"),title=el("h3","paper-title"),description=el("p","paper-description",p.summary);
     top.append(el("span",`priority ${p.priority}`,p.priority),el("span","author-tier",p.authorTier===1?"A · 影响力依据已核实":p.authorTier===2?"B · 相关研究积累":"作者影响力待核实"),el("span","paper-date",`更新 ${p.updated}`));
-    title.append(link(p.title,p.pdf||p.source));title.onclick=e=>{e.preventDefault();openReader(p.id)};
+    const titleLink=link(p.title,p.pdf||p.source);setPaperTitle(titleLink,p);title.append(titleLink);title.onclick=e=>{e.preventDefault();openReader(p.id)};
     const tags=el("div","paper-tags");p.topics.forEach(t=>tags.append(el("span","",t)));
     const details=el("details","paper-evidence");details.append(el("summary","", "作者与排序依据"));
     details.append(el("p","",`作者：${p.authors}`),el("p","",`首次发布：${p.published}；最近版本：${p.updated}`),el("p","",`阅读建议：${p.rankReason}`),el("p","",p.influenceEvidence));

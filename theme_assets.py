@@ -10,7 +10,8 @@ def inject(body,kind):
  markup=b'<link rel="stylesheet" href="/research-theme.css"><script defer src="/research-theme.js"></script>'
  return body.replace(b'</head>',markup+b'</head>',1) if b'research-theme.js' not in body else body
 def asset(path):
- names={'/research-theme.js':('theme.js','application/javascript'),'/research-theme.css':('theme.css','text/css')}
+ if path in ('/paper-title.js','/paper-title-model.mjs'):return (ROOT/'web'/path.lstrip('/')).read_bytes(),'application/javascript'
+ names={'/research-theme.js':('theme.js','application/javascript'),'/research-theme.css':('theme.css','text/css'),'/research-paste.js':('paste.js','application/javascript')}
  if path not in names:return None
  name,kind=names[path];return (ASSETS/name).read_bytes(),kind
 def preference():

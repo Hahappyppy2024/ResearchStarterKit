@@ -42,6 +42,19 @@ def save_dataset(data):
   for pid in obj['sourcePaperIds']:study.queue_paper(c,study.resolve('paper',pid),reason='数据集来源论文：'+obj['name'])
   return obj
 
+def assign_dataset_topics(data):
+ """Change classification only, without rescheduling source papers."""
+ import knowledge_service as k
+ index={n['id']:n for n in k.taxonomy()['nodes']}
+ ids=data.get('topicIds')
+ if not isinstance(ids,list) or len(ids)>100 or any(not isinstance(i,str) or i not in index or index[i]['kind']!='topic' for i in ids):raise ValueError('数据集主题分类无效')
+ with study.connection() as c:
+  old=study.row(c,'dataset',data.get('id',''))
+  if old['revision']!=data.get('revision'):raise ValueError('数据集已更新，请刷新后重试')
+  obj={**old,'topicIds':list(dict.fromkeys(ids)),'revision':old['revision']+1,'updatedAt':study.now()}
+  k.put(c,'dataset',obj)
+  return obj
+
 def upload_figure(paper_id,raw):
  import knowledge_service as k
  study.resolve('paper',paper_id)
