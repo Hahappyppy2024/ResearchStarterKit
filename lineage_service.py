@@ -56,7 +56,8 @@ def detail(ident):
    r=c.execute('SELECT body FROM papers WHERE id=?',(pid,)).fetchone()
    papers.append({**atlas.get(pid,{}),**json.loads(r[0])} if r else atlas.get(pid,dict(id=pid,title='题录暂不可用：'+pid,year=0)))
  import knowledge_service
- return dict(map=obj,papers=papers,edges=knowledge_service.edges(obj["paperIds"]))
+ import paper_classification
+ return dict(map=obj,papers=paper_classification.decorate(papers),edges=knowledge_service.edges(obj["paperIds"]))
 
 def save(data):
  with study.connection() as c:
@@ -68,7 +69,7 @@ def save(data):
   if not obj['name']:raise ValueError('请填写主题或问题名称')
   obj['description']=study.text(data.get('description',obj.get('description','')))
   ids=data.get('paperIds',obj['paperIds'])
-  if not isinstance(ids,list) or len(ids)>300 or any(not isinstance(i,str) or not i or len(i)>200 for i in ids):raise ValueError('每张图谱最多收录 300 篇论文')
+  if not isinstance(ids,list) or len(ids)>10000 or any(not isinstance(i,str) or not i or len(i)>200 for i in ids):raise ValueError('每张图谱最多收录 10000 篇论文')
   obj['paperIds']=list(dict.fromkeys(ids));paths=data.get('paths',obj['paths'])
   if not isinstance(paths,list) or len(paths)>60:raise ValueError('每张图谱最多 60 条路径')
   clean=[]

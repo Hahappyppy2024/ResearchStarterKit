@@ -29,11 +29,11 @@
  }
  if(embedded)return;
  let active='daily';const p=location.pathname,port=location.port;
- if(port==='8767')active='library';else if(port==='8768')active='poetry';else if(port==='8791')active='scholars';else if(port==='8770'||port==='8771')active=p.startsWith('/learning')?'learning':'projects';else if(port==='4173')active='atlas';else if(/arxiv/.test(p))active='arxiv';else if(/courses/.test(p))active='courses';else if(/reading|paper-questions|paper-week/.test(p))active='reading';else if(/lineage|taxonomy|datasets/.test(p))active='atlas';else if(/library/.test(p))active='library';else if(/labs/.test(p))active='scholars';else if(/blog/.test(p))active='blog';else if(/methods/.test(p))active='methods';
+ if(port==='8767')active='library';else if(port==='8768')active='poetry';else if(port==='8791')active='scholars';else if(port==='8770'||port==='8771')active=p.startsWith('/learning')?'learning':'projects';else if(port==='4173')active='atlas';else if(/arxiv/.test(p))active='arxiv';else if(/courses|innovation/.test(p))active='courses';else if(/reading|paper-questions|paper-week/.test(p))active='reading';else if(/lineage|taxonomy|datasets/.test(p))active='atlas';else if(/library/.test(p))active='library';else if(/labs/.test(p))active='scholars';else if(/blog/.test(p))active='blog';else if(/methods/.test(p))active='methods';
  const header=document.createElement('header');header.className='hub-header research-nav-host research-shared-header';
  const brand=document.createElement('a');brand.className='hub-brand';brand.href=hub+'#daily';
  const mark=document.createElement('span');mark.className='brand-mark';mark.textContent='研';
- const title=document.createElement('span');title.textContent='我的研究桌面';const subtitle=document.createElement('small');subtitle.textContent='世上无难事，只要肯登攀。';subtitle.title='毛泽东《水调歌头·重上井冈山》';title.append(subtitle);brand.append(mark,title);header.append(brand);
+ const title=document.createElement('span');title.textContent='我的研究桌面';brand.append(mark,title);header.append(brand);const motto=document.createElement('div');motto.className='research-motto';motto.textContent='世上无难事，只要肯登攀。';motto.title='毛泽东《水调歌头·重上井冈山》；当前书法字体：华文行楷';header.append(motto);
  const nav=document.createElement('nav');nav.className='hub-tabs';nav.setAttribute('aria-label','研究网站切换');
  for(const [id,zh,en] of entries){const a=document.createElement('a');a.href=hub+'#'+id;a.dataset.site=id;a.textContent=zh;const small=document.createElement('small');small.textContent=en;a.append(small);if(id===active)a.setAttribute('aria-current','page');nav.append(a)}
  const badge=document.createElement('span');badge.className='local-badge';badge.textContent='LOCAL · 仅本机';header.append(nav,badge);document.body.prepend(header);
@@ -110,4 +110,18 @@
  }
  new MutationObserver(()=>{if(!pending){pending=true;requestAnimationFrame(scan);}}).observe(document.body,{childList:true,subtree:true});
  scan();
+})();
+
+/* A shared sticky close control for every dialog, including dynamically created ones. */
+(()=>{
+ const install=()=>{
+  for(const dialog of document.querySelectorAll('dialog,[role="dialog"]')){
+   if(dialog.querySelector(':scope > .reader-frozen-tools')||dialog.querySelector(':scope > .research-dialog-closebar'))continue;
+   const controls=[...dialog.querySelectorAll('button,[role="button"]')].filter(b=>b.matches('[data-close],.modal-close,.dialog-close,.close-button')||/^关闭/.test(b.getAttribute('aria-label')||'')||/^(关闭|关闭窗口|关闭弹窗)$/.test(b.textContent.trim()));
+   if(!controls.length&&dialog.tagName!=='DIALOG')continue;
+   const bar=document.createElement('div');bar.className='research-dialog-closebar';const close=document.createElement('button');close.type='button';close.textContent='关闭';close.setAttribute('aria-label','关闭当前窗口');
+   close.onclick=()=>{if(controls[0])controls[0].click();else dialog.close()};bar.append(close);for(const control of controls)control.classList.add('research-original-close');dialog.prepend(bar);
+  }
+ };
+ let scheduled=false;new MutationObserver(()=>{if(!scheduled){scheduled=true;requestAnimationFrame(()=>{scheduled=false;install()})}}).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['open','aria-hidden']});install();
 })();

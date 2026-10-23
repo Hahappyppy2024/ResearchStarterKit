@@ -31,3 +31,8 @@ htmlcov/
 .env
 .env.*
 !.env.example
+
+# Private course exports and user-specific change notes
+/course-materials/
+/courses-private/
+/WORKSPACE-UPDATE.md

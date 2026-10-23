@@ -27,6 +27,13 @@ def absorb(papers):
     with db() as c:
         for p in papers:
             if not p.get("id") or not p.get("title"):continue
+            old=c.execute('SELECT body FROM papers WHERE id=?',(p['id'],)).fetchone()
+            if old:
+                saved=json.loads(old[0])
+                if saved.get('title')==p['title']:
+                    p=dict(p)
+                    for key in ('titleZh','titleEn'):
+                        if not p.get(key) and saved.get(key):p[key]=saved[key]
             c.execute("INSERT INTO papers(id,title,venue,year,body) VALUES(?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,venue=excluded.venue,year=excluded.year,body=excluded.body",
                 (p["id"],p["title"],p.get("venue","arXiv"),int(p.get("year",p.get("published","2026")[:4])),json.dumps(p,ensure_ascii=False)))
 def ingest_files():
@@ -239,6 +246,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             try:
                 import study_service as study
                 value=lambda key,default="":q.get(key,[default])[0]
+                if path.path=='/api/study/course-materials':return self.reply(study.course_materials(value('id')))
+                if path.path=='/api/study/course-poster':return self.reply(study.course_poster(value('id'),value('source')),kind='image/jpeg')
                 import knowledge_service as knowledge
                 if path.path=='/api/study/scholar-papers':
                     import scholar_papers
@@ -297,6 +306,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     import lineage_service
                     return self.reply(lineage_service.detail(value("id")) if value("id") else lineage_service.all_maps())
                 if path.path=="/api/study/state":return self.reply(study.state(value("date",None)))
+                if path.path=="/api/study/course-bibliography":return self.reply(study.course_bibliography(value("id")))
                 if path.path=="/api/study/resources":return self.reply(study.catalog(value("q"),value("kind"),value("page",0),value('venue')))
                 if path.path=="/api/study/resource":return self.reply(study.resolve(value("kind"),value("id")))
                 if path.path=="/api/study/task":return self.reply(study.task_detail(value("paperId"),value("taskId")))

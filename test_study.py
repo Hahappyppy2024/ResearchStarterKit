@@ -11,6 +11,55 @@ class StudyTests(unittest.TestCase):
   for p in reversed(self.patches):p.stop()
   __import__("gc").collect();self.temp.cleanup()
  def course(self,name='Test course'):return s.save_record('course',dict(name=name,goal='Explain methods'))
+ def test_course_lesson_plans_persist_and_validate_unit(self):
+  a=s.save_record('course',dict(name='Teaching preparation',units=['Lesson 1'],lessonPlans={'Lesson 1':'Goal\nDemo\nDeliverable'}))
+  self.assertEqual(s.state()['courses'][0]['lessonPlans']['Lesson 1'],'Goal\nDemo\nDeliverable')
+  with self.assertRaises(ValueError):s.save_record('course',dict(a,lessonPlans={'Missing lesson':'Invalid'}))
+  with self.assertRaises(ValueError):s.save_record('course',dict(a,lessonPlans={'Lesson 1':42}))
+  updated=s.save_record('course',dict(id=a['id'],revision=a['revision'],goal='Revised'))
+  self.assertEqual(updated['lessonPlans'],a['lessonPlans'])
+ def test_course_innovations_persist_and_validate(self):
+  a=s.save_record('course',dict(name='Research course',innovationQ1='Mechanism and transfer',innovationQ2='Scoped reproducible study',materialFolder='local-data/course-materials/example'))
+  updated=s.save_record('course',dict(id=a['id'],revision=a['revision'],goal='Updated goal'))
+  self.assertEqual(updated['innovationQ1'],a['innovationQ1'])
+  self.assertEqual(updated['innovationQ2'],a['innovationQ2'])
+  self.assertEqual(updated['materialFolder'],a['materialFolder'])
+  with self.assertRaises(ValueError):s.save_record('course',dict(updated,innovationQ1=['Invalid type']))
+ def test_course_material_access_is_scoped(self):
+  a=self.course();b=self.course('Other course');root=pathlib.Path(self.temp.name)
+  materials=root/'local-data'/'course-materials';materials.mkdir(parents=True)
+  (materials/'poster.jpg').write_bytes(b'poster')
+  manifest=materials/'source-manifest.json'
+  manifest.write_text(json.dumps([dict(courseId=a['id'],sourceNumber=1,storedPath='poster.jpg')]),encoding='utf-8')
+  with mock.patch.object(s,'ROOT',root):
+   self.assertEqual(s.course_poster(a['id'],1),b'poster')
+   self.assertEqual(s.course_materials(b['id'])['items'],[])
+   with self.assertRaises(ValueError):s.course_poster(b['id'],1)
+   manifest.write_text(json.dumps([dict(courseId=a['id'],sourceNumber=1,storedPath='../outside.jpg')]),encoding='utf-8')
+   with self.assertRaises(ValueError):s.course_poster(a['id'],1)
+ def test_innovation_tasks_are_independent_and_survive_course_edits(self):
+  projects=[dict(id='idea-a',tier='q1',title='Hypothesis A',tasks={}),dict(id='idea-b',tier='q2',title='Hypothesis B',tasks={})]
+  course=s.save_record('course',dict(name='Task research',innovationProjects=projects))
+  edited=course['innovationProjects'];edited[0]['tasks']['problem']={'status':'done','notes':'Inputs, outputs and evidence'}
+  updated=s.save_record('course',dict(id=course['id'],revision=course['revision'],innovationProjects=edited))
+  self.assertEqual(updated['innovationProjects'][0]['tasks']['problem']['status'],'done')
+  self.assertEqual(updated['innovationProjects'][1]['tasks']['problem']['status'],'todo')
+  renamed=s.save_record('course',dict(id=course['id'],revision=updated['revision'],name='Renamed course'))
+  self.assertEqual(renamed['innovationProjects'],updated['innovationProjects'])
+  with self.assertRaises(ValueError):s.save_record('course',dict(id=course['id'],revision=course['revision'],innovationProjects=projects))
+ def test_foundation_and_paper_guides_preserve_personal_work(self):
+  a=s.save_record('course',dict(name='Learning guide',innovationProjects=[dict(id='study-a',tier='q1',title='Research',tasks={'foundations':{'status':'doing','notes':'My notes','guide':'Concepts and worked examples'},'related':{'status':'todo','notes':'Paper comparisons','guide':'Primary paper links'}})]))
+  idea=a['innovationProjects'][0];self.assertEqual(len(idea['tasks']),9)
+  idea['tasks']['foundations']['notes']='Updated personal notes'
+  b=s.save_record('course',dict(id=a['id'],revision=a['revision'],innovationProjects=[idea]))
+  self.assertEqual(b['innovationProjects'][0]['tasks']['foundations']['guide'],'Concepts and worked examples')
+  self.assertEqual(b['innovationProjects'][0]['tasks']['related']['notes'],'Paper comparisons')
+  self.assertEqual(b['innovationProjects'][0]['tasks']['foundations']['status'],'doing')
+  idea['tasks']['foundations']['guide']=[]
+  with self.assertRaises(ValueError):s.save_record('course',dict(id=b['id'],revision=b['revision'],innovationProjects=[idea]))
+ def test_innovation_tasks_reject_invalid_payloads(self):
+  for projects in [[dict(id='a',tier='q3',title='Bad')],[dict(id='a',tier='q1',title='Bad',tasks={'unknown':{}})],[dict(id='a',tier='q1',title='Bad',tasks={'problem':{'status':'invented'}})],[dict(id='a',tier='q1',title='First'),dict(id='a',tier='q2',title='Second')]]:
+   with self.assertRaises(ValueError):s.save_record('course',dict(name='Invalid research',innovationProjects=projects))
  def test_courses_resources_duplicate_and_shared(self):
   a=self.course();b=self.course('Other');data=dict(courseId=a['id'],unit='论文阅读',resourceKind='paper',resourceId=self.p1['id'])
   first=s.add_link(data);again=s.add_link(data);self.assertEqual(first['id'],again['id']);self.assertTrue(again['alreadyExists'])

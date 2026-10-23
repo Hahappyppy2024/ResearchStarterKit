@@ -2,6 +2,29 @@
 import contextlib,datetime as dt,json,pathlib,re,sqlite3,uuid
 ROOT=pathlib.Path(__file__).resolve().parent;DB=ROOT/'local-data'/'study-workspace.sqlite'
 ATLAS=pathlib.Path('D:/000_CV_projects/Top_projects/research-atlas')
+INNOVATION_TASK_IDS=('foundations','problem','related','data','method','baseline','ablation','analysis','writing')
+
+def innovation_projects(value):
+ if not isinstance(value,list) or len(value)>30:raise ValueError('创新点列表格式无效')
+ result=[];seen=set()
+ for project in value:
+  if not isinstance(project,dict):raise ValueError('创新点格式无效')
+  ident=text(project.get('id',''),100)
+  if not re.fullmatch(r'[a-zA-Z0-9_-]{1,100}',ident) or ident in seen:raise ValueError('创新点编号无效或重复')
+  seen.add(ident)
+  if project.get('tier') not in ('q1','q2'):raise ValueError('请选择一区或二区目标')
+  title=text(project.get('title',''),3000)
+  if not title:raise ValueError('请填写创新点')
+  tasks=project.get('tasks',{})
+  if not isinstance(tasks,dict) or set(tasks)-set(INNOVATION_TASK_IDS):raise ValueError('创新任务类型无效')
+  cleaned={}
+  for key in INNOVATION_TASK_IDS:
+   task=tasks.get(key,{})
+   if not isinstance(task,dict) or task.get('status','todo') not in ('todo','doing','done'):raise ValueError('任务进度无效')
+   cleaned[key]={'status':task.get('status','todo'),'notes':text(task.get('notes',''),15000)}
+   if 'guide' in task:cleaned[key]['guide']=text(task['guide'],30000)
+  result.append(dict(id=ident,tier=project['tier'],title=title,tasks=cleaned))
+ return result
 def today():return dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).date().isoformat()
 def now():return dt.datetime.now(dt.timezone.utc).isoformat()
 def text(value,limit=30000):
@@ -30,13 +53,39 @@ def row(c,kind,ident):
  if not r:raise ValueError('记录不存在')
  return json.loads(r[0])
 def records(c,kind,archived=False):return [json.loads(r[0]) for r in c.execute('SELECT body FROM records WHERE kind=? AND archived=? ORDER BY rowid DESC',(kind,int(archived)))]
+
+def course_materials(ident):
+ with connection() as c:row(c,'course',ident)
+ manifest=ROOT/'local-data'/'course-materials'/'source-manifest.json'
+ if not manifest.is_file():return {'items':[]}
+ items=json.loads(manifest.read_text(encoding='utf-8'))
+ return {'items':[{'sourceNumber':m['sourceNumber'],'duplicateOf':m.get('exactDuplicateOf')} for m in items if m.get('courseId')==ident]}
+
+def course_bibliography(ident):
+ with connection() as c:row(c,'course',ident)
+ path=ROOT/'local-data'/'course-materials'/'model-paper-catalog.json'
+ if not path.is_file():return {'items':[],'note':'模型来源论文待整理'}
+ catalog=json.loads(path.read_text(encoding='utf-8'))
+ return catalog.get('courses',{}).get(ident,{'items':[],'note':'模型来源论文待整理'})
+
+def course_poster(ident,number):
+ allowed={m['sourceNumber'] for m in course_materials(ident)['items']}
+ try:number=int(number)
+ except (ValueError,TypeError):raise ValueError('材料编号无效')
+ if number not in allowed:raise ValueError('课程材料不存在')
+ base=(ROOT/'local-data'/'course-materials').resolve()
+ manifest=json.loads((base/'source-manifest.json').read_text(encoding='utf-8'))
+ item=next(m for m in manifest if m['sourceNumber']==number)
+ target=(base/item['storedPath']).resolve()
+ if not target.is_relative_to(base) or target.suffix.lower()!='.jpg' or not target.is_file():raise ValueError('课程材料路径无效')
+ return target.read_bytes()
 def state(date=None):
  date=valid_date(date or today())
  with connection() as c:
   return dict(courses=records(c,'course'),archivedCourses=records(c,'course',True),problems=records(c,'problem'),comparisons=records(c,'comparison'),archivedProblems=records(c,'problem',True),archivedComparisons=records(c,'comparison',True),links=[json.loads(r[0]) for r in c.execute('SELECT body FROM links WHERE archived=0 ORDER BY rowid')],queue=reading_queue(c,date),date=date)
 def save_record(kind,data):
  if kind not in ('course','problem','comparison'):raise ValueError('记录类型无效')
- fields={'course':['name','audience','goal','prerequisites','assessment','design'],'problem':['name','broad','narrow','question','known','gap','hypothesis','evidence','next'],'comparison':['name','question','conditions','conclusion','next']}
+ fields={'course':['name','audience','goal','prerequisites','assessment','design','category','innovationQ1','innovationQ2','innovationNotes','materialFolder','outlineStatus','subcategory','sourceVariant'],'problem':['name','broad','narrow','question','known','gap','hypothesis','evidence','next'],'comparison':['name','question','conditions','conclusion','next']}
  with connection() as c:
   obj=row(c,kind,data['id']) if data.get('id') else dict(id=str(uuid.uuid4()),createdAt=now(),revision=0)
   if data.get('id') and data.get('revision')!=obj.get('revision',0):raise ValueError('记录已更新，请刷新后再编辑，保留你的草稿')
@@ -44,12 +93,22 @@ def save_record(kind,data):
    if field in data:obj[field]=text(data[field],160 if field=='name' else 30000)
   if not obj.get('name'):raise ValueError('请填写名称')
   if kind=='course':
+   if 'sourceTitles' in data:
+    titles=data['sourceTitles']
+    if not isinstance(titles,list) or len(titles)>20:raise ValueError('原图标题格式无效')
+    obj['sourceTitles']=list(dict.fromkeys(text(title,2000) for title in titles))
+   if 'innovationProjects' in data:obj['innovationProjects']=innovation_projects(data['innovationProjects'])
    units=data.get('units',obj.get('units',['基础知识','论文阅读','课程设计']))
    if not isinstance(units,list) or not units or len(units)>30:raise ValueError('请设置 1–30 个课程章节')
    obj['units']=list(dict.fromkeys(text(v,100) for v in units if isinstance(v,str) and v.strip()))
    if not obj['units']:raise ValueError('章节不能为空')
    used={json.loads(r[0])['unit'] for r in c.execute('SELECT body FROM links WHERE course_id=? AND archived=0',(obj['id'],))}
    if used-set(obj['units']):raise ValueError('不能移除仍有资料的章节；请先将其中资料移出课程再修改章节')
+   if 'lessonPlans' in data:
+    plans=data['lessonPlans']
+    if not isinstance(plans,dict) or len(plans)>30:raise ValueError('课次备课内容格式无效')
+    if any(unit not in obj['units'] for unit in plans):raise ValueError('备课内容需要对应现有课次')
+    obj['lessonPlans']={unit:text(content,30000) for unit,content in plans.items()}
   else:
    ids=data.get('paperIds',obj.get('paperIds',[]))
    if not isinstance(ids,list) or len(ids)>30 or any(not isinstance(v,str) or len(v)>200 for v in ids):raise ValueError('论文列表格式无效')

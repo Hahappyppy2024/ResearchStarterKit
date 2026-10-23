@@ -82,6 +82,8 @@ def get_week(value=None,kind='new'):
   papers=[json.loads(r[0]) for r in c.execute('SELECT body FROM snapshots WHERE week=? AND kind=? ORDER BY id DESC',(week,kind))]
   row=c.execute('SELECT body FROM curation WHERE week=?',(week,)).fetchone();curation=json.loads(row[0]) if row else {'notes':'','picks':None}
  meta=next((w for w in list_weeks()['weeks'] if w['start']==week),None)
+ import paper_classification
+ papers=paper_classification.decorate(papers)
  return {'week':week,'kind':kind,'papers':papers,'meta':meta,'dateNote':DATE_NOTE,'curation':curation}
 
 def save_curation(data):

@@ -22,3 +22,15 @@ body:has(#tree):has(#kind) #editor>button{background:var(--theme-accent);color:w
 .research-nav-host .hub-brand small,.hub-header .hub-brand small{display:table!important;color:#fff!important;background:var(--theme-accent,#28594b);border-radius:6px;padding:6px 10px;font-size:16px!important;line-height:1.6;letter-spacing:.3px;margin-top:5px;font-weight:600!important;white-space:normal}
 
 
+
+/* Close stays visible inside long native or ARIA dialogs. */
+.research-dialog-closebar{position:sticky!important;top:0!important;z-index:1000!important;display:flex!important;justify-content:flex-end!important;background:var(--theme-paper,#fff)!important;border-bottom:1px solid var(--theme-line,#d8e0ce);padding:8px 0;margin-bottom:12px;isolation:isolate}
+.research-dialog-closebar>button{flex:none!important;background:var(--theme-accent,#28594b)!important;color:#fff!important;border-radius:8px;padding:8px 16px;font:inherit;cursor:pointer}
+.research-original-close{display:none!important}
+
+/* Centered calligraphic motto; installed STXingkai is the local fallback. */
+.hub-header.research-nav-host{position:relative}.hub-header.research-shared-header{position:sticky}
+.research-motto{position:absolute;left:50%;top:10px;transform:translateX(-50%);max-width:calc(100% - 460px);text-align:center;white-space:nowrap;font-family:"毛泽东字体","毛体","MaoTi","STXingkai","华文行楷",cursive;font-size:clamp(28px,3vw,42px);font-weight:400;line-height:1.25;letter-spacing:2px;color:var(--theme-accent,#28594b);padding:0 8px}
+@media(max-width:900px){.research-motto{position:static;transform:none;flex:0 0 100%;width:100%;max-width:none;order:2;font-size:clamp(24px,4.5vw,36px);padding:5px 0}.research-nav-host .hub-tabs{order:3}}
+
+.hub-header.research-nav-host>.local-badge{position:absolute;left:72px;right:auto;top:43px;margin:0!important;font-size:8px}
