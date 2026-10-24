@@ -1,4 +1,5 @@
 import {setPaperTitle} from './paper-title.js';
+import {notifyRequiredReading} from './required-reading-updates.js';
 const base=location.port==='8772'?location.origin:'http://127.0.0.1:8766';
 export async function addToCourse(resource){
  const dialog=document.createElement('dialog');dialog.className='course-picker';dialog.style.cssText='max-width:550px;width:90%;border:1px solid #dbe2d0;border-radius:20px;padding:28px;background:#fffef9;color:#28594b';
@@ -19,5 +20,5 @@ export async function addToRequiredReading(paperId,reason=''){
  const {chinaTime}=await import('./schedule.mjs');
  const r=await fetch(base+'/api/study/queue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({paperId,date:chinaTime().date,reason})});
  const d=await r.json();if(!r.ok)throw Error(d.error||'加入今日必读失败');
- localStorage.setItem('required-reading-updated',String(Date.now()));window.dispatchEvent(new Event('required-reading-change'));return d;
+ notifyRequiredReading();return d;
 }

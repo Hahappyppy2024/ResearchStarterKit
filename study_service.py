@@ -242,9 +242,10 @@ def reading_queue(c,date):
  for day,ident,body,archived in c.execute('SELECT date,paper_id,body,archived FROM queue WHERE date<=? ORDER BY date,rowid',(date,)):latest[ident]=(day,json.loads(body),archived)
  result=[]
  knowledge={p['id']:p for p in records(c,'paper-knowledge')}
+ manual={p['id']:p for p in records(c,'paper-reading-status')}
  for ident,(day,obj,archived) in latest.items():
   if archived:continue
-  if day<date and complete(knowledge.get(ident,{})):continue
+  if day<date and (manual[ident]['read'] if ident in manual else complete(knowledge.get(ident,{}))):continue
   if day<date:obj={**obj,'carriedFrom':day,'date':date}
   result.append(obj)
  return result

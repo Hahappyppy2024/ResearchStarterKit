@@ -2,11 +2,11 @@ import {knowledgeApi as api} from './paper-knowledge.js';
 import {mountQuestionList} from './paper-research.js';
 import {PAPER_TASKS} from './paper-tasks.mjs';
 const choices=new Map();
-function updateChoice(id,selection){const old=choices.get(id);if(old&&old.revision>selection.revision)return;choices.set(id,selection);for(const label of document.querySelectorAll('[data-paper-quiz]'))if(label.dataset.paperQuiz===id)label.querySelector('input').checked=selection.enabled}
-export async function mountQuizToggle(host,paperId){
- const label=document.createElement('label'),check=document.createElement('input'),status=document.createElement('span');label.className='paper-daily-quiz-toggle';label.dataset.paperQuiz=paperId;check.type='checkbox';check.disabled=true;check.setAttribute('aria-label','这篇论文加入每日 Quiz');label.append(check,document.createTextNode(' 加入每日 Quiz '),status);host.append(label);let selection;
- try{selection=await api('paper-quiz-selection?paperId='+encodeURIComponent(paperId));updateChoice(paperId,selection);check.disabled=false}catch(e){status.textContent=e.message;return}
- check.onchange=async()=>{check.disabled=true;try{selection=await api('paper-quiz-selection',{paperId,revision:(choices.get(paperId)||selection).revision,enabled:check.checked});updateChoice(paperId,selection);status.textContent=selection.enabled?'已加入，使用此论文的 Flash Cards':'已移出每日 Quiz'}catch(e){check.checked=selection.enabled;status.textContent=e.message}finally{check.disabled=false}};
+function updateChoice(id,selection){const old=choices.get(id);if(old&&old.revision>selection.revision)return;choices.set(id,selection);for(const button of document.querySelectorAll('button[data-paper-quiz]'))if(button.dataset.paperQuiz===id){button.setAttribute('aria-pressed',String(selection.enabled));button.textContent=selection.enabled?button.dataset.removeLabel:button.dataset.addLabel;}}
+export async function mountQuizToggle(host,paperId,options={}){
+ const button=document.createElement('button'),status=document.createElement('small');button.className='button paper-daily-quiz-toggle';button.type='button';button.dataset.paperQuiz=paperId;button.dataset.addLabel=options.label||'加入每日 Quiz';button.dataset.removeLabel=button.dataset.addLabel.replace(/^加入/,'移除');button.textContent=button.dataset.addLabel;button.disabled=true;button.setAttribute('aria-pressed','false');status.setAttribute('role','status');host.append(button,status);let selection;
+ try{selection=await api('paper-quiz-selection?paperId='+encodeURIComponent(paperId));updateChoice(paperId,selection);button.disabled=false;}catch(e){status.textContent=e.message;return;}
+ button.onclick=async()=>{button.disabled=true;status.textContent='';try{selection=await api('paper-quiz-selection',{paperId,revision:(choices.get(paperId)||selection).revision,enabled:!(choices.get(paperId)||selection).enabled});updateChoice(paperId,selection);}catch(e){status.textContent=e.message;}finally{button.disabled=false;}};
 }
 export function mountPaperFlashcards(host,paperId,state,all,save){
  const view=mountQuestionList(host,state,save,true,'Flash Card'),tools=document.createElement('div'),generate=document.createElement('button'),refresh=document.createElement('button'),status=document.createElement('p'),hint=document.createElement('p');let links={};

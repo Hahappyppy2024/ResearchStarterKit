@@ -128,7 +128,8 @@ def browse(topic='',source='conference',venue='',year='',query='',page=0,state='
     def section(p):return next((c+':'+s for c,s in p['categories'] if topic==c or topic==c+':'+s),':'.join(p['categories'][0]))
     filtered.sort(key=lambda p:(section(p),-int(p.get('year') or 0),p['title'].casefold()))
     page=max(0,min(int(page),max(0,(len(filtered)-1)//20)));page_rows=filtered[page*20:(page+1)*20];translations=batch_translations(page_rows)
-    output=[dict(p,titleZh=translations.get(p['title'],''),summaryZh=translations.get(p.get('summary',''),'')) for p in page_rows]
+    import paper_titles
+    output=paper_titles.hydrate_titles([dict(p,titleZh=p.get('titleZh') or translations.get(p['title'],''),summaryZh=translations.get(p.get('summary',''),'')) for p in page_rows])
     return dict(topics=copy.deepcopy(roots),customTopics=copy.deepcopy(custom),venues=venues,years=years,papers=output,count=len(filtered),page=page,pageSize=20,
                 allConferenceCount=snapshot['totalConference'],allPersonalCount=snapshot['totalPersonal'],
                 conferenceCount=conference_count,personalCount=personal_count,
@@ -163,10 +164,11 @@ def translate(data):
     pid=study.text(data.get('paperId',''),200)
     p=study.resolve('paper',pid)
     if p.get('venue') not in conferences.VENUES:raise ValueError('这里只翻译已收录会议论文的公开标题与摘要')
-    result=dict(titleZh=cached_translation(p['title']),summaryZh=cached_translation(p.get('summary','')),provider='Google 在线机器翻译')
+    import paper_titles
+    result=paper_titles.bilingual_title({'paperId':pid})
+    result['summaryZh']=cached_translation(p.get('summary',''))
     with TRANSLATION_LOCK:
         try:
-            result['titleZh']=translate_text(p['title'])
             result['summaryZh']=translate_text(p.get('summary',''))
         except Exception:result['error']='中文翻译暂不可用，可点击重试；英文原文仍保留。'
     return result

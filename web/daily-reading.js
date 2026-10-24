@@ -1,3 +1,5 @@
+import {mountCatalogActions} from './paper-catalog-actions.js';
+import {mountPaperProgress} from './paper-progress.js';
 import {openPaperAffiliations} from './paper-labs.js';
 import {paperTitle,setPaperTitle,paperOption} from './paper-title.js';
 import {markPaperRead} from "./reading-history.mjs";
@@ -22,10 +24,7 @@ function render(){progress();$("daily-reading-lists").replaceChildren();for(cons
   const known=details.filter(x=>Array.isArray(x.affiliations)&&x.affiliations.length);
   const units=known.map(x=>`${x.name}：${x.affiliations.join(" / ")}`).join("；");
   body.append(node("p","reading-affiliations","工作单位："+(units?units+(known.length<details.length?"；其余作者暂未提供":""):"暂未提供（arXiv 元数据无此信息）")));
-  const actions=node("div","reader-actions"),abs=node("button","button","中英摘要"),original=node("a","button","原文 PDF ↗"),notes=node("button","button","笔记");abs.onclick=()=>openReader(p.id);notes.onclick=()=>openReader(p.id,"notes");if(url?.startsWith("https://")){original.href=url;original.target="_blank";original.rel="noopener"}const add=node("button","button","加入今日安排");add.type="button";add.setAttribute("aria-label","加入今日安排："+p.title);add.onclick=()=>window.dispatchEvent(new CustomEvent("paper-add-to-task",{detail:{id:p.id,title:p.title,url:p.pdf||p.source,topic}}));const checklist=node("button","button",`阅读清单 ${paperTaskProgress(p.id)}/${paperTaskTotal}`);checklist.type="button";checklist.dataset.paperChecklist=p.id;checklist.setAttribute("aria-label","论文阅读清单："+p.title);checklist.onclick=()=>openReader(p.id,"tasks");actions.append(abs,original,notes,checklist,add);const affiliationButton=node('button','button','实验室／学者');affiliationButton.type='button';affiliationButton.onclick=()=>openPaperAffiliations(p);actions.append(affiliationButton);body.append(actions);
-  const label=node("label","reading-check"),check=node("input");check.type="checkbox";check.checked=states[p.id]==="read";check.disabled=true;check.title="阅读任务全部完成后自动标记已读";check.setAttribute("aria-label",`已读：${p.title}`);const badge=node("span","",check.checked?"已读":"未读");label.append(check,badge);li.classList.toggle("is-read",check.checked);
-  check.onchange=()=>{try{markPaperRead(p.id,check.checked);states=JSON.parse(localStorage.getItem(KEY)||"{}");if(check.checked&&(index+1)*PAGE_SIZE<list.length&&list.slice(index*PAGE_SIZE,index*PAGE_SIZE+PAGE_SIZE).every(x=>states[x.id]==="read"))pages[topic]=index+1;render()}catch{$("daily-reading-status").textContent="阅读状态保存失败，请检查浏览器存储。"}};
-  li.append(body,label);ul.append(li);
+  mountPaperProgress(body,p);mountCatalogActions(body,p);li.append(body);ul.append(li);
  }
  if(list.length){const nav=node("div","reading-pagination"),prev=node("button","button","上一组"),next=node("button","button","下一组"),count=node("span","",`${index+1} / ${Math.ceil(list.length/PAGE_SIZE)}`);prev.disabled=index===0;next.disabled=(index+1)*PAGE_SIZE>=list.length;prev.onclick=()=>{pages[topic]=index-1;render()};next.onclick=()=>{pages[topic]=index+1;render()};nav.append(prev,count,next);section.append(nav)}
  $("daily-reading-lists").append(section);

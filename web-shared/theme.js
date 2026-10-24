@@ -18,7 +18,7 @@
 // One navigation design for the hub and every standalone local page.
 (()=>{
  const hub='http://127.0.0.1:8769/';
- const entries=[['daily','每日努力','Daily Effort'],['arxiv','arXiv 每周论文','Weekly Papers'],['courses','我的课程','My Courses'],['reading','今日必读','Must Read'],['atlas','论文脉络','Paper Atlas'],['scholars','实验室与学者','Labs & Scholars'],['library','论文库','Paper Library'],['projects','项目实验本','Projects Notebook'],['learning','基础知识','AI Foundations'],['blog','Blog','Research Blog'],['methods','科研方法','Research Methods']];
+ const entries=[["daily", "每日努力", "Daily Effort"], ["courses", "我的课程", "My Courses"], ["learning", "基础知识", "AI Foundations"], ["reading", "今日必读", "Must Read"], ["arxiv", "arXiv 每周论文", "Weekly Papers"], ["library", "论文库", "Paper Library"], ["atlas", "论文脉络", "Paper Atlas"], ["scholars", "实验室与学者", "Labs & Scholars"], ["methods", "科研方法", "Research Methods"], ["projects", "项目实验本", "Projects Notebook"], ["blog", "Blog", "Research Blog"]];
  const existing=document.querySelector('.hub-header');
  if(existing){existing.classList.add('research-nav-host');return}
  const embedded=window.parent!==window;document.body.classList.add(embedded?'research-embedded':'research-has-topbar');

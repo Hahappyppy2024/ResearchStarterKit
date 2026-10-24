@@ -1,17 +1,33 @@
+import {TEMPLATE_KEY,cleanTemplateTasks,defaultTemplates,validateTemplates,baseForDate,freezeExistingDays} from './schedule-templates.mjs';
+import {openTemplateSettings} from './schedule-template-settings.js';
+import {advanceDailyDate,unscheduledPeriod} from './daily-date.mjs';
+import {dailyState,resetDailyCompletion,undoDailyCompletionReset,restoreDailyTemplate,undoDailyTemplateRestore} from './daily-state.mjs';
+import {knowledgeApi} from './paper-knowledge.js';
+import {returnScheduledTask,returnSubtask} from './timeline-return.mjs';
+import {nestTodo,restoreNestedTodo,moveSubtask,subtreeIds} from './timeline-nesting.mjs';
+import {makeTodoDraggable,mountDailyTimeline,makeSubtaskDraggable,makeSubtaskDropTarget,makeSubtaskResizable,mountTodoReturnTarget} from './daily-timeline.js';
+import {prioritizeTask,subtaskSlots} from './timeline-model.mjs';
+import {dailyCompletion} from './daily-completion.mjs';
+import {mountPaperProgress} from './paper-progress.js';
+import {renderWeeklyCats} from './weekly-cats.js';
 import {paperTitle,setPaperTitle,paperOption} from './paper-title.js';
 import {mountQuizToggle} from './paper-quiz-ui.js';
-import {markPaperRead,paperIsComplete,renderReadingStats,READING_STATE_KEY,READING_HISTORY_KEY} from "./reading-history.mjs";
+import {cacheManualReading,markPaperRead,isPaperRead,renderReadingStats,READING_STATE_KEY,READING_HISTORY_KEY} from "./reading-history.mjs";
 import {openReader,paperTaskProgress,paperTaskTotal,markPaperTaskDone} from "./paper-reader.js";
 import {cleanTodos,plannedTasks,currentTask,timeMinutes,scheduledBase,cleanScheduleOverrides,cleanHiddenSchedule,cleanSubtasks,cleanPaper} from "./todos.mjs";
-import {schedule,reminders,timeLabel,chinaTime,currentAt,nextAt,shiftDate,calendarText} from "./schedule.mjs";
+import {schedule as builtinSchedule,reminders,timeLabel,chinaTime,currentAt,nextAt,shiftDate,calendarText} from "./schedule.mjs";
+let schedule=builtinSchedule;
+let templateConfig=defaultTemplates(builtinSchedule);try{const raw=localStorage.getItem(TEMPLATE_KEY);if(raw)templateConfig=validateTemplates(JSON.parse(raw));}catch{}
 const $=id=>document.getElementById(id);
 const key="daily-practice-v1";
 let db={days:{},notifications:false},storageOkay=true;
 try{const saved=JSON.parse(localStorage.getItem(key)||"null");if(saved?.days&&typeof saved.days==="object")db={days:saved.days,notifications:saved.notifications===true}}catch{storageOkay=false}
 let selected=chinaTime().date,lastToday=selected,followToday=true,lastMinute=null;
+let pendingTimelineTodo=null;
 let editingTodo=null,removedTodo=null,editingSchedule=null,scheduleUndo=null,removedSubtask=null;
-function day(){const value=db.days[selected]||{},todos=cleanTodos(value.todos),done=new Set(Array.isArray(value.done)?value.done:[]),subtasks=cleanSubtasks(schedule,value.todos,value.subtasks);for(const t of todos)if(t.paper){if(paperIsComplete(t.paper.id))done.add(t.id);else done.delete(t.id)}for(const list of Object.values(subtasks))for(const item of list)if(item.paper)item.done=paperIsComplete(item.paper.id);return {...value,done:[...done],notes:typeof value.notes==="string"?value.notes:"",todos,scheduleOverrides:cleanScheduleOverrides(schedule,value.scheduleOverrides),hiddenSchedule:cleanHiddenSchedule(schedule,value.hiddenSchedule),subtasks}}
-function tasksFor(date){return plannedTasks(scheduledBase(schedule,db.days[date]||{}),db.days[date]?.todos)}
+function scheduleFor(date){return baseForDate(builtinSchedule,db.days,templateConfig,date,chinaTime().date)}
+function day(){return dailyState(scheduleFor(selected),db.days,selected)}
+function tasksFor(date){return plannedTasks(scheduledBase(scheduleFor(date),db.days[date]||{}),db.days[date]?.todos,db.days[date]?.timelineOrder)}
 function totalTasks(){return [...new Map([...tasksFor(selected),...day().todos].map(t=>[t.id,t])).values()]}
 function refreshTodos(){lastMinute=null;renderDay(false);tick()}
 function fillTimeChoices(id,value=""){
@@ -25,36 +41,68 @@ function fillTimeChoices(id,value=""){
 function setTimePair(prefix,start,end){fillTimeChoices(prefix+"-start",start===null?"":timeLabel(start));fillTimeChoices(prefix+"-end",end===null?"":timeLabel(end))}
 for(const prefix of ["todo","schedule-edit"]){setTimePair(prefix,null,null);$(prefix+"-start").onchange=()=>{const start=timeMinutes($(prefix+"-start").value),end=timeMinutes($(prefix+"-end").value);if(start!==null&&(end===null||end<=start))fillTimeChoices(prefix+"-end",timeLabel(start+30))}}
 function resetTodoForm(){editingTodo=null;$("todo-form").reset();setTimePair("todo",null,null);$("todo-submit").textContent="添加待办";$("todo-cancel").hidden=true}
-function paperActions(paper){
-  const actions=document.createElement("span");actions.className="task-paper-actions";
-  const abstract=document.createElement("button");abstract.type="button";abstract.textContent="中英摘要";abstract.setAttribute("aria-label","阅读摘要："+paper.title);abstract.onclick=()=>openReader(paper.id);actions.append(abstract);const checklist=document.createElement("button");checklist.type="button";checklist.textContent=`阅读清单 ${paperTaskProgress(paper.id)}/${paperTaskTotal}`;checklist.dataset.paperChecklist=paper.id;checklist.setAttribute("aria-label","论文阅读清单："+paper.title);checklist.onclick=()=>openReader(paper.id,"tasks");actions.append(checklist);
-  if(paper.url){const link=document.createElement("a");link.textContent="原文 ↗";link.href=paper.url;link.target="_blank";link.rel="noopener";actions.append(link)}
-  mountQuizToggle(actions,paper.id);return actions;
+// Daily reading sessions have their own check; the paper's cumulative record is retained.
+function mountDailyPaperCheck(host,paper,checked,onChange){
+ const date=selected,wrap=document.createElement('div'),label=document.createElement('label'),check=document.createElement('input'),text=document.createElement('span');
+ wrap.className='paper-progress-controls';check.type='checkbox';check.checked=checked;
+ check.setAttribute('aria-label',date+' 阅读完成：'+paper.title);label.title=date+' 的阅读任务';text.textContent=checked?'已读':'未读';label.append(check,text);wrap.append(label);host.append(wrap);
+ check.onchange=()=>{if(selected!==date)return;const read=check.checked;onChange(read);
+  // Undoing today's session must not erase a paper read on an earlier day.
+  if(read&&date===chinaTime().date&&!isPaperRead(paper.id))knowledgeApi('paper-read-status',{paperId:paper.id,read:true}).then(value=>{cacheManualReading(value);localStorage.setItem('paper-progress-updated',Date.now()+':'+crypto.randomUUID());window.dispatchEvent(new CustomEvent('paper-progress-change',{detail:value}));}).catch(()=>toast('当天完成状态已保留；论文已读状态同步失败，请稍后重试。'));
+ };
+ return wrap;
 }
+function setTaskDone(id,completed){const done=new Set(day().done);if(completed)done.add(id);else done.delete(id);updateDay({done:[...done]});refreshTodos();}
+function openTodoPlan(todo){pendingTimelineTodo=todo.id;refreshTodos();$('schedule').scrollIntoView({behavior:'smooth',block:'start'});}
+function changeTimeline(task,value){
+ const state=day(),timelineOrder=prioritizeTask(state.timelineOrder,task.id);
+ if(task.custom)updateDay({todos:state.todos.map(t=>t.id===task.id?{...t,...value}:t),timelineOrder});
+ else updateDay({scheduleOverrides:{...state.scheduleOverrides,[task.id]:{title:task.title,detail:task.detail||'',...value}},timelineOrder});
+ pendingTimelineTodo=null;refreshTodos();
+}
+function placeTimelineTodo(id,value){const state=day();if(!state.todos.some(t=>t.id===id))return;updateDay({todos:state.todos.map(t=>t.id===id?{...t,...value}:t),timelineOrder:prioritizeTask(state.timelineOrder,id)});pendingTimelineTodo=null;refreshTodos();}
+function returnTimelineTask(task){const state=day(),next=returnScheduledTask(state,task,'todo-'+crypto.randomUUID());if(next===state)return;updateDay(next);pendingTimelineTodo=null;refreshTodos();}
+function returnTimelineChild(rootId,id){const state=day(),next=returnSubtask(state,rootId,id,'todo-'+crypto.randomUUID());if(next===state)return;updateDay(next);pendingTimelineTodo=null;refreshTodos();}
 function projectActions(task){const a=document.createElement("a");a.className="task-project-actions";a.href=task.kind==="learning"?"http://127.0.0.1:8770/learning?module="+encodeURIComponent(task.projectId)+"&deck="+encodeURIComponent(task.deckId):"http://127.0.0.1:8770/?project="+encodeURIComponent(task.projectId);a.target="_blank";a.rel="noopener";a.textContent=(task.kind==="learning"?"打开学习 PPT · ":"打开项目 · ")+task.projectName+" ↗";return a}
-function renderSubtasks(task){
-  const area=document.createElement("details");area.className="subtasks";
-  const items=day().subtasks[task.id]||[],summary=document.createElement("summary");
-  summary.textContent=`子任务 ${items.filter(t=>t.done).length} / ${items.length} · 不计时`;
-  area.open=items.length>0;area.append(summary);
-  const setItems=next=>{updateDay({subtasks:{...day().subtasks,[task.id]:next}});refreshTodos()};
-  for(const item of items){
-    const row=document.createElement("div");row.className="subtask-row";
-    const label=document.createElement("label"),check=document.createElement("input"),name=document.createElement("span");
-    check.type="checkbox";check.checked=item.done;if(item.paper){check.disabled=true;check.title="完成这篇论文全部阅读任务后自动完成";}check.setAttribute("aria-label",`子任务完成：${item.title}`);if(item.paper)setPaperTitle(name,item.paper);else name.textContent=item.title;name.classList.toggle("subtask-done",item.done);label.append(check,name);
-    check.onchange=()=>{if(item.paper)recordPaperRead(item.paper.id,check.checked);setItems(items.map(t=>t.id===item.id?{...t,done:check.checked}:t))};
-    const edit=document.createElement("button"),remove=document.createElement("button");edit.type=remove.type="button";edit.textContent="编辑";remove.textContent="删除";edit.setAttribute("aria-label","编辑子任务："+item.title);remove.setAttribute("aria-label","删除子任务："+item.title);
-    const editForm=document.createElement("form"),editInput=document.createElement("input"),save=document.createElement("button"),cancel=document.createElement("button");editForm.className="subtask-add";editForm.hidden=true;editInput.type="text";editInput.maxLength=160;editInput.required=true;editInput.value=item.title;editInput.setAttribute("aria-label","修改子任务："+item.title);save.type="submit";save.textContent="保存";cancel.type="button";cancel.textContent="取消";editForm.append(editInput,save,cancel);
-    edit.onclick=()=>{editForm.hidden=false;editInput.focus()};cancel.onclick=()=>{editForm.hidden=true};editForm.onsubmit=e=>{e.preventDefault();const title=editInput.value.trim();if(title)setItems(items.map(t=>t.id===item.id?{...t,title}:t))};
-    remove.onclick=()=>{removedSubtask={date:selected,taskId:task.id,item,index:items.indexOf(item)};setItems(items.filter(t=>t.id!==item.id))};row.append(label,edit,remove);area.append(row);if(item.paper)area.append(paperActions(item.paper));area.append(editForm);
+function nestTimelineTodo(rootId,todoId,parentSubtaskId=null){const state=day();if(![...schedule,...state.todos].some(t=>t.id===rootId))return;updateDay(nestTodo(state,rootId,todoId,'sub-'+crypto.randomUUID(),parentSubtaskId));pendingTimelineTodo=null;refreshTodos();}
+function moveTimelineSubtask(fromRoot,id,toRoot,parentSubtaskId=null){const state=day(),next=moveSubtask(state,fromRoot,id,toRoot,parentSubtaskId);if(next===state)return;updateDay(next);refreshTodos();}
+function renderSubtasks(task,{compact=false}={}){
+ const area=document.createElement(compact?'div':'details');area.className='subtasks'+(compact?' subtask-tree-compact':'');
+ const items=day().subtasks[task.id]||[],summary=document.createElement(compact?'div':'summary');
+ summary.textContent=`子任务 ${items.filter(t=>t.done).length} / ${items.length}`;area.append(summary);if(!compact)area.open=items.length>0;
+ const setItems=next=>{updateDay({subtasks:{...day().subtasks,[task.id]:next}});refreshTodos();};
+ const dropOptions={onMove:moveTimelineSubtask,onTodo:nestTimelineTodo},slots=subtaskSlots({...task,start:task.sourceStart??task.start,end:task.sourceEnd??task.end},items);
+ function appendItems(parentId,container){for(const item of items.filter(t=>(t.parentSubtaskId||null)===parentId)){
+  const branch=document.createElement('div');branch.className='subtask-branch';
+  const row=document.createElement('div');row.className='subtask-row';makeSubtaskDraggable(row,task.id,item,moveTimelineSubtask,returnTimelineChild);makeSubtaskDropTarget(row,task.id,item.id,dropOptions);
+  const name=document.createElement(item.paper?'button':'span');name.className='subtask-name';if(item.paper){name.type='button';setPaperTitle(name,item.paper);name.onclick=()=>openReader(item.paper.id);}else name.textContent=item.title;name.classList.toggle('subtask-done',item.done);
+  const grip=document.createElement('span');grip.className='subtask-grip';grip.textContent='⠿';grip.title='拖入其他子任务';
+  const slotCell=document.createElement('div');slotCell.className='subtask-slot';
+  if(compact){if(item.paper){mountDailyPaperCheck(slotCell,item.paper,item.done,done=>setItems(items.map(t=>t.id===item.id?{...t,done}:t)));}else{const check=document.createElement('input');check.type='checkbox';check.checked=item.done;check.setAttribute('aria-label','子任务完成：'+item.title);check.onchange=()=>{if(item.studyTask)markPaperTaskDone(item.studyTask.paperId,item.studyTask.taskId,check.checked);setItems(items.map(t=>t.id===item.id?{...t,done:check.checked}:t));};slotCell.append(check);}}
+  const slot=slots.get(item.id);if(slot){row.dataset.subtaskStart=slot.start;row.dataset.subtaskEnd=slot.end;}const time=document.createElement('small');time.className='subtask-time';time.textContent=slot?`${timeLabel(slot.start)}–${timeLabel(slot.end)}`:'待安排';time.title='计划 '+(slot?.duration||item.durationMinutes||10)+' 分钟';time.classList.toggle('subtask-time-overflow',!!slot?.overflow);slotCell.append(time);if(slot?.overflow){const warning=document.createElement('small');warning.textContent='超出父任务';warning.className='subtask-time-overflow';slotCell.append(warning);}
+  const content=document.createElement('div');content.className='subtask-content';const heading=document.createElement('div');heading.className='subtask-heading';heading.append(grip,name);if(item.paper){const count=document.createElement('span');count.className='paper-title-progress';mountPaperProgress(count,item.paper,{showRead:false,countLabel:'阅读清单'});heading.append(count);}content.append(heading);if(item.detail){const detail=document.createElement('p');detail.className='subtask-detail small muted';detail.textContent=item.detail;content.append(detail);}row.append(slotCell,content);if(compact){branch.style.minHeight=(70+Math.max(0,(slot?.duration||item.durationMinutes||10)-10)*2)+'px';makeSubtaskResizable(branch,slot?.duration||item.durationMinutes||10,minutes=>setItems(items.map(t=>t.id===item.id?{...t,durationMinutes:minutes,spentMinutes:minutes}:t)));}if(item.spentMinutes){const spent=document.createElement('small');spent.className='subtask-spent';spent.textContent='已记录用时 '+item.spentMinutes+' 分钟';slotCell.append(spent);}branch.append(row);
+  if(!compact){
+   const actions=document.createElement('div');actions.className='subtask-tools';
+   if(item.paper)mountDailyPaperCheck(actions,item.paper,item.done,done=>setItems(items.map(t=>t.id===item.id?{...t,done}:t)));else{const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.checked=item.done;check.setAttribute('aria-label','子任务完成：'+item.title);label.append(check);check.onchange=()=>{if(item.studyTask)markPaperTaskDone(item.studyTask.paperId,item.studyTask.taskId,check.checked);setItems(items.map(t=>t.id===item.id?{...t,done:check.checked}:t));};actions.append(label);}
+   const edit=document.createElement('button'),remove=document.createElement('button');edit.type=remove.type='button';edit.textContent='编辑';remove.textContent='删除';edit.setAttribute('aria-label','编辑子任务：'+item.title);remove.setAttribute('aria-label','删除子任务：'+item.title);
+   const form=document.createElement('form'),input=document.createElement('input'),save=document.createElement('button'),cancel=document.createElement('button');form.className='subtask-add';form.hidden=true;input.value=item.title;input.maxLength=160;input.required=true;input.setAttribute('aria-label','修改子任务：'+item.title);save.type='submit';save.textContent='保存';cancel.type='button';cancel.textContent='取消';form.append(input,save,cancel);edit.onclick=()=>{form.hidden=false;input.focus();};cancel.onclick=()=>form.hidden=true;form.onsubmit=e=>{e.preventDefault();if(input.value.trim())setItems(items.map(t=>t.id===item.id?{...t,title:input.value.trim()}:t));};
+   remove.onclick=()=>{const ids=new Set(subtreeIds(items,item.id));removedSubtask={date:selected,taskId:task.id,items:items.filter(t=>ids.has(t.id))};setItems(items.filter(t=>!ids.has(t.id)));};actions.append(edit,remove);
+   if(item.paper)mountQuizToggle(actions,item.paper.id,{quiet:true});
+   {const restore=document.createElement('button');restore.type='button';restore.textContent='移回 Todo List';restore.onclick=()=>{returnTimelineChild(task.id,item.id);};actions.append(restore);}
+   branch.append(actions,form);if(item.projectTask)branch.append(projectActions(item.projectTask));
   }
-  const form=document.createElement("form"),input=document.createElement("input"),add=document.createElement("button");form.className="subtask-add";input.type="text";input.maxLength=160;input.required=true;input.placeholder="添加子任务，不设时间";input.setAttribute("aria-label","新子任务："+task.title);add.type="submit";add.textContent="添加";add.setAttribute("aria-label","添加子任务："+task.title);form.append(input,add);form.onsubmit=e=>{e.preventDefault();const title=input.value.trim();if(title)setItems([...items,{id:"sub-"+crypto.randomUUID(),title,done:false}])};area.append(form);
-  if(removedSubtask?.date===selected&&removedSubtask.taskId===task.id){area.open=true;const undo=document.createElement("button");undo.type="button";undo.textContent="撤销删除子任务";undo.onclick=()=>{const copy=[...items],u=removedSubtask;copy.splice(u.index,0,u.item);removedSubtask=null;setItems(copy)};area.append(undo)}
-  return area;
+  const children=document.createElement('div');children.className='subtask-children';appendItems(item.id,children);if(children.children.length)branch.append(children);container.append(branch);
+ }}
+ const tree=document.createElement('div');tree.className='subtask-tree';appendItems(null,tree);area.append(tree);
+ if(!compact){
+  const form=document.createElement('form'),input=document.createElement('input'),add=document.createElement('button');form.className='subtask-add';input.type='text';input.maxLength=160;input.required=true;input.placeholder='添加子任务，默认 10 分钟';input.setAttribute('aria-label','新子任务：'+task.title);add.type='submit';add.textContent='添加';add.setAttribute('aria-label','添加子任务：'+task.title);form.append(input,add);form.onsubmit=e=>{e.preventDefault();if(input.value.trim())setItems([...items,{id:'sub-'+crypto.randomUUID(),title:input.value.trim(),done:false}]);};area.append(form);
+  if(removedSubtask?.date===selected&&removedSubtask.taskId===task.id){area.open=true;const undo=document.createElement('button');undo.type='button';undo.textContent='撤销删除子任务';undo.onclick=()=>{const restored=removedSubtask.items;removedSubtask=null;setItems([...items,...restored]);};area.append(undo);}
+ }
+ return area;
 }
 function renderTodos(){
  $("todo-date-label").textContent=selected;$("todo-list").replaceChildren();
- for(const todo of day().todos){const row=document.createElement("div");row.className="todo-item"+(day().done.includes(todo.id)?" done":"");const label=document.createElement("label"),check=document.createElement("input"),body=document.createElement("span"),title=document.createElement("span"),time=document.createElement("small");check.type="checkbox";check.checked=day().done.includes(todo.id);if(todo.paper){check.disabled=true;check.title="由论文全部阅读任务的完成状态决定";}check.setAttribute("aria-label","待办完成："+todo.title);if(todo.paper)setPaperTitle(title,todo.paper);else title.textContent=todo.title;time.textContent=todo.start===null?"未安排时间":`${timeLabel(todo.start)}–${timeLabel(todo.end)} · 已加入今日安排`;body.append(title,time);label.append(check,body);check.onchange=()=>{const done=new Set(day().done);if(check.checked)done.add(todo.id);else done.delete(todo.id);if(todo.studyTask)markPaperTaskDone(todo.studyTask.paperId,todo.studyTask.taskId,check.checked);if(todo.paper)recordPaperRead(todo.paper.id,check.checked);updateDay({done:[...done]});refreshTodos()};const actions=document.createElement("div");actions.className="todo-item-actions";const edit=document.createElement("button"),remove=document.createElement("button");edit.type=remove.type="button";edit.textContent="编辑";remove.textContent="删除";edit.setAttribute("aria-label","编辑待办："+todo.title);remove.setAttribute("aria-label","删除待办："+todo.title);edit.onclick=()=>{editingTodo=todo.id;$("todo-title").value=todo.title;$("todo-detail").value=todo.detail||"";setTimePair("todo",todo.start,todo.end);$("todo-submit").textContent="保存修改";$("todo-cancel").hidden=false;$("todo-title").focus()};remove.onclick=()=>{removedTodo={date:selected,todo,subtasks:day().subtasks[todo.id]||[],done:day().done.includes(todo.id)};updateDay({todos:day().todos.filter(t=>t.id!==todo.id),done:day().done.filter(id=>id!==todo.id)});if(editingTodo===todo.id)resetTodoForm();refreshTodos();$("todo-status").textContent="已删除待办，可撤销。"};const move=document.createElement('button');move.type='button';move.textContent=todo.start===null?'加入今日安排':'移除今日安排';move.onclick=()=>{if(todo.start===null){edit.onclick();$('todo-start').focus();$('todo-status').textContent='请选择起止时间，保存后加入今日安排。';$('todo-form').scrollIntoView({behavior:'smooth',block:'center'});}else{updateDay({todos:day().todos.map(t=>t.id===todo.id?{...t,start:null,end:null}:t)});refreshTodos();}};actions.append(edit,move,remove);row.append(label,actions);if(todo.detail&&!todo.studyTask){const detail=document.createElement("p");detail.className="small muted";detail.textContent=todo.detail;row.append(detail);}if(todo.studyTask){const b=document.createElement("button");b.className="button";b.textContent="打开论文任务与回答";b.onclick=()=>openReader(todo.studyTask.paperId,"tasks");row.append(b);const detail=document.createElement("p");detail.className="small muted";detail.textContent=todo.detail;row.append(detail)}if(todo.paper)row.append(paperActions(todo.paper));if(todo.projectTask)row.append(projectActions(todo.projectTask));row.append(renderSubtasks(todo));$("todo-list").append(row)}
+ for(const todo of day().todos){const row=document.createElement("div");row.className="todo-item"+(day().done.includes(todo.id)?" done":"");const label=document.createElement("label"),check=document.createElement("input"),body=document.createElement("span"),title=document.createElement("span"),time=document.createElement("small");check.type="checkbox";check.checked=day().done.includes(todo.id);check.setAttribute("aria-label","待办完成："+todo.title);if(todo.paper)setPaperTitle(title,todo.paper);else title.textContent=todo.title;time.hidden=todo.start===null;time.textContent=todo.start===null?"":`${timeLabel(todo.start)}–${timeLabel(todo.end)} · 已加入今日安排`;body.append(title);if(todo.paper){const count=document.createElement('span');count.className='paper-title-progress';mountPaperProgress(count,todo.paper,{showRead:false,countLabel:'阅读清单'});body.append(count);}body.append(time);label.append(...(todo.paper?[]:[check]),body);check.onchange=()=>{const done=new Set(day().done);if(check.checked)done.add(todo.id);else done.delete(todo.id);if(todo.studyTask)markPaperTaskDone(todo.studyTask.paperId,todo.studyTask.taskId,check.checked);updateDay({done:[...done]});refreshTodos()};const actions=document.createElement("div");actions.className="todo-item-actions";const edit=document.createElement("button"),remove=document.createElement("button");edit.type=remove.type="button";edit.textContent="编辑";remove.textContent="删除";edit.setAttribute("aria-label","编辑待办："+todo.title);remove.setAttribute("aria-label","删除待办："+todo.title);edit.onclick=()=>{editingTodo=todo.id;$("todo-title").value=todo.title;$("todo-detail").value=todo.detail||"";setTimePair("todo",todo.start,todo.end);$("todo-submit").textContent="保存修改";$("todo-cancel").hidden=false;$("todo-title").focus()};remove.onclick=()=>{removedTodo={date:selected,todo,subtasks:day().subtasks[todo.id]||[],done:day().done.includes(todo.id)};updateDay({todos:day().todos.filter(t=>t.id!==todo.id),done:day().done.filter(id=>id!==todo.id)});if(editingTodo===todo.id)resetTodoForm();refreshTodos();$("todo-status").textContent="已删除待办，可撤销。"};const move=document.createElement('button');move.type='button';move.textContent=todo.start===null?'拖入时间轴':'移除今日安排';move.onclick=()=>{if(todo.start===null){openTodoPlan(todo);}else{updateDay({todos:day().todos.map(t=>t.id===todo.id?{...t,start:null,end:null}:t)});refreshTodos();}};if(todo.paper)mountDailyPaperCheck(actions,todo.paper,day().done.includes(todo.id),done=>setTaskDone(todo.id,done));actions.append(edit,...(todo.start===null?[]:[move]),remove);if(todo.paper)mountQuizToggle(actions,todo.paper.id,{quiet:true});row.append(label,actions);if(todo.detail&&!todo.studyTask){const detail=document.createElement("p");detail.className="small muted";detail.textContent=todo.detail;row.append(detail);}if(todo.studyTask){const b=document.createElement("button");b.className="button";b.textContent="打开论文任务与回答";b.onclick=()=>openReader(todo.studyTask.paperId,"tasks");row.append(b);const detail=document.createElement("p");detail.className="small muted";detail.textContent=todo.detail;row.append(detail)}if(todo.projectTask)row.append(projectActions(todo.projectTask));row.append(renderSubtasks(todo));makeTodoDraggable(row,todo,{onNest:nestTimelineTodo,onDrop:placeTimelineTodo});$("todo-list").append(row)}
  if(!day().todos.length){const empty=document.createElement("p");empty.className="small muted";empty.textContent="这一天还没有额外待办。";$("todo-list").append(empty)}
  $("todo-undo").hidden=!removedTodo||removedTodo.date!==selected;
 }
@@ -62,34 +110,43 @@ function toast(message){$("toast").textContent=message;$("toast").hidden=false;c
 function save(){
   try{localStorage.setItem(key,JSON.stringify(db));storageOkay=true;$("save-status").textContent="已保存到当前浏览器"}catch{storageOkay=false;$("save-status").textContent="保存失败，请导出备份，避免丢失记录";toast("浏览器无法保存，请导出备份")}
 }
-function updateDay(updates){db.days[selected]={...day(),...updates};save()}
+function updateDay(updates){db.days[selected]={...day(),baseSchedule:structuredClone(scheduleFor(selected)),...updates};save()}
 function renderProgress(){
-  const tasks=totalTasks(),n=tasks.filter(s=>day().done.includes(s.id)).length;
-  $("progress-count").textContent=`${n} / ${tasks.length}`;
-  $("progress-fill").style.width=`${tasks.length?n/tasks.length*100:0}%`;
-  document.querySelector(".progress-track").setAttribute("aria-valuenow",n);document.querySelector(".progress-track").setAttribute("aria-valuemax",tasks.length);
+  const {done:n,total}=dailyCompletion(schedule,day());
+  renderWeeklyCats($("weekly-task-cats"),schedule,{...db.days,...(selected===chinaTime().date||db.days[selected]?{[selected]:day()}:{})},selected,chinaTime().date);
+  $("progress-count").textContent=`${n} / ${total}`;
+  $("progress-fill").style.width=`${total?n/total*100:0}%`;
+  document.querySelector(".progress-track").setAttribute("aria-valuenow",n);document.querySelector(".progress-track").setAttribute("aria-valuemax",total);
 }
 function durationLabel(minutes){return [Math.floor(minutes/60)?`${Math.floor(minutes/60)} 小时`:"",minutes%60?`${minutes%60} 分钟`:""].filter(Boolean).join(" ")}
 function renderDay(announceDate=true){
+  schedule=scheduleFor(selected);
+  if(selected===chinaTime().date&&!Array.isArray(db.days[selected]?.baseSchedule)){db.days[selected]={...db.days[selected],baseSchedule:structuredClone(schedule)};save();}
   $("date").value=selected;
   $("schedule-heading").textContent=selected===chinaTime().date?"今日安排":"每日安排";
   $("day-label").textContent=new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"long",day:"numeric",weekday:"long",timeZone:"Asia/Shanghai"}).format(new Date(`${selected}T12:00:00+08:00`));
   $("schedule").replaceChildren();
   const state=day();
-  const planned=tasksFor(selected);$("schedule-window").textContent=planned.length?`${timeLabel(Math.min(...planned.map(t=>t.start)))} — ${timeLabel(Math.max(...planned.map(t=>t.end)))}`:"尚未安排";
+  $('completion-reset').disabled=!state.done.length&&!Object.values(state.subtasks).flat().some(item=>item.done);
+  $('completion-reset').title='重置 '+selected+' 的父任务和子任务勾选';
+  $('completion-reset-notice').hidden=!state.completionResetUndo;
+  $('template-reset-notice').hidden=!state.templateResetUndo;
+  $('schedule-settings-date').textContent=selected+' · 仅作用于当天';
+  const planned=tasksFor(selected);$("schedule-window").textContent="06:00 — 23:00";
   for(const task of planned){
     const row=document.createElement("div");row.className="task";row.dataset.id=task.id;row.dataset.start=task.start;row.dataset.end=task.end;
     row.innerHTML=`<div class="task-time">${timeLabel(task.start)}–${timeLabel(task.end)}<div class="task-duration">${durationLabel(task.end-task.start)}</div></div><div><div class="task-title"><i class="task-marker ${task.type}"></i><span class="task-name"></span><span class="task-badge" hidden>进行中</span></div><p class="task-details"></p></div><input type="checkbox">`;
     if(task.paper)setPaperTitle(row.querySelector('.task-name'),task.paper);else row.querySelector('.task-name').textContent=task.title;
     row.querySelector(".task-details").textContent=task.detail;
-    const check=row.querySelector("input");check.checked=state.done.includes(task.id);if(task.paper){check.disabled=true;check.title="由论文全部阅读任务的完成状态决定";}check.setAttribute("aria-label",`完成：${task.title}`);
+    const check=row.querySelector("input");check.checked=state.done.includes(task.id);check.setAttribute("aria-label",`完成：${task.title}`);
     row.classList.toggle("done",check.checked);
-    check.addEventListener("change",()=>{const done=new Set(day().done);if(check.checked)done.add(task.id);else done.delete(task.id);if(task.studyTask)markPaperTaskDone(task.studyTask.paperId,task.studyTask.taskId,check.checked);if(task.paper)recordPaperRead(task.paper.id,check.checked);updateDay({done:[...done]});refreshTodos()});
-    const actions=document.createElement("div");actions.className="schedule-item-actions";const edit=document.createElement("button"),remove=document.createElement("button");edit.type=remove.type="button";edit.textContent="编辑";remove.textContent="删除";edit.setAttribute("aria-label","编辑安排："+task.title);remove.textContent=task.custom?"移除今日安排":"删除";remove.setAttribute("aria-label",(task.custom?"移除今日安排：":"删除安排：")+task.title);edit.onclick=()=>openScheduleEditor(task);remove.onclick=()=>deleteScheduleTask(task);actions.append(edit,remove);row.children[1].append(actions);if(task.studyTask){const b=document.createElement("button");b.className="button";b.textContent="打开论文任务与回答";b.onclick=()=>openReader(task.studyTask.paperId,"tasks");row.children[1].append(b)}if(task.paper)row.children[1].append(paperActions(task.paper));if(task.projectTask)row.children[1].append(projectActions(task.projectTask));row.children[1].append(renderSubtasks(task));
-    $("schedule").append(row);
+    check.addEventListener("change",()=>{const done=new Set(day().done);if(check.checked)done.add(task.id);else done.delete(task.id);if(task.studyTask)markPaperTaskDone(task.studyTask.paperId,task.studyTask.taskId,check.checked);updateDay({done:[...done]});refreshTodos()});
+    const actions=document.createElement("div");actions.className="schedule-item-actions";const edit=document.createElement("button"),remove=document.createElement("button");edit.type=remove.type="button";edit.textContent="编辑";remove.textContent="删除";edit.setAttribute("aria-label","编辑安排："+task.title);remove.textContent=task.custom?"移除今日安排":"删除";remove.setAttribute("aria-label",(task.custom?"移除今日安排：":"删除安排：")+task.title);edit.onclick=()=>openScheduleEditor(task);remove.onclick=()=>deleteScheduleTask(task);if(task.paper)mountDailyPaperCheck(actions,task.paper,state.done.includes(task.id),done=>setTaskDone(task.id,done));actions.append(edit,remove);if(task.custom){const del=document.createElement('button');del.type='button';del.textContent='删除';del.onclick=()=>{updateDay({todos:day().todos.filter(t=>t.id!==task.id),done:day().done.filter(id=>id!==task.id)});refreshTodos();};actions.append(del);}if(task.paper)mountQuizToggle(actions,task.paper.id,{quiet:true});row.children[1].append(actions);if(task.paper){const count=document.createElement('div');count.className='timeline-paper-count';mountPaperProgress(count,task.paper,{showRead:false,countLabel:'阅读清单'});row.querySelector('.task-title').append(count);}if(task.studyTask){const b=document.createElement("button");b.className="button";b.textContent="打开论文任务与回答";b.onclick=()=>openReader(task.studyTask.paperId,"tasks");row.children[1].append(b)}if(task.projectTask)row.children[1].append(projectActions(task.projectTask));row.children[1].append(renderSubtasks(task));
+    if(task.paper){check.remove();const corner=document.createElement('div');corner.className='timeline-parent-paper-check';mountDailyPaperCheck(corner,task.paper,state.done.includes(task.id),done=>setTaskDone(task.id,done));row.append(corner);}$("schedule").append(row);
   }
   if(!planned.length){const empty=document.createElement("p");empty.className="small muted";empty.textContent="这一天暂无定时安排，可从 Todo List 添加。";$("schedule").append(empty)}
-  $("schedule-undo").hidden=!scheduleUndo||scheduleUndo.date!==selected;$("schedule-reset").disabled=!state.hiddenSchedule.length&&!Object.keys(state.scheduleOverrides).length;
+  mountDailyTimeline($('schedule'),planned,{onChange:changeTimeline,onDrop:placeTimelineTodo,onNest:nestTimelineTodo,onMoveSubtask:moveTimelineSubtask,onReturn:returnTimelineTask,renderChildren:task=>(day().subtasks[task.id]||[]).length?renderSubtasks(task,{compact:true}):null,pendingTodo:state.todos.find(t=>t.id===pendingTimelineTodo),onCancel:()=>{pendingTimelineTodo=null;refreshTodos();}});
+  $("schedule-undo").hidden=!scheduleUndo||scheduleUndo.date!==selected;$("schedule-reset").disabled=!state.hiddenSchedule.length&&!Object.keys(state.scheduleOverrides).length&&!(state.timelineOrder||[]).length;
   $("notes").value=state.notes??"";
   $("save-status").textContent=storageOkay?"记录保存在当前浏览器":"浏览器存储不可用，请导出备份";
   renderTodos();renderProgress();highlightCurrent();
@@ -97,7 +154,7 @@ function renderDay(announceDate=true){
 }
 function selectDate(value){
   if(!/^\d{4}-\d{2}-\d{2}$/.test(value)||Number.isNaN(Date.parse(value)))return;
-  selected=value;followToday=selected===chinaTime().date;resetTodoForm();renderDay();
+  pendingTimelineTodo=null;selected=value;followToday=selected===chinaTime().date;resetTodoForm();renderDay();
 }
 function highlightCurrent(){
   const ct=chinaTime(),current=currentTask(tasksFor(ct.date),ct.minute);
@@ -106,15 +163,27 @@ function highlightCurrent(){
     row.classList.toggle("active",active);row.querySelector(".task-badge").hidden=!active;
   }
 }
+function dailyEditingInProgress(){
+ if(document.querySelector('dialog[open],.timeline-dragging,.timeline-todo-dragging,.subtask-drag-preview,.subtask-resizing'))return true;
+ if(editingTodo||$('todo-title').value.trim()||$('todo-detail').value.trim())return true;
+ if(document.activeElement===$('notes'))return true;
+ return [...document.querySelectorAll('.subtasks form:not([hidden])')].some(form=>form.querySelector('input[aria-label^="修改子任务"]')||[...form.querySelectorAll('input')].some(input=>input.value.trim()));
+}
+function syncDailyDate(today){
+ const next=advanceDailyDate({selected,lastToday,followToday},today,dailyEditingInProgress());
+ const hint=$('daily-date-state');if(hint){hint.hidden=selected===today&&!next.pending;const text=next.pending?'新的一天已开始，完成当前编辑后自动切换到 '+today:selected!==today?'正在查看 '+selected+'；北京时间今天是 '+today:'';if(hint.textContent!==text)hint.textContent=text;}
+ $('today').title=selected===today?'查看今天的日程':'回到今天 '+today;
+ if(!next.changed)return;selected=next.selected;lastToday=next.lastToday;followToday=next.followToday;pendingTimelineTodo=null;lastMinute=null;resetTodoForm();renderDay();if(hint)hint.hidden=true;
+}
 function tick(){
   const ct=chinaTime();$("clock").textContent=ct.clock;
-  if(ct.date!==lastToday){lastToday=ct.date;if(followToday){selected=ct.date;renderDay()}else highlightCurrent()}
+  syncDailyDate(ct.date);
   if(lastMinute!==`${ct.date}:${ct.minute}`){
     lastMinute=`${ct.date}:${ct.minute}`;
     const todayTasks=tasksFor(ct.date),task=currentTask(todayTasks,ct.minute),next=[...todayTasks,...reminders.filter(t=>t.id==="sleep")].sort((a,b)=>a.start-b.start).find(t=>t.start>ct.minute)||schedule[0];
-    $("current-title").textContent=task?.title??"休息，明天再出发";
-    $("current-detail").textContent=task?.detail??"收好今天的收获。明早 06:00 起床，开始新的一天。";
-    $("current-time").textContent=task?`${timeLabel(task.start)} — ${timeLabel(task.end)}`:"23:00 — 次日 06:00";
+    const gap=task?null:unscheduledPeriod(todayTasks,ct.minute);$("current-title").textContent=task?.title??gap.title;
+    $("current-detail").textContent=task?.detail??gap.detail;
+    $("current-time").textContent=task?`${timeLabel(task.start)} — ${timeLabel(task.end)}`:`${gap.timePrefix}${timeLabel(gap.start)}${gap.timeMiddle}${timeLabel(gap.end)}`;
     $("remaining").textContent=task?`本时段还剩 ${task.end-ct.minute} 分钟`:"";
     $("next-title").textContent=next.title;
     $("next-time").textContent=`${next.start<=ct.minute?"明天 ":""}${timeLabel(next.start)} — ${timeLabel(next.end)}`;
@@ -131,7 +200,14 @@ function tick(){
 function openScheduleEditor(task){editingSchedule={id:task.id,date:selected,custom:!!task.custom};$("schedule-edit-title").value=task.title;setTimePair("schedule-edit",task.sourceStart??task.start,task.sourceEnd??task.end);$("schedule-edit-detail").value=task.custom?(day().todos.find(t=>t.id===task.id)?.detail||""):task.detail||"";$("schedule-edit-status").textContent="修改仅保存到 "+selected+"。分段任务编辑的是整项原始安排；新增任务占用的时间会自动分离。";$("schedule-edit-dialog").showModal()}
 function deleteScheduleTask(task){const done=day().done.includes(task.id);if(task.custom){const todo=day().todos.find(t=>t.id===task.id);scheduleUndo={date:selected,kind:"custom",todo,subtasks:day().subtasks[todo.id]||[],done};removedTodo={date:selected,todo,subtasks:day().subtasks[todo.id]||[],done};updateDay({todos:day().todos.map(t=>t.id===task.id?{...t,start:null,end:null}:t)});if(editingTodo===task.id)resetTodoForm()}else{scheduleUndo={date:selected,kind:"base",id:task.id,done};updateDay({hiddenSchedule:[...day().hiddenSchedule,task.id],done:day().done.filter(id=>id!==task.id)})}refreshTodos();$("schedule-status").textContent="已从当天安排移除“"+task.title+"”，可撤销。"}
 $("schedule-undo").onclick=()=>{if(!scheduleUndo||scheduleUndo.date!==selected)return;const u=scheduleUndo,done=new Set(day().done);if(u.done)done.add(u.kind==="base"?u.id:u.todo.id);if(u.kind==="base")updateDay({hiddenSchedule:day().hiddenSchedule.filter(id=>id!==u.id),done:[...done]});else{updateDay({todos:[...day().todos.filter(t=>t.id!==u.todo.id),u.todo],subtasks:{...day().subtasks,[u.todo.id]:u.subtasks||[]},done:[...done]});if(removedTodo?.todo.id===u.todo.id)removedTodo=null}scheduleUndo=null;refreshTodos();$("schedule-status").textContent="已恢复安排。"};
-$("schedule-reset").onclick=()=>{updateDay({scheduleOverrides:{},hiddenSchedule:[]});scheduleUndo=null;refreshTodos();$("schedule-status").textContent="已恢复当天的默认安排，Todo 待办保留。"};
+$('manage-default-schedule').onclick=()=>{ $('schedule-settings').open=false;openTemplateSettings(templateConfig,config=>{const frozen=freezeExistingDays(builtinSchedule,db.days,templateConfig,chinaTime().date);localStorage.setItem(TEMPLATE_KEY,JSON.stringify(config));db.days=frozen;save();templateConfig=config;refreshTodos();toast('默认日程已保存；已有日期保持原样，新日期自动选用对应模板。');});};
+window.addEventListener('storage',e=>{if(e.key===TEMPLATE_KEY&&e.newValue){try{templateConfig=validateTemplates(JSON.parse(e.newValue));refreshTodos();}catch{}}});
+$("schedule-reset").onclick=()=>{db.days[selected]=restoreDailyTemplate(day());save();scheduleUndo=null;$('schedule-settings').open=false;refreshTodos();};
+$('template-reset-undo').onclick=()=>{db.days[selected]=undoDailyTemplateRestore(day());save();refreshTodos();};
+document.addEventListener('click',e=>{if(!e.target.closest('#schedule-settings'))$('schedule-settings').open=false;});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')$('schedule-settings').open=false;});
+$('completion-reset').onclick=()=>{db.days[selected]=resetDailyCompletion(day());save();$('schedule-settings').open=false;refreshTodos();$('schedule-status').textContent='已重置 '+selected+' 的任务勾选，可撤销。';};
+$('completion-reset-undo').onclick=()=>{db.days[selected]=undoDailyCompletionReset(day());save();refreshTodos();$('schedule-status').textContent='已恢复 '+selected+' 重置前的勾选。';};
 $("schedule-edit-cancel").onclick=()=>$("schedule-edit-dialog").close();
 $("schedule-edit-form").onsubmit=e=>{e.preventDefault();if(!editingSchedule||editingSchedule.date!==selected)return;const title=$("schedule-edit-title").value.trim(),start=timeMinutes($("schedule-edit-start").value),end=timeMinutes($("schedule-edit-end").value),detail=$("schedule-edit-detail").value;if(!title||start===null||end===null||end<=start){$("schedule-edit-status").textContent="请填写名称和有效起止时间，结束时间须晚于开始时间。";return}const values={title,start,end,detail};if(editingSchedule.custom){updateDay({todos:[...day().todos.filter(t=>t.id!==editingSchedule.id),{...day().todos.find(t=>t.id===editingSchedule.id),...values}]})}else updateDay({scheduleOverrides:{...day().scheduleOverrides,[editingSchedule.id]:values}});$("schedule-edit-dialog").close();editingSchedule=null;refreshTodos();$("schedule-status").textContent="已保存当天修改，重叠时间已自动分离。"};
 $("todo-form").onsubmit=e=>{e.preventDefault();const title=$("todo-title").value.trim(),startValue=$("todo-start").value,endValue=$("todo-end").value,start=timeMinutes(startValue),end=timeMinutes(endValue);if(!title)return;if((startValue||endValue)&&(start===null||end===null||end<=start)){$("todo-status").textContent="请填写有效的起止时间，结束时间须晚于开始时间。";return}const todo={...day().todos.find(t=>t.id===editingTodo),id:editingTodo||"todo-"+crypto.randomUUID(),title,start,end,detail:$("todo-detail").value};const todos=day().todos.filter(t=>t.id!==todo.id);todos.push(todo);updateDay({todos});resetTodoForm();refreshTodos();$("todo-status").textContent=start===null?"已加入待办清单，之后可编辑时间。":"已插入今日安排，原任务在开始处暂停，结束后继续；其他时段保持不变。"};
@@ -169,7 +245,7 @@ $("import").addEventListener("change",async e=>{
     const cleaned={};
     for(const [date,value] of Object.entries(data.days)){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||Number.isNaN(Date.parse(date))||!value||!Array.isArray(value.done)||typeof value.notes!=="string")throw Error("记录格式不正确");
-      const todos=cleanTodos(value.todos);cleaned[date]={scheduleOverrides:cleanScheduleOverrides(schedule,value.scheduleOverrides),hiddenSchedule:cleanHiddenSchedule(schedule,value.hiddenSchedule),done:[...new Set(value.done.filter(id=>schedule.some(t=>t.id===id)||todos.some(t=>t.id===id)))],notes:value.notes,todos,subtasks:cleanSubtasks(schedule,todos,value.subtasks)};
+      const importBase=Array.isArray(value.baseSchedule)?cleanTemplateTasks(value.baseSchedule):builtinSchedule;const todos=cleanTodos(value.todos);cleaned[date]={baseSchedule:importBase,...(value.nestedTodoArchive&&typeof value.nestedTodoArchive==='object'?{nestedTodoArchive:value.nestedTodoArchive}:{}),...(value.catalogTodoArchive&&typeof value.catalogTodoArchive==='object'?{catalogTodoArchive:value.catalogTodoArchive}:{}),timelineOrder:Array.isArray(value.timelineOrder)?value.timelineOrder.filter(i=>typeof i==='string'):[],scheduleOverrides:cleanScheduleOverrides(importBase,value.scheduleOverrides),hiddenSchedule:cleanHiddenSchedule(importBase,value.hiddenSchedule),done:[...new Set(value.done.filter(id=>importBase.some(t=>t.id===id)||todos.some(t=>t.id===id)))],notes:value.notes,todos,subtasks:cleanSubtasks(importBase,todos,value.subtasks)};
     }
     const overlap=Object.keys(cleaned).some(d=>db.days[d]);
     if(overlap&&!confirm("备份中有与当前记录相同的日期。导入会替换这些日期的打卡和笔记，是否继续？"))return;
@@ -178,6 +254,8 @@ $("import").addEventListener("change",async e=>{
 });
 window.addEventListener("storage",e=>{if(e.key===key){try{const updated=JSON.parse(e.newValue);if(updated?.days){db=updated;renderDay();notificationStatus()}}catch{}}});
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)tick()});
+window.addEventListener('focus',tick);window.addEventListener('pageshow',tick);
+window.addEventListener('message',e=>{if(e.origin==='http://127.0.0.1:8769'&&e.source===window.parent&&e.data?.type==='research-daily-activate')tick();});
 renderDay();tick();setInterval(tick,1000);
 
 let paperTaskDialog=null,pendingPaperTask=null;
@@ -221,7 +299,6 @@ window.addEventListener("message",e=>{if(e.origin==="http://127.0.0.1:8769"&&e.s
 const incomingParams=new URLSearchParams(location.search);if(incomingParams.get("paperToday")==="1"){selected=chinaTime().date;followToday=true;renderDay()}
 const incomingPaper=incomingParams.get("addPaper");if(incomingPaper){const cleanedUrl=new URL(location.href);cleanedUrl.searchParams.delete("addPaper");cleanedUrl.searchParams.delete("paperToday");history.replaceState(null,"",cleanedUrl);openLibraryPaperTask(incomingPaper)}
 
-function recordPaperRead(id,read){try{markPaperRead(id,read)}catch{toast("论文阅读统计保存失败，请检查浏览器存储。")}}
 window.addEventListener("paper-reading-status-change",renderReadingStats);
 window.addEventListener("storage",e=>{if(e.key===READING_STATE_KEY||e.key===READING_HISTORY_KEY)renderReadingStats()});
 renderReadingStats();setInterval(renderReadingStats,60000);
@@ -266,9 +343,16 @@ const markReadParam=new URLSearchParams(location.search).get('markRead');if(mark
 
 // Share completion with the reading queue across pages and browser origins.
 let completionRefresh=false;
-async function refreshPaperCompletions(){if(completionRefresh||document.querySelector('dialog[open]'))return;completionRefresh=true;try{const ids=[...new Set([...day().todos.map(t=>t.paper?.id||t.studyTask?.paperId),...Object.values(day().subtasks).flat().map(t=>t.paper?.id)].filter(Boolean))];for(const id of ids){if(localStorage.getItem('paper-knowledge-draft:'+id))continue;const response=await fetch('/api/study/paper-knowledge?id='+encodeURIComponent(id),{cache:'no-store'});if(!response.ok)continue;const record=await response.json();if(localStorage.getItem('paper-knowledge-draft:'+id))continue;localStorage.setItem('paper-reading-tasks-v1:'+id,JSON.stringify(record.tasks));markPaperRead(id,record.completed)}refreshTodos()}catch{}finally{completionRefresh=false}}
+async function refreshPaperCompletions(){if(completionRefresh||dailyEditingInProgress())return;completionRefresh=true;try{const ids=[...new Set([...day().todos.map(t=>t.paper?.id||t.studyTask?.paperId),...Object.values(day().subtasks).flat().map(t=>t.paper?.id)].filter(Boolean))];for(const id of ids){if(localStorage.getItem('paper-knowledge-draft:'+id))continue;const response=await fetch('/api/study/paper-knowledge?id='+encodeURIComponent(id),{cache:'no-store'});if(!response.ok)continue;const record=await response.json();if(localStorage.getItem('paper-knowledge-draft:'+id))continue;localStorage.setItem('paper-reading-tasks-v1:'+id,JSON.stringify(record.tasks));markPaperRead(id,record.completed)}refreshTodos()}catch{}finally{completionRefresh=false}}
 window.addEventListener('paper-completion-change',()=>refreshTodos());
 window.addEventListener('storage',e=>{if(e.key==='paper-knowledge-updated')refreshPaperCompletions()});
 window.addEventListener('focus',refreshPaperCompletions);
 window.addEventListener('schedule-date-change',refreshPaperCompletions);
 setInterval(refreshPaperCompletions,20000);refreshPaperCompletions();
+
+window.addEventListener('paper-progress-change',()=>refreshTodos());
+window.addEventListener('paper-reading-status-change',()=>refreshTodos());
+
+window.addEventListener('daily-todo-change',()=>{try{const stored=JSON.parse(localStorage.getItem(key));if(stored?.days){db=stored;refreshTodos();}}catch{}});
+
+mountTodoReturnTarget($('todo-panel'),{onTask:id=>{const task=tasksFor(selected).find(t=>t.id===id);if(task)returnTimelineTask(task);},onSubtask:returnTimelineChild});

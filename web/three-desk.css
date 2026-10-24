@@ -13,3 +13,5 @@
 .methods-desk .method-step-article p{font-size:13px;line-height:1.7;margin:8px 0}
 .methods-desk .method-step-article small{font-size:12px}
 .methods-desk .desk-category-column nav button{font-size:14px}
+
+.reading-desk .desk-category-column>.paper-questions-entry{margin:0 0 22px;padding:12px;font-size:14px;font-weight:600;text-align:center;background:var(--theme-paper);border-color:var(--theme-line)}

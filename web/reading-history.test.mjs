@@ -1,6 +1,6 @@
 import {PAPER_TASKS} from './paper-tasks.mjs';
 import assert from 'node:assert/strict';
-import {readingStats,markPaperRead,storedReadingStats,READING_STATE_KEY,READING_HISTORY_KEY} from './reading-history.mjs';
+import {readingStats,markPaperRead,cacheManualReading,isPaperRead,storedReadingStats,READING_STATE_KEY,READING_HISTORY_KEY} from './reading-history.mjs';
 const store=new Map();globalThis.localStorage={getItem:k=>store.get(k)??null,setItem:(k,v)=>store.set(k,v)};
 globalThis.window={dispatchEvent:()=>{}};globalThis.CustomEvent=class{constructor(type){this.type=type}};
 const states={a:'read',b:'read',c:'read',d:'read',e:'unread',legacy:'read'};
@@ -14,3 +14,11 @@ markPaperRead('same-paper',false);assert.equal(storedReadingStats().total,0);ass
 console.log('Shared reading statistics, deduplication and unmark checks passed.');
 
 const unfinished=Object.fromEntries(PAPER_TASKS.map(t=>[t.id,{done:t.id!=='datasets'}]));store.set('paper-reading-tasks-v1:unfinished',JSON.stringify(unfinished));assert.equal(markPaperRead('unfinished',true),false);
+
+cacheManualReading({id:'manual-paper',read:true,readDate:'2026-10-20',manual:true});
+assert.equal(isPaperRead('manual-paper'),true);assert.equal(store.has('paper-reading-tasks-v1:manual-paper'),false);
+markPaperRead('manual-paper',false);assert.equal(isPaperRead('manual-paper'),true);
+cacheManualReading({id:'manual-paper',read:false,readDate:null,manual:true});assert.equal(isPaperRead('manual-paper'),false);
+console.log('Explicit read marks remain independent of task completion.');
+
+cacheManualReading({id:'server-completed',read:true,readDate:'2026-10-21',manual:false});assert.equal(isPaperRead('server-completed'),true);assert.equal(store.has('paper-reading-tasks-v1:server-completed'),false);

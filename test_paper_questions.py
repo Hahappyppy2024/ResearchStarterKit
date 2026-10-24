@@ -3,6 +3,19 @@ from unittest.mock import patch
 import study_service as study,local_app,paper_questions as questions
 
 class PaperQuestionTests(unittest.TestCase):
+ def test_issue_counts_delete_restore_and_image_answer(self):
+  image='![截图](http://127.0.0.1:8766/api/study/paste-image?id=12345678-1234-1234-1234-123456789abc)'
+  q=questions.save(dict(paperId=self.paper['id'],question='含截图的问题',answer=image))
+  questions.save(dict(paperId=self.paper['id'],question='已解决的问题',resolved=True))
+  questions.save(dict(paperId=self.other['id'],question='另一篇'))
+  self.assertEqual(questions.listing(mode='counts')['byPaper'][self.paper['id']],dict(open=1,resolved=1))
+  deleted=questions.save({**q,'deleted':True})
+  self.assertEqual(questions.listing(paper_id=self.paper['id'])['total'],1)
+  self.assertEqual(questions.listing(mode='counts')['byPaper'][self.paper['id']],dict(open=0,resolved=1))
+  with self.assertRaises(ValueError):questions.save({**q,'answer':'旧版本覆盖'})
+  restored=questions.save({**deleted,'deleted':False})
+  self.assertEqual(restored['answer'],image);self.assertEqual(restored['paperId'],self.paper['id'])
+  self.assertEqual(questions.listing(mode='counts')['byPaper'][self.paper['id']],dict(open=1,resolved=1))
  def setUp(self):
   self.tmp=tempfile.TemporaryDirectory();root=pathlib.Path(self.tmp.name);self.patches=[patch.object(study,'DB',root/'study.sqlite'),patch.object(local_app,'DATA',root),patch.object(study,'today',return_value='2026-10-21')]
   for p in self.patches:p.start()

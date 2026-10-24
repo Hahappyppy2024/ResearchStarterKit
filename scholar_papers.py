@@ -77,4 +77,5 @@ def listing(scholar_id='',lab_id=''):
    if old.get('venue')=='arXiv' and p.get('venue') not in ('','arXiv'):merged.update(venue=p['venue'],publicationNote=p.get('publicationNote',''))
    dedup[key]=merged
   else:dedup[key]=p
- return dict(papers=list(dedup.values()),scope=person['name'] if person else lab['name'] if lab else '全部论文')
+ import paper_titles
+ return dict(papers=paper_titles.hydrate_titles(list(dedup.values())),scope=person['name'] if person else lab['name'] if lab else '全部论文')

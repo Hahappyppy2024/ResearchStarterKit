@@ -1,8 +1,13 @@
+import {mountPaperProgress} from './paper-progress.js';
 import {publicationGroup,authorMatches} from './paper-publication.mjs';
 import {paperTitle,setPaperTitle,paperOption} from './paper-title.js';
 import {knowledgeApi as api} from './paper-knowledge.js';import {openReader} from './paper-reader.js';
 const $=id=>document.getElementById(id),el=(t,v)=>{const n=document.createElement(t);if(v)n.textContent=v;return n;};let labs=[],people=[],topicNodes=[],affiliations=[],current=null,selected='all',scholarId=new URLSearchParams(location.search).get('scholar')||'';const paperId=new URLSearchParams(location.search).get('paperId'),photos=new Map();
 const labNames=l=>[...(l.leaders||'').split('\n'),...(l.scholars||'').split('\n')].map(n=>n.trim()).filter(Boolean);
+const labNav=document.querySelector('.lab-directory-nav');let fitFrame=0;
+function fitLabDirectory(){cancelAnimationFrame(fitFrame);fitFrame=requestAnimationFrame(()=>{const top=Math.max(0,labNav.getBoundingClientRect().top)+'px';if(labNav.style.getPropertyValue('--lab-directory-top')!==top)labNav.style.setProperty('--lab-directory-top',top);});}
+new ResizeObserver(fitLabDirectory).observe(document.body);
+window.addEventListener('resize',fitLabDirectory);window.addEventListener('scroll',fitLabDirectory,{passive:true});fitLabDirectory();
 const namedPerson=(p,n)=>[p.name,p.en].filter(Boolean).some(v=>v.trim().toLowerCase()===n.trim().toLowerCase());
 const leaderOf=(p,l)=>(l.leaders||'').split('\n').some(n=>namedPerson(p,n));
 const memberOf=(p,l)=>(p.labIds||[]).includes(l.id)||labNames(l).some(n=>namedPerson(p,n));
@@ -33,7 +38,7 @@ async function drawPapers(){
   const line=el('article'),card=el('div'),actions=el('div'),read=el('button','阅读任务');line.className='timeline-record';card.className='lab-paper-record';actions.className='actions';read.onclick=()=>openReader(p.id,'tasks');card.append(el('small',[(ref.publishedVenue||p.venue||'题录待补充'),...byId.get(p.id)].filter(Boolean).join(' · ')),paperTitle(p),el('p',(p.summary||'摘要暂未收录，可打开原文和阅读任务。').slice(0,180)));
   const names=[...new Set([...(ref.scholarIds||[]),...(p.scholarIds||[])])].map(id=>people.find(n=>n.id===id)?.name).filter(Boolean);card.append(el('small','作者：'+(Array.isArray(p.authors)?p.authors.join(', '):p.authors||'待补充')));if(names.length)card.append(el('small','已关联学者：'+names.join('、')));if(p.publicationNote)card.append(el('small',p.publicationNote));if(p.collectionEvidence)card.append(el('small',p.collectionEvidence));
   actions.append(read);const add=el('button','加入今日必读');add.onclick=async()=>{add.disabled=true;try{await api('queue',{paperId:p.id});add.textContent='已加入今日必读'}catch(e){add.textContent=e.message}finally{add.disabled=false}};const edit=el('button','编辑实验室／学者关联');edit.onclick=async()=>{const {openPaperAffiliations}=await import('./paper-labs.js');await openPaperAffiliations(p);};actions.append(add,edit);
-  if(/^https?:\/\//.test(p.source||'')){const a=el('a','来源 ↗');a.href=p.source;a.target='_blank';a.rel='noopener';actions.append(a);}card.append(actions);line.append(card);col.append(line);
+  if(/^https?:\/\//.test(p.source||'')){const a=el('a','来源 ↗');a.href=p.source;a.target='_blank';a.rel='noopener';actions.append(a);}mountPaperProgress(card,p);card.append(actions);line.append(card);col.append(line);
  }
  for(const [key,label] of [['published','正式发表'],['preprint','arXiv 预印本']]){groups[key].firstChild.textContent=label+' · '+counts[key]+' 篇';if(!counts[key])groups[key].append(el('p','暂无关联论文。'));}
  if(counts.unknown){unknown.firstChild.textContent='发表状态待核实 · '+counts.unknown+' 篇';host.append(unknown);}if(failures)host.append(el('p',failures+' 条题录暂时未能读取，请刷新重试。'));

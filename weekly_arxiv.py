@@ -89,7 +89,7 @@ def get_week(value=None,kind='new'):
 def save_curation(data):
  week=monday(data.get('week',''));notes=data.get('notes');picks=data.get('picks')
  if not isinstance(notes,str) or len(notes)>50000:raise ValueError('周总结需在 50000 字符以内')
- if not isinstance(picks,list) or len(picks)>50 or any(not isinstance(p,str) or not re.fullmatch(r'arxiv-\d{4}\.\d{4,5}',p) for p in picks):raise ValueError('精选论文格式无效')
+ if not isinstance(picks,list) or len(picks)>10000 or any(not isinstance(p,str) or not re.fullmatch(r'arxiv-\d{4}\.\d{4,5}',p) for p in picks):raise ValueError('精选论文格式无效')
  with connection() as c:
   valid={r[0] for r in c.execute('SELECT id FROM snapshots WHERE week=?',(week,))}
   if not set(picks)<=valid:raise ValueError('精选中包含不属于该周的论文')

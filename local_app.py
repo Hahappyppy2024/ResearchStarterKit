@@ -276,6 +276,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 if path.path=='/api/study/paper-library-statistics':
                     import reading_journal
                     return self.reply(reading_journal.statistics(include_items=True))
+                if path.path=='/api/study/paper-progress':
+                    import paper_progress
+                    return self.reply(paper_progress.listing(value('ids').split(',') if value('ids') else []))
+                if path.path=='/api/study/paper-featured':
+                    import paper_progress
+                    return self.reply(paper_progress.featured())
+                if path.path=='/api/study/reading-queue-status':
+                    date=study.valid_date(value('date',study.today()))
+                    with study.connection() as c:ids=[p['paperId'] for p in study.reading_queue(c,date)]
+                    return self.reply(dict(date=date,ids=ids))
+                if path.path=='/api/study/task-cat':
+                    face=value('face')
+                    if face not in ('smile','cry'):raise ValueError('小猫状态无效')
+                    return self.reply((ROOT/'local-data'/'personal-avatars'/('task-cat-'+face+'-v1.png')).read_bytes(),kind='image/png')
                 if path.path=='/api/study/paper-questions':
                     import paper_questions
                     return self.reply(paper_questions.listing(value('date',None),value('paperId'),value('mode','all')))
@@ -379,7 +393,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.reply({"count":count,"page":page,"papers":[dict(json.loads(b),zoteroKey=k) for b,k in rows]})
         static={" /":"","/": "index.html"}
         name="index.html" if path.path=="/" else path.path.lstrip("/")
-        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("paper-title.js","paper-title-model.mjs","paper-labs.js","paper-reader.js","paper-knowledge.js","related-papers.js","dataset-ui.js","paper-assets.js","paper-research.js","paper-quiz-ui.js","auto-card-merge.mjs","paper-questions-ui.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
+        asset_root=ROOT/"web" if WEB.name=="web-literature" and name in ("timeline-nesting.mjs","paper-catalog-actions.js","catalog-actions.mjs","todos.mjs","required-reading-updates.js","paper-title.js","paper-title-model.mjs","paper-labs.js","paper-reader.js","paper-knowledge.js","related-papers.js","dataset-ui.js","paper-assets.js","paper-research.js","paper-quiz-ui.js","auto-card-merge.mjs","paper-questions-ui.js","paper-reader.css","paper-tasks.mjs","course-picker.js","paper-task-definitions.json","paper-relations.mjs","reading-history.mjs","schedule.mjs") else WEB
         p=(asset_root/name).resolve()
         if not p.is_relative_to(asset_root.resolve()) or not p.is_file():return self.reply({"error":"不存在"},404)
         import mimetypes
@@ -418,6 +432,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 if action in ('blog-post','blog-folder','research-lab','method-post','method-resource','paste-image'):
                     import workspace_content
                     return self.reply(workspace_content.paste_image(body) if action=='paste-image' else workspace_content.save(action,body))
+                if action=='paper-read-status':
+                    import paper_progress
+                    return self.reply(paper_progress.save(body))
+                if action=='paper-featured':
+                    import paper_progress
+                    return self.reply(paper_progress.save_featured(body))
                 if action=='reading-library-select':return self.reply(study.select_reading_paper(body))
                 if action=='paper-library-archive':
                     import reading_journal
