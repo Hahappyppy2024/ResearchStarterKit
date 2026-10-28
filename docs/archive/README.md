@@ -1,6 +1,6 @@
 # ResearchStarterKit 📚
 
-**面向初级科研人员的本地科研学习工具包**  
+**面向初级科研人员的本地科研学习工具包**
 **A local-first research learning toolkit for beginners**
 
 [简体中文](README.md) | [English](README_EN.md) · [中文使用指南](docs/USAGE.md) · [English Guide](docs/USAGE_EN.md)
