@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {categoriesForTopic,timelineEntries} from './web/topic-timeline-model.mjs';
+import {categoriesForTopic,timelineEntries} from '../toolkit/web/topic-timeline-model.mjs';
 test('Topic descendants and inherited memberships retain shared canonical categories',()=>{
  const nodes=[{id:'a',kind:'topic'},{id:'b',kind:'topic',parentId:'a'},{id:'p',kind:'problem',topicIds:['b']},{id:'child',kind:'problem',parentId:'p'},{id:'other',kind:'problem',topicIds:['else']},{id:'s',kind:'solution',topicIds:['a']}];
  assert.deepEqual(categoriesForTopic(nodes,'a','problem').map(n=>n.id),['p','child']);

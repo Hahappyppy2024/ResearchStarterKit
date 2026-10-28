@@ -36,3 +36,15 @@ htmlcov/
 /course-materials/
 /courses-private/
 /WORKSPACE-UPDATE.md
+
+# Data remains private at every directory level
+**/local-data/
+**/local-data-backups/
+**/course-materials/
+**/courses-private/
+**/pasted-images/
+*.pdf
+*.ppt
+*.pptx
+*.zip
+node_modules/

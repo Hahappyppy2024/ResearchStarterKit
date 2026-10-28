@@ -1,4 +1,4 @@
-import {test} from 'node:test';import assert from 'node:assert/strict';import {publicationGroup,authorMatches} from './web/paper-publication.mjs';
+import {test} from 'node:test';import assert from 'node:assert/strict';import {publicationGroup,authorMatches} from '../toolkit/web/paper-publication.mjs';
 test('arxiv metadata remains a preprint',()=>{assert.equal(publicationGroup({id:'arxiv-123',venue:'arXiv'}),'preprint');assert.equal(publicationGroup({venue:'arXiv preprint'}),'preprint');});
 test('conference venue or explicit confirmed venue is published',()=>{assert.equal(publicationGroup({venue:'CVPR'}),'published');assert.equal(publicationGroup({venue:'arXiv'},{publicationStatus:'published',publishedVenue:'CVPR'}),'published');});
 test('unknown metadata is never automatically labelled published',()=>{assert.equal(publicationGroup({venue:'自选论文'}),'unknown');assert.equal(publicationGroup({venue:'CVPR'},{publicationStatus:'unknown'}),'unknown');});
