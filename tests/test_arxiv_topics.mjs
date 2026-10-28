@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {topicIndex} from '../toolkit/web/arxiv-topics.mjs';
+import {topicIndex} from '../sites/mist-blue-lotus/app/web/arxiv-topics.mjs';
 const nodes=[{id:'root',kind:'topic',name:'软件工程'},{id:'child',parentId:'root',kind:'topic',name:'代码生成',en:'Code Generation'},{id:'problem',kind:'problem',name:'问题'}];
 const papers=[{id:'a',topics:['Code Generation']},{id:'b',topics:[]},{id:'c',topicIds:['child']},{id:'d',topics:['Object Detection']}];
 const result=topicIndex(nodes,[{id:'taxonomy-child',paperIds:['b']}],papers);

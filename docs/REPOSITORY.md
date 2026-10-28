@@ -1,17 +1,12 @@
-# 仓库目录与迁移
+# 仓库目录
 
-本次在独立发布副本整理仓库。本机正在运行的科研网站与数据库不移动。
+本次已用当前完整网站替换简化模板与旧的重复工具快照：
 
-| 原位置 | 新位置 |
-| --- | --- |
-| 根目录 Python、PowerShell、CMD、JS 工具 | `toolkit/` |
-| `web*` 页面、共享资源 | `toolkit/web*`，保留内部相对结构 |
-| `scholar-update/` | `toolkit/scholar-update/` |
-| 根目录 `test_*` | `tests/` |
-| 各模块 Markdown 说明 | `docs/local-toolkit/` |
-| 原 README | `docs/archive/` |
-| 新雾蓝荷塘网站 | `sites/mist-blue-lotus/` |
+- `sites/mist-blue-lotus/app/`：当前完整网站，内部保留 `web`、`web-hub`、`web-learning`、`web-projects`、`web-shared` 等结构，避免打断相对引用。
+- `run.py`：根目录一条命令启动。
+- `tests/`：回归测试；`scripts/run_site_checks.py` 配置完整网站导入路径。
+- `scripts/`：候选上传文件检查。
+- `docs/local-toolkit/`、`docs/archive/`：历史参考文档，旧路径仅供历史查阅，以根 README 的新运行方式为准。
+- `docs/screenshots/`：只存空数据库公开副本的验收截图。
 
-工具源码保留用于后续维护，不等同于完整个人工作环境。使用工具时将工作目录设为 `toolkit/`，自行配置数据与依赖。原有课程资料生成器和个人学者追踪快照不随本次目录重排重新发布；课程 UI 代码可保留，但不提供课程正文、材料或数据库。新网站完全独立，不读取这些工具目录。
-
-部分旧测试依赖原本地环境；这里仅保留历史测试源码。新公开网站的发布检查使用 `scripts/check_public_release.py`。不要把本机数据库复制进仓库来使历史测试通过。
+私人原站未移动。Git 历史可恢复旧代码；未强推或改写历史。运行数据只在公开副本自己的 `app/local-data/` 中生成，不提交 Git。

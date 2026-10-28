@@ -9,7 +9,7 @@ class TopicTests(unittest.TestCase):
  def test_save_persist_grouped_query_and_duplicate(self):
   t=topics_service.add_topic("农业遥感检测","agriculture, crop\nremote sensing, satellite\ndetection")
   self.assertEqual(t["query"],'(all:"agriculture" OR all:"crop") AND (all:"remote sensing" OR all:"satellite") AND (all:"detection")')
-  self.assertEqual(len(topics_service.list_topics()),8)
+  self.assertEqual(len(topics_service.list_topics()),len(topics_service.BUILTINS)+1)
   self.assertEqual(topics_service.list_topics()[-1]["name"],"农业遥感检测")
   with self.assertRaises(ValueError):topics_service.add_topic("农业遥感检测","crop")
   with self.assertRaises(ValueError):topics_service.make_query('unsafe"query')

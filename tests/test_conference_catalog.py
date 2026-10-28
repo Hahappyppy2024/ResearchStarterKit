@@ -38,6 +38,11 @@ class ConferenceCatalogTests(unittest.TestCase):
         self.assertEqual(catalog.browse(2027,"CVPR")["papers"],[])
         self.assertEqual(catalog.browse(2025,"ICML")["count"],1)
 
+    def test_acl_present_and_venues_alphabetical(self):
+        venues=[c['venue'] for c in catalog.navigation()['years'][0]['conferences']]
+        self.assertIn('ACL',venues)
+        self.assertEqual(venues,sorted(venues,key=str.casefold))
+
     def test_hierarchy_filters_multilabel_and_pagination(self):
         all_rows = catalog.browse(2026,"CVPR")
         self.assertEqual(all_rows["total"],2)

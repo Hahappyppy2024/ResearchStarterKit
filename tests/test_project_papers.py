@@ -18,6 +18,17 @@ class ProjectPaperTests(unittest.TestCase):
   self.assertTrue(repeated['reused']);self.assertEqual(repeated['paper']['id'],ident);self.assertEqual(len(study.state()['queue']),1);self.assertEqual(len(links.listing(self.project['id'])['items']),1);self.assertEqual(set(repeated['link']['relationTypes']),{'reproduce','baseline','module'});self.assertEqual(knowledge_service.get_paper(ident)['tasks']['problem']['answer'],'Keep this note')
   links.save(dict(projectId=self.other['id'],paperId=ident,relationTypes=['dataset']))
   queued=study.state()['queue'][0];self.assertEqual(set(queued['projectIds']),{self.project['id'],self.other['id']});self.assertEqual(len(queued['projectRelations']),2)
+ def test_publication_metadata_saved_to_shared_library(self):
+  for title,venue,kind,year in [('Conference paper','CVPR','conference',2025),('Journal paper','IEEE TGRS','journal',2024)]:
+   result=links.save(dict(projectId=self.project['id'],relationTypes=['background'],paper=dict(title=title,venue=venue,publicationType=kind,year=str(year))))
+   paper=study.resolve('paper',result['paper']['id'])
+   self.assertEqual((paper['venue'],paper['publicationType'],paper['year']),(venue,kind,year))
+   self.assertIn(paper['id'],[p['id'] for p in study.catalog(venue=venue)['items']])
+   with local_app.db() as c:
+    stored=c.execute('SELECT venue,year FROM papers WHERE id=?',(paper['id'],)).fetchone()
+   self.assertEqual(tuple(stored),(venue,year))
+  for extra in ({'year':'oops'},{'venue':''},{'publicationType':'unknown'}):
+   with self.assertRaises(ValueError):links.save(dict(projectId=self.project['id'],relationTypes=['background'],paper=dict(title='Invalid paper',**extra)))
  def test_revision_roles_and_archived_project(self):
   paper=study.save_paper(dict(title='Existing paper'));created=links.save(dict(projectId=self.project['id'],paperId=paper['id'],relationTypes=['uncertain']))
   changed=links.save(dict(projectId=self.project['id'],paperId=paper['id'],revision=created['link']['revision'],relationTypes=['foundation','improve']));self.assertEqual(changed['link']['relationTypes'],['foundation','improve'])

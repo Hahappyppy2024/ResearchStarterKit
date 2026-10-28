@@ -10,6 +10,18 @@ class WeeklyTests(unittest.TestCase):
  def tearDown(self):
   for p in reversed(self.patches):p.stop()
   self.temp.cleanup()
+ def test_daily_worker_updates_current_week_and_previous_even_when_one_fails(self):
+  with patch.object(service,'fetch_week',side_effect=[RuntimeError('offline'),{'week':'2026-10-12'}]) as fetch:
+   result=service.update_daily_archives()
+  self.assertEqual([c.args[0] for c in fetch.call_args_list],['2026-10-19','2026-10-12'])
+  self.assertEqual(result,[{'week':'2026-10-12'}])
+ def test_daily_check_does_not_reassign_paper_dates(self):
+  with service.connection() as c:service.store(c,self.paper(),'2026-10-21T12:00:00+08:00')
+  run=service.record_morning([{'week':'2026-10-12','papers':1}])
+  self.assertNotIn('papers',run)
+  self.assertEqual(service.get_day('2026-10-13')['count'],1)
+  self.assertEqual(service.get_day('2026-10-21')['count'],0)
+  self.assertEqual(service.daily_check()['status'],'complete')
  def paper(self,id='arxiv-2610.10001',published='2026-10-13',updated='2026-10-13',title='First snapshot'):
   return dict(id=id,title=title,venue='arXiv',year=2026,published=published,updated=updated,topics=['Agent'])
  def digest(self,date,papers):
@@ -29,6 +41,14 @@ class WeeklyTests(unittest.TestCase):
   self.assertEqual(service.get_week('2026-10-12')['curation']['notes'],'Problem → method → next step')
   self.assertIsNone(service.get_week('2026-10-19')['curation']['picks'])
   with self.assertRaises(ValueError):service.save_curation(dict(week='2026-10-12',notes='',picks=['arxiv-2610.99999']))
+ def test_daily_flow_archives_use_first_publication_not_collection_or_update_date(self):
+  self.digest('2026-10-20',[self.paper(),self.paper(updated='2026-10-20'),self.paper('arxiv-2610.10002','2026-10-14','2026-10-14')])
+  days=service.list_days()['days'];self.assertEqual([d for d in days if d['count']],[dict(date='2026-10-14',count=1),dict(date='2026-10-13',count=1)]);self.assertEqual(days[0],dict(date='2026-10-21',count=0))
+  first=service.get_day('2026-10-13');self.assertEqual(first['count'],1);self.assertEqual(first['papers'][0]['title'],'First snapshot')
+  self.assertEqual(service.get_day('2026-10-20')['count'],0)
+  self.digest('2026-10-21',[self.paper(title='Changed later')]);service.archive_local()
+  self.assertEqual(service.get_day('2026-10-13')['papers'][0]['title'],'First snapshot')
+  with self.assertRaises(ValueError):service.get_day('2026-10-22')
  def feed(self,start,count,total=101):
   entries=''.join(f'<entry><id>https://arxiv.org/abs/2610.{10000+i}v1</id><title>Agent {i}</title><published>2026-10-13T12:00:00Z</published><updated>2026-10-13T12:00:00Z</updated><summary>agent tools</summary><author><name>A</name></author></entry>' for i in range(start,start+count))
   return f'<feed xmlns="http://www.w3.org/2005/Atom" xmlns:o="http://a9.com/-/spec/opensearch/1.1/"><o:totalResults>{total}</o:totalResults>{entries}</feed>'.encode()

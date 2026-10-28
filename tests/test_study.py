@@ -11,6 +11,40 @@ class StudyTests(unittest.TestCase):
   for p in reversed(self.patches):p.stop()
   __import__("gc").collect();self.temp.cleanup()
  def course(self,name='Test course'):return s.save_record('course',dict(name=name,goal='Explain methods'))
+ def test_course_types_keep_existing_directions_and_partial_updates(self):
+  for course_type in s.COURSE_TYPES:
+   course=s.save_record('course',dict(name=course_type,courseType=course_type,category='Agent',subcategory='CV 应用'))
+   updated=s.save_record('course',dict(id=course['id'],revision=course['revision'],goal='Updated'))
+   self.assertEqual((updated['courseType'],updated['category'],updated['subcategory']),(course_type,'Agent','CV 应用'))
+  with self.assertRaises(ValueError):s.save_record('course',dict(name='Invalid',courseType='other'))
+ def test_legacy_courses_are_research_without_rewriting_saved_content(self):
+  legacy=dict(id='legacy-course',name='Existing',category='LLM',subcategory='对齐',revision=7,units=['论文阅读'])
+  body=json.dumps(legacy,ensure_ascii=False)
+  with s.connection() as c:c.execute('INSERT INTO records VALUES(?,?,?,0)',('course',legacy['id'],body))
+  course=s.state()['courses'][0]
+  self.assertEqual(course,dict(legacy,courseType='research'))
+  with s.connection() as c:self.assertEqual(c.execute('SELECT body FROM records WHERE id=?',(legacy['id'],)).fetchone()[0],body)
+  s.archive(dict(kind='course',id=legacy['id']))
+  self.assertEqual(s.state()['archivedCourses'][0]['courseType'],'research')
+
+ def test_custom_course_categories_persist_without_courses_and_are_type_scoped(self):
+  a=s.save_course_category(dict(courseType='foundation',name='  自定义方向  '))
+  self.assertEqual(a['name'],'自定义方向')
+  self.assertEqual(a,s.save_course_category(dict(courseType='foundation',name='自定义方向')))
+  b=s.save_course_category(dict(courseType='self',name='自定义方向'))
+  self.assertNotEqual(a['id'],b['id'])
+  child=s.save_course_category(dict(courseType='foundation',name='子方向',parent='自定义方向'))
+  data=s.state()
+  self.assertEqual(len(data['courseCategories']),3)
+  self.assertFalse(data['courses'])
+  self.assertEqual(child['parent'],'自定义方向')
+ def test_custom_course_subcategories_use_existing_course_parents_and_validate(self):
+  course=s.save_record('course',dict(name='Existing course',courseType='research',category='原有方向',subcategory='保留'))
+  s.save_course_category(dict(courseType='research',name='新子类',parent='原有方向'))
+  self.assertEqual(s.state()['courses'][0],course)
+  for payload in [dict(courseType='research',name='子类',parent='不存在'),dict(courseType='self',name='子类',parent='原有方向'),dict(courseType='invalid',name='分类'),dict(courseType='self',name=' '),dict(courseType='self',name='x'*101)]:
+   with self.assertRaises(ValueError):s.save_course_category(payload)
+
  def test_course_lesson_plans_persist_and_validate_unit(self):
   a=s.save_record('course',dict(name='Teaching preparation',units=['Lesson 1'],lessonPlans={'Lesson 1':'Goal\nDemo\nDeliverable'}))
   self.assertEqual(s.state()['courses'][0]['lessonPlans']['Lesson 1'],'Goal\nDemo\nDeliverable')
