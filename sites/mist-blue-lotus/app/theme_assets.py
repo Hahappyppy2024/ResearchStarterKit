@@ -1,5 +1,5 @@
 """Shared local theme assets and the user's persistent palette choice."""
-import json,pathlib,threading
+import json,pathlib,threading,re
 ROOT=pathlib.Path(__file__).resolve().parent
 ASSETS=ROOT/'web-shared'
 SETTING=ROOT/'local-data'/'appearance.json'
@@ -8,11 +8,12 @@ LOCK=threading.Lock()
 ORIGINS={f'http://127.0.0.1:{p}' for p in (8866,8867,8868,8869,8870,8891,8873,8872)}|{'http://localhost:8869'}
 def inject(body,kind):
  if 'text/html' not in kind:return body
- markup=b'<link rel="stylesheet" href="/research-theme.css"><script defer src="/research-theme.js"></script>'
+ body=re.sub(br'<html([^>]*)lang="[^"]*"',br'<html\1lang="en"',body,count=1)
+ markup=b'<script defer src="/research-english.js"></script><link rel="stylesheet" href="/research-theme.css"><script defer src="/research-theme.js"></script>'
  return body.replace(b'</head>',markup+b'</head>',1) if b'research-theme.js' not in body else body
 def asset(path):
  if path in ('/paper-title.js','/paper-title-model.mjs'):return (ROOT/'web'/path.lstrip('/')).read_bytes(),'application/javascript'
- names={'/research-theme.js':('theme.js','application/javascript'),'/research-theme.css':('theme.css','text/css'),'/research-paste.js':('paste.js','application/javascript')}
+ names={'/research-english.js':('english-ui.js','application/javascript'),'/research-english.json':('english-ui.json','application/json'),'/research-theme.js':('theme.js','application/javascript'),'/research-theme.css':('theme.css','text/css'),'/research-paste.js':('paste.js','application/javascript')}
  if path not in names:return None
  name,kind=names[path];body=(ASSETS/name).read_bytes()
  if path=='/research-theme.css' and preference()['theme']=='blue-mint':body+=b'\n'+LOCAL_PALETTE.read_bytes()

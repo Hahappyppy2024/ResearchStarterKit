@@ -1,13 +1,30 @@
-# ResearchStarterKit · Mist Blue & Lotus Pond — Full Website
+# ResearchStarterKit — English Edition
 
-This is the full source distribution of the actual local research desktop, not a simplified static redesign. The original pages, interactions, backend and lotus palette are retained. Private databases, personal records and course materials are excluded. The private News/Ideas modules remain excluded as previously requested.
+A local research desktop with an English interface and a mist-blue lotus design.
+
+Read the [bilingual project homepage](README.md) for features, setup, data boundaries, and repository structure.
+
+## Run
+
+Requires Python 3.11+. From this repository's root:
 
 ```sh
 python run.py
 ```
 
-Use Python 3.11+ and open **http://127.0.0.1:8869/#daily**. New, independent databases are created under `sites/mist-blue-lotus/app/local-data/`, which Git ignores. Public-copy ports 8866–8870 are isolated from the owner's original services.
+Open http://127.0.0.1:8869/#daily. This requires the local Python backend; GitHub Pages alone cannot run it.
 
-Source: [full application](sites/mist-blue-lotus/app/). Details: [Chinese README](README.md) and [run instructions](sites/mist-blue-lotus/README.md).
+## Privacy
 
-GitHub stores the source; GitHub Pages cannot execute Python/SQLite. Download and run locally. Network collection, Zotero integration and optional PowerPoint conversion require their respective services or tools. No private course content is bundled.
+The public edition creates its own empty local database. Private course materials, owner records, uploaded files, and the Daily News / private News and Ideas modules are excluded.
+
+## Interface
+
+English labels are bundled in `sites/mist-blue-lotus/app/web-shared/english-ui.json`. Translation occurs only in rendered UI text and descriptive attributes. Input values and stored user records are not rewritten. Some specialist machine translations may need editorial refinement.
+
+## Verify
+
+```sh
+python scripts/check_full_release.py
+python scripts/run_site_checks.py
+```

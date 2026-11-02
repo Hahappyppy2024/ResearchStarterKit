@@ -93,3 +93,10 @@ html body details[open]>summary.cute-disclosure::after,html body button.cute-dis
 /* CUTE_NAV_TRIAL_END */
 
 html body summary.cute-disclosure::before{content:none!important;display:none!important}html body button.library-tree-toggle:disabled{visibility:hidden!important}html body .library-tree-toggle.cute-disclosure{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:24px!important;padding:0!important}html body .library-tree-toggle.cute-disclosure::after{margin:0!important;float:none!important}
+
+/* Public English edition: readable labels and restrained typography. */
+html[lang=en] .research-motto{font-family:Georgia,serif!important;font-size:clamp(20px,2vw,30px)!important;letter-spacing:.3px!important}html[lang=en] .research-nav-host .hub-tabs small{display:none}html[lang=en] .hub-tabs a,html[lang=en] .hub-tabs button{white-space:normal;line-height:1.5}html[lang=en] h1,html[lang=en] .page-heading h1{font-family:Georgia,serif!important;letter-spacing:.2px!important}html[lang=en] .research-toolbar-tagline{font-family:Georgia,serif!important;font-size:16px!important;letter-spacing:.3px!important}
+
+html[lang=en] #daily-quote{font-family:Georgia,serif!important;font-size:clamp(22px,2.5vw,34px)!important;line-height:1.5!important;font-weight:500!important;letter-spacing:.1px!important;max-width:860px}html[lang=en] .hero .eyebrow{letter-spacing:1px!important}
+
+html[lang=en] .poetry-quick-mark{font-family:Georgia,serif!important;font-size:10px!important;letter-spacing:0!important}html[lang=en] .poetry-quick-link small{line-height:1.5!important}
