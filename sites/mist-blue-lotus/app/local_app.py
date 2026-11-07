@@ -255,9 +255,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         if not self.trusted():return self.reply({"error":"仅允许本机同源请求"},403)
         path=urllib.parse.urlsplit(self.path);q=urllib.parse.parse_qs(path.query)
+        if path.path in ('/api/study/course-attachments','/api/study/course-attachment-file'):
+            try:
+                import course_attachments as attachments
+                course=q.get('courseId',[''])[0];unit=q.get('unit',[''])[0]
+                if path.path.endswith('-file'):
+                    data,kind=attachments.read(course,unit,q.get('id',[''])[0]);return self.reply(data,kind=kind)
+                return self.reply(attachments.listing(course,unit))
+            except (ValueError,KeyError,OSError) as e:return self.reply({'error':str(e)},400)
         import theme_assets
         shared=theme_assets.asset(path.path)
         if shared:return self.reply(shared[0],kind=shared[1])
+        if path.path=='/api/study/memos':
+            import memo_service
+            return self.reply(memo_service.listing())
         if path.path.startswith("/api/study/"):
             try:
                 import study_service as study
@@ -457,6 +468,25 @@ class Handler(http.server.BaseHTTPRequestHandler):
         return self.reply(p.read_bytes(),kind=mimetypes.guess_type(p.name)[0] or "application/octet-stream")
     def do_POST(self):
         upload_path=urllib.parse.urlsplit(self.path)
+        if upload_path.path=="/api/study/paper-pdf-upload":
+            if not self.trusted():return self.reply({'error':'Local uploads only'},403)
+            try:
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0<length<=50*1024*1024:return self.reply({'error':'PDF size limit: 50 MB'},413)
+                import paper_uploads
+                q=urllib.parse.parse_qs(upload_path.query)
+                return self.reply(paper_uploads.upload(q.get('paperId',[''])[0],q.get('name',[''])[0],self.rfile.read(length)))
+            except (ValueError,KeyError,OSError) as e:return self.reply({'error':str(e)},400)
+        if upload_path.path=="/api/study/course-attachment-upload":
+            if not self.trusted():return self.reply({'error':'只允许本机上传'},403)
+            try:
+                length=int(self.headers.get('Content-Length','0'))
+                if not 0<length<=50*1024*1024:return self.reply({'error':'单个文件最大 50 MB'},413)
+                import course_attachments as attachments
+                q=urllib.parse.parse_qs(upload_path.query)
+                return self.reply(attachments.upload(q.get('courseId',[''])[0],q.get('unit',[''])[0],q.get('name',[''])[0],self.rfile.read(length)))
+            except (ValueError,KeyError,OSError) as e:return self.reply({'error':str(e)},400)
+        upload_path=urllib.parse.urlsplit(self.path)
         if upload_path.path=="/api/study/methodology-upload":
             if not self.trusted():return self.reply({"error":"只允许本机上传"},403)
             try:
@@ -481,6 +511,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 import study_service as study
                 action=self.path.rsplit("/",1)[-1]
                 if action=='paper-scope-restore':return self.reply(paper_scope.restore(body))
+                if action=='memo':
+                    import memo_service
+                    return self.reply(memo_service.save(body))
                 if action=='course-category':return self.reply(study.save_course_category(body))
                 if action=='paper-affiliations':
                     import paper_affiliations

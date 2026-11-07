@@ -45,6 +45,16 @@ This is a local Python application, not a static GitHub Pages site. GitHub hosts
 | Projects & Blog | 项目实验记录和普通博客 |
 | Lotus Pond | 论文阅读相关的小鱼荷塘与统计 |
 
+## Upload and read local files / 上传与阅读本地文件
+
+Drag a PDF into **Paper Library → Add paper**, enter or confirm its metadata, and select **Save and start reading**. The reader shows the PDF on the left and reading tasks/notes on the right. Local PDFs are stored separately for each paper; replacing a PDF keeps the same reading record.
+
+在 **论文库 → 添加论文** 中拖入 PDF，填写或核对题录，点击 **保存并开始阅读**。左侧查看 PDF，右侧填写阅读任务与笔记；替换 PDF 后仍沿用同一篇论文的阅读记录。
+
+Each lesson also supports drag-and-drop PDF, Word and PowerPoint attachments. Individual files are limited to **50 MB**. Files stay under this edition's own `local-data/paper-uploads/` or `local-data/course-attachments/`, which Git ignores. Other existing file pickers also accept drag-and-drop and keep their original limits.
+
+每课支持拖拽上传 PDF、Word、PPT，单个文件上限 **50 MB**。文件保存在本副本的上述私有运行目录，不随 Git 上传；其他原有上传入口也支持拖拽，并沿用各自的大小限制。
+
 ## Private data stays private / 私人数据不随公开版发布
 
 This repository contains application code and interface assets. It does **not** include the owner's private databases, papers, courses, notes, screenshots, uploaded documents, reading history, daily news, or private News/Ideas modules.
@@ -85,3 +95,19 @@ Optional collectors, Zotero connections, and document converters need their own 
 Existing Git history is preserved. Excluding private data from this release is not a claim that past Git history has been purged.
 
 保留现有 Git 历史；本次排除私人数据不代表已经清除过去历史中的内容。
+
+## Feature overview
+
+| Icon | Feature | Description |
+| --- | --- | --- |
+| 📅 | Daily Effort | Schedule templates, tasks and subtasks |
+| 📝 | Memo | Quick capture, tags, search, pin and trash; one dated Blog post per day |
+| 📚 | Paper Library | Organize and read papers |
+| 🌌 | arXiv Observatory | Daily archives and paper visualization |
+| 🔗 | Paper Atlas | Connect topics, problems and methods |
+| 🎓 | Courses | Lessons and document attachments |
+| 💡 | Foundations | Study AI concepts and modules |
+| 👥 | Scholars | Research profiles and papers |
+| 🧭 | Methods | Research workflow notes |
+| 🧪 | Projects | Experiments and evidence |
+| ✍️ | Blog | Categorized research notes and daily memos |
